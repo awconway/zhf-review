@@ -1,0 +1,124 @@
+---
+title: "Accuracy of zero heat flux temperature measurements"
+output: html_document
+---
+
+Functions for calculating Bland-Altman meta-analysis
+
+```{r echo=FALSE}
+meta <-  function(Te,V_T){
+m <- length(Te)
+wt_FE=1/V_T
+T_FE <- sum(Te*wt_FE)/sum(wt_FE)
+Q <- sum(wt_FE*(Te - T_FE)^2)
+S1 <- sum(wt_FE)
+S2 <- sum(wt_FE^2)
+o2 <- (Q - (m - 1))/(S1 - S2/S1)
+wt_RE <- 1/(V_T + o2)
+T_RE <- sum(Te*wt_RE)/sum(wt_RE)
+V_T_RE_mod <- 1/sum(wt_RE)
+V_T_RE_rve <- (m/(m-1))*sum(wt_RE^2*(Te - T_RE)^2)/(sum(wt_RE))^2
+c(m,T_RE,o2,V_T_RE_mod, V_T_RE_rve)
+}
+loa_maker <- function(bias,V_bias,logs2,V_logs2) {
+bias_row=meta(bias, V_bias)
+logs2_row=meta(logs2, V_logs2)
+bias_mean <- bias_row[2]
+sd2_est <- exp(logs2_row[2])
+tau_est <- bias_row[3]
+LOA_L <- bias_mean - 2*sqrt(sd2_est + tau_est)
+LOA_U <- bias_mean + 2*sqrt(sd2_est + tau_est)
+m <- bias_row[1]
+tcrit <- qt(1-.05/2,m-1)
+B1 <- sd2_est^2/(sd2_est + tau_est)
+B2 <- tau_est^2/(sd2_est + tau_est)
+wt <- 1/V_bias
+S1 <- sum(wt)
+S2 <- sum(wt^2)
+S3 <- sum(wt^3)
+A0 <- 2*(m-1)/(S1-S2/S1)^2
+A1 <- 4/(S1 - S2/S1)
+A2 <- 2*(S2-2*S3/S1+S2^2/S1^2)/(S1-S2/S1)^2
+V_logT2 <- A0/tau_est^2 + A1/tau_est + A2
+V_logT2 <- 2/sum((V_bias + tau_est)^(-2))
+V_LOA_mod <- bias_row[4] + B1*logs2_row[4] + B2*V_logT2
+V_LOA_rve <- bias_row[5] + B1*logs2_row[5] + B2*V_logT2
+CI_L_mod <- LOA_L - tcrit*sqrt(V_LOA_mod)
+CI_U_mod <- LOA_U + tcrit*sqrt(V_LOA_mod)
+CI_L_rve <- LOA_L - tcrit*sqrt(V_LOA_rve)
+CI_U_rve <- LOA_U + tcrit*sqrt(V_LOA_rve)
+c(m, bias_mean,sqrt(sd2_est), tau_est, LOA_L, LOA_U, CI_L_mod, CI_U_mod, CI_L_rve, CI_U_rve)}
+```
+
+
+##Legend:
+
+Bias=pooled estimate of mean differences calculated as PaCO2-TcCO2 in mmHg
+
+SD=pooled standard deviation of differences
+
+tau2=Variation in bias between studies
+
+LoA_L LoA_U = Lower and upper 95% limit of agreement calculated from pooled estimates of bias and standard deviation of differences
+
+CI_Lm CI_Um = Model-based random-effects meta-analysis estimate of CI for LOA
+
+CI_Lr CI_Ur = Robust variance estimation meta-analysis estimate of CI for LOA
+
+#Primary meta-analysis (all included studies)
+```{r}
+library(tidyverse)
+data <- readxl::read_xlsx("ZHF.xlsx")
+
+#variance
+data <- data %>% 
+  mutate(s2 = ((upper - bias)/1.96)^2)
+
+data <- data %>% 
+  mutate(V_bias = s2/n)
+
+data <- data %>% 
+  mutate(logs2 = log(s2)+1/(n-1))
+
+data <- data %>% 
+  mutate(V_logs2 = 2/(n-1))
+
+data_NPA <- data %>% 
+  filter(comparison=="NPA")
+
+
+data_es <- data %>% 
+  filter(comparison=="Es")
+
+data_PA <- data %>% 
+  filter(comparison=="PA")
+
+data_core <- data %>% 
+  filter(comparison=="PA"|comparison=="Bladder"|comparison=="Es")
+
+```
+
+
+```{r}
+out <- loa_maker(data_core$bias,data_core$V_bias,data_core$logs2,data_core$V_logs2)
+names(out) <- c("studies","bias","sd","tau2","LOA_L","LOA_U","CI_Lm","CI_Um","CI_Lr","CI_Ur")
+out[1:10]
+```
+
+```{r}
+out <- loa_maker(data_es$bias,data_es$V_bias,data_es$logs2,data_es$V_logs2)
+names(out) <- c("studies","bias","sd","tau2","LOA_L","LOA_U","CI_Lm","CI_Um","CI_Lr","CI_Ur")
+out[1:10]
+```
+
+```{r}
+out <- loa_maker(data_PA$bias,data_PA$V_bias,data_PA$logs2,data_PA$V_logs2)
+names(out) <- c("studies","bias","sd","tau2","LOA_L","LOA_U","CI_Lm","CI_Um","CI_Lr","CI_Ur")
+out[1:10]
+```
+
+```{r}
+out <- loa_maker(data_NPA$bias,data_NPA$V_bias,data_NPA$logs2,data_NPA$V_logs2)
+names(out) <- c("studies","bias","sd","tau2","LOA_L","LOA_U","CI_Lm","CI_Um","CI_Lr","CI_Ur")
+out[1:10]
+```

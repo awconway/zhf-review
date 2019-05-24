@@ -1,0 +1,111 @@
+---
+title: "Untitled"
+author: "Aaron Conway"
+date: "29/04/2019"
+output: html_document
+---
+
+```{r}
+library(revtools)
+library(tidyverse)
+library(vroom)
+```
+
+# Search pubmed with phrase "zero heat flux"
+
+```{r}
+data <- read_bibliography("citations.bib")
+```
+
+# Screen abstracts
+
+*It is essential that data is saved as .csv before exiting webpaage*
+
+```{r}
+screen_abstracts(data)
+```
+
+# Load in results from reviewers
+
+```{r message=FALSE}
+reviewer_1 <- read_csv("reviewer_1.csv") %>% 
+  mutate(reviewer_one = selected)
+
+
+reviewer_2 <- read_csv("reviewer_2.csv") %>% 
+  mutate(reviewer_two = selected)
+
+
+abstract_review <- right_join(reviewer_1, reviewer_2, by = "label")
+abstract_review <- abstract_review %>% 
+  select(label, title.x, abstract.x, doi.x, author.x, reviewer_one, reviewer_two)
+names <- c("label", "title", "abstract", "doi", "author", "reviewer_one", "reviewer_two")
+colnames(abstract_review) <- names
+```
+
+
+# Compare results between reviewers
+
+```{r}
+# Identify inclusions (both reviewers selected include)
+
+inclusions <- abstract_review %>% 
+  filter(reviewer_one == "selected" & reviewer_two == "selected")
+
+
+# Identify exclusions (both reviewers selected include)
+
+exclusions <- abstract_review %>% 
+   filter(reviewer_one == "excluded" & reviewer_two == "excluded")
+
+
+# Identify conflicts (diagreement among reviewers)
+
+conflicts <- abstract_review %>% 
+  filter((reviewer_one == "excluded" & reviewer_two == "selected") | (reviewer_one == "selected" & reviewer_two == "excluded"))
+
+
+# Third reviewer to resolve conflicts
+
+screen_abstracts(as.data.frame(conflicts))
+
+# Add inclusions and exclusions after resolution of conflicts
+
+reviewer_3 <- read_csv("reviewer_2.csv")
+
+inclusions_3 <- reviewer_3 %>% 
+  filter(selected == "selected")
+
+exclusions_3 <- reviewer_3 %>% 
+  filter(selected == "excluded")
+
+
+```
+
+# Full text screening
+
+
+```{r}
+library(BibScan)
+```
+
+
+```{r}
+library(crminer)
+x <- "6c00c459-ddeb8bce-425652b1-aa68cd58"
+Sys.setenv(CROSSREF_TDM=x)
+e <- "aaron.conway@utoronto.ca"
+Sys.setenv(CROSSREF_EMAIL=e)
+```
+
+
+```{r}
+indir <- here::here("full-texts", "savedrecs.bib")
+outdir <- here::here('full-texts')
+article_pdf_download(indir, outdir)
+```
+
+```{r}
+df_citations <- bibfile_reader(indir, bib_format)
+```
+

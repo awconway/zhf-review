@@ -1,0 +1,35 @@
+---
+title: "flow diagram"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(nomnoml)
+```
+```{nomnoml}
+#import: my-common-styles.nomnoml
+#stroke: black
+#.blob: fill=#DBDBDB visual=italic
+#direction: down
+#arrowSize: 0.6
+#bendSize: 0.3
+#fillArrows: true
+
+  [129 references imported for screening]->[94 studies screened against title and abstract]
+
+  [129 references imported for screening]-->[<blob> 35 duplicates removed]
+
+  [94 studies screened against title and abstract]->[23 studies assessed for full-text eligibility]
+  [94 studies screened against title and abstract]-->[<blob> 71 studies excluded]
+
+[23 studies assessed for full-text eligibility] -> [17 studies included]
+
+ [23 studies assessed for full-text eligibility] --> [<blob> 7 studies excluded | 4 Wrong intervention
+                                                      
+                                                      1 Wrong comparator
+                                                      
+                                                      1 Wrong study design]
+```
+
+

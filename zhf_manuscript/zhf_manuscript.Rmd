@@ -1,17 +1,16 @@
 ---
-title: Title here
-subtitle: Do you have a subtitle? If so, write it here
+title: "Accuracy and precision of zero-heat-flux temperature monitoring: a systematic review and meta- analysis"
 titlerunning: Short form of title (if too long for head)
-authorrunning: Short form of author list if too long for running head
+authorrunning: Conway,
 thanks: | 
     Grants or other notes about the article that should go on the front 
     page should be placed here. General acknowledgments should be placed at the
     end of the article.
 
 authors: 
-- name: Äüthör 1
-  address: Department of YYY, University of XXX
-  email: abc@def
+- name: Aaron Conway
+  address: Peter Munk Cardiac Centre, UHN & Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
+  email: aaron.conway@utoronto.ca
   
 - name: Âuthóř 2
   address: Department of ZZZ, University of WWW
@@ -32,34 +31,90 @@ MSC:
 
 abstract: |
   The text of your abstract.  150 -- 250 words.
-
+  
 bibliography: bibliography.bib
 output: rticles::springer_article
+
 ---
+  
+  ```{r echo=FALSE, include=FALSE}
+library(redcapAPI)
+library(tidyverse)
+library(kableExtra)
+library(purrr)
+library(ggplot2)
+library(dplyr)
+library(qwraps2)
+library(rticles)
+```
+# Introduction
 
-# Introduction {#intro}
+Core temperature monitoring is an important intervention within perioperative and intensive care settings$(ref)$. Thermoregulatory dysfunction is commonly associated with the induction of anesthesia and can lead to adverse outcomes including cardiac dysrhythmias, altered hemostasis and increased risk of surgical site infection [@frank1997perioperative; @kurz1996perioperative; @michelson1994reversible; @rohrer1992effect]. The pulmonary artery catheter is the reference standard for continuous core temperature monitoring$(ref)$, however, the invasive nature of this method renders an increased risk of bloodstream infections and damage to surrounding tissue[@hadian2006evidence]. Although clinically accurate relative to pulmonary artery thermometry, surrogate measures of core temperature via esophageal, rectal, and bladder sites remain mildly invasive interventions$(ref)$. 
 
-Your text comes here. Separate text sections with
+Zero-heat-flux (ZHF) thermometry is an alternative non-invasive method that allows for continuous monitoring of core temperature. Originally developed in the 1970s, ZHF technology was recently implemented in the 3M SpotOn (3M, St Paul, MN), a single-use, disposable sensor $(ref)$. In practice, the ZHF sensor, such as the 3M SpotOn, is placed on the lateral surface of the forehead and initially warmed to equilibrate the temperature of the skin surface to the underlaying core tissues$(ref)$. Equipped with a thermal insulator, the ZHF sensor eliminates heat loss to the environment $(thereby creating an isothermal pathway between the skin surface and underlaying core tissues)$ to allow for changes in core temperature to be directly reflected by a change in skin surface temperature $(ref)$. 
 
-# Section title {#sec:1}
+The agreement between ZHF and established core temperature measures has been investigated in several studies conducted within the clinical setting, each with varied results. Appraisal of these studies and synthesis of the results would aid $clinical decision-making regarding the appropriate circumstances in which ZHF monitoring may be used.$
 
-Text with citations by @Galyardt14mmm, [@Mislevy06Cog].
+We aimed to determine if the ZHF sensor has clinically acceptable accuracy and precision compared with established core temperature tools. Accuracy is defined as the average difference between the ZHF sensor and established core temperature instrument and precisions as the variance (typically reported as the SD) in the differences.
 
-## Subsection title {#sec:2}
+# Methods
 
-as required. Don't forget to give each section
-and subsection a unique label (see Sect. \ref{sec:1}).
+A systematic review was conducted in accordance with a predetermined protocol (PROSPERO trial registration number: ################).
 
-#### Paragraph headings 
+## Data sources and searches
 
-Use paragraph headings as needed.
+Published studies were found by searching Medline and EMBASE from January 2000 to July 2019, $as well as the reference lists of articles identified to be relevant to the review.  This search strategy is an efficient approach for systematic reviews of diagnostic test accuracy studies [@preston2015improving]. Unpublished and ongoing studies were located by searching the International Clinical Trials Platform.$ Published conference abstracts were included if there was enough information reported to appraise the quality of the study. There were no language restrictions applied during the search. $The Cochrane-recommended search strategy combining terms for the ‘target condition’ and ‘index test’ was used [@mann2012should]$. The search strategies used for each data base can be located in [file 1]().
 
-\begin{align}
-a^2+b^2=c^2
-\end{align}
+The selection of studies was undertaken by two independent reviewers. Studies were included if reported measures from a ZHF sensor and another established core temperature tool coincided.  Studies involving a case control design were excluded due to potential for overestimation of the intervention performance. Studies were excluded if conducted on non-human subjects or outside of a clinical healthcare setting. Studies were excluded if conducted earlier than the year 2000 as prior studies evaluated outdated technology that is no longer relevant to current clinical practice. 
+
+## Data extraction and quality assessment
+
+$Information was extracted regarding study characteristics(author, year of publication, country, design, sample size, clinical setting, numbers studied and analyses for each outcome), population characteristics (inclusion and exclusion criteria) and ZHF characteristics (timing and methods of measurements, and methods of calibration).$ The outcomes that were extracted included the mean bias (eg, accuracy) and variance (eg, SD, precision) in temperature between the ZHF sensor and established core temperature measurement tool. $Information was extracted about how repeated measurements were handled: (1) analysed each pair of data separately; (2) treated each pair of data as independent; or (3) used either analysis of variance or a random effects model as a way to control for the dependent nature of the repeated measures data [@myles2007using].$
+
+Using the revised Quality Assessment of Diagnostic Accuracy Studies (QUADAS-2), each reviewer independently assessed the risk of bias for the included studies [@whiting2011quadas]. $Reviewers used guiding questions to rate the risk of bias for patient selection$, conduct of the ZHF measurements, conduct of the established core temperature measurement tools, and timing and flow (eg, timing of ZHF and established core temperature measurements, dropouts) as “high”, “low” or “unclear”. We worked to minimize the risk of publication bias by conducting a comprehensive search of multiple databases as well as an international clinical trial registry [@glasziou2001systematic]. $Statistical analyses to detect reporting bias were not conducted due to lack of validated methods [@begg2005systematic]. Although some meta-analyses of method comparison studies have used tests for detecting funnel plot asymmetry [@niven2015accuracy], simulations have revealed that such tests will result in publication bias being incorrectly identified too often [@deeks2005performance]$. In order to rate the quality of evidence, we applied the Grading Quality of Evidence and Strength of Recommendation methodology [@schunemann2008grading]. Evidence was downgraded in accordance with study limitations, inconsistency and imprecision. There were no circumstances in which evidence was downgraded for indirectness as this systematic review only included relevant studies. Although the possibility of publication bias was not excluded, this bias was not formally assessed as it was not considered sufficient enough to reason downgrading the quality of evidence. 
+
+## Data synthesis and analysis
+
+The objective $for the meta-analysis was to estimate the population limits of agreement between$ temperature measurements by the ZHF sensor and established core temperature measurement tools. $The framework for meta-analysis of Bland-Altman method comparison studies based on limits of agreement (LoA) approach was used [@tipton2017framework]$. This method was selected because it parallels the approach used in primary Bland-Altman studies, whereby an estimate is generated for the pooled LoAs in the population (not just in the samples studied). The ‘population LoA’ is more broad than the LoA commonly reported in the meta-analyses of Bland-Altman studies [@tipton2017framework]. In these instances, $the pooled LoAs are calculated using $\delta\pm2\sqrt{\sigma2+\tau2}$, where $\delta$ is the average bias across studies, $\sigma2$ is the average within-study variation in differences and $\tau2$ is the variation in bias across studies.$ Estimations of $\delta$ and $\sigma2$ were made using a weighted least-squares model (similar to a random-effects approach), with the associated SEs estimated using robust variance estimation (RVE). RVE was used alternatively to model-based SEs as several studies included in the systematic review used repeated-measures designs without accommodating for the correlation between measurements [@hedges2010robust; @tanner2016handling; @tipton2015small]. We used the $method-of-moments estimator from ref 16 for the $\tau2$ parameter$. In accordance with ref 12, (1) measures of uncertainty were included $when interpreting the LoA estimates by calculating the outer $95\%$ CIs for pooled LoA$; and (2) repeated measurements were adjusted if improperly adjusted for in $individual studies (by using weights proportional to the number of samples, not the total number of measurements)$. The formulas for the above calculations from ref 12 can be found in [file 1](). The R statistical program was use to conduct all analyses [@team2017r]. All data and R code (provided in ref 12) used in the meta-analyses can be located [here](https://doi.org).
+
+
+Prior to conducting the meta-analyses, the results from each study were converted into a standard format, with bias meaning $ECT - ZHF$ measured in $^\circ C$. In two of the studies, the results were reported for two separate groups of participants, so these were treated in the meta-analyses as separate ‘studies’. $Other studies reported separate results for analyses conducted using different TcCO2 device types or sensor locations performed on the same patients. Only the result with the largest number of paired measurements between PaCO2 and TcCO2 was selected for inclusion in the main analysis, with others included in subgroup meta-analyses where appropriate. For the studies that reported results for patients while receiving both two-lung and one-lung ventilation during thoracic surgery, we used the result for two-lung ventilation in the main analysis. The conventionally cited clinically acceptable agreement between$ ECT and ZHF sensors is 0.5 $^\circ C$(ref). $It was deemed that outer confidence bounds for $95\%$ LoA between ECT and ZHF (termed as ‘population limits of agreement’) outside of these bounds would$ be clinically unacceptable. Sensitivity analysis for the primary meta-analysis was performed based on risk of bias, whereby ‘unclear risk of bias’ was treated as ‘high risk’ and ‘high risk of bias’ studies were excluded from analyses. $As clinicians would be interested in the accuracy of$ ZHF relative to temperature monitoring devices they use, and within the clinical setting in which they use it we conducted subgroup analyses according to the comparator device used (eg, core, peripheral, nasopharangeal) and clinical setting (eg, intraoperative, intensuve care unit).
+
+# Results
+
+<!-- Table 1  -->
+<!-- |---|---|---|---|---|---|---|---|---|---|---|---|---| -->
+<!-- |Table 1 Results of meta-analysis of agreement between transcutaneous and arterial carbon dioxide| -->
+<!-- |---|---|---|---|---|---|---|---|---|---|---|---|---| -->
+<!-- |---|Studies|N|n|Bias|SD|tau2|LoA_L|LoA_U|CI_L|CI_U| -->
+<!-- |---|---|---|---|---|---|---|---|---|---|---|---|---| -->
+<!-- |Subset|Stu-content|N-content|n-content|Bias-content|SD-content|tau2-content|LoAL-content|LoAU-content|CIL-content|CIU-content| -->
+<!-- |Subset|Stu-content|N-content|n-content|Bias-content|SD-content|tau2-content|LoAL-content|LoAU-content|CIL-content|CIU-content| -->
+
+<!-- Table 2 -->
+<!-- |Outcome|Summary accuracy and precision (C)|Participants|Study characteristics|Quality|Implications| -->
+<!-- |---|---|---|---|---|---| -->
+<!-- |Out-content|Sum-content|Par-content|Char-content|Qual-content|Impl-content| -->
+<!-- |Out-content|Sum-content|Par-content|Char-content|Qual-content|Impl-content| -->
+<!-- |Out-content|Sum-content|Par-content|Char-content|Qual-content|Impl-content| -->
+<!-- |Out-content|Sum-content|Par-content|Char-content|Qual-content|Impl-content| -->
+
+| test1 | test2 | test3 | test4 | test5 |
+|-------|-------|-------|-------|-------|
+| a     | b     | c     | d     | e     |
+| a     | b     | c     | d     | e     |
+| a     | b     | c     | d     | e     |
 
 
 
+## Study selection and description
 
+## Agreement between ZHF and core temperature measurements
+
+# Discussion
+
+## Limitations
+
+# Conclusion
 
 # References

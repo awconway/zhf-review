@@ -12,6 +12,7 @@ library(nomnoml)
 #stroke: black
 #.blob: fill=#DBDBDB visual=italic
 #direction: down
+#edges: rounded
 #arrowSize: 0.6
 #bendSize: 0.3
 #fillArrows: true
@@ -23,13 +24,32 @@ library(nomnoml)
   [94 studies screened against title and abstract]->[23 studies assessed for full-text eligibility]
   [94 studies screened against title and abstract]-->[<blob> 71 studies excluded]
 
-[23 studies assessed for full-text eligibility] -> [17 studies included]
+[23 studies assessed for full-text eligibility] -> [16 studies included]
 
- [23 studies assessed for full-text eligibility] --> [<blob> 7 studies excluded | 4 Wrong intervention
-                                                      
-                                                      1 Wrong comparator
-                                                      
-                                                      1 Wrong study design]
+ [23 studies assessed for full-text eligibility] --> [<blob> 6 studies excluded | 4 wrong intervention
+                                                      1 wrong comparator
+                                                      1 wrong study design]
+ [23 studies assessed for full-text eligibility] --> [<blob> 1 study awaiting classification]
 ```
 
 
+The objective for the meta-analysis was to estimate the population limits of agreement between temperature measurements by the ZHF sensor and established core temperature measurement tools.  The framework for meta-analysis of Bland-Altman method comparison studies based on limits of agreement (LoA) approach was used [@tipton2017framework]. This method was selected because it parallels the approach used in primary Bland-Altman studies, whereby an estimate is generated for the pooled LoAs in the population (not just in the samples studied). The ‘population LoA’ is more broad than the LoA commonly reported in the meta-analyses of Bland-Altman studies [@tipton2017framework]. In these instances, the pooled LoAs are calculated using $δ±2√(σ2+τ2)$, where $δ$ is the average bias across studies, $σ2$ is the average within-study variation in differences and $τ2$ is the variation in bias across studies.  Estimations of $δ$ and $σ2$ were made using a weighted least-squares model (similar to a random-effects approach), with the associated SEs estimated using robust variance estimation (RVE). RVE was used alternatively to model-based SEs as several studies included in the systematic review used repeated-measures designs without accommodating for the correlation between measurements [@hedges2010robust; @tanner2016handling; @tipton2015small]. We used the method-of-moments estimator from ref 16 for the $τ2$ parameter.  In accordance with ref 12, (1) measures of uncertainty were included when interpreting the LoA estimates by calculating the outer $95\%$ CIs for pooled LoA; and (2) repeated measurements were adjusted if improperly adjusted for in individual studies (by using weights proportional to the number of samples, not the total number of measurements). The formulas for the above calculations from ref 12 can be found in [file 1](). The R statistical program was use to conduct all analyses[@team2017r]. All data and R code (provided in ref 12) used in the meta-analyses can be located [here](https://doi.org).
+
+
+Prior to conducting the meta-analyses, the results from each study were converted into a standard format, with bias meaning ECT - ZHF measured in $˚C$. In two of the studies, the results were reported for two separate groups of participants, so these were treated in the meta-analyses as separate ‘studies’. Other studies reported separate results for analyses conducted using different TcCO2 device types or sensor locations performed on the same patients. Only the result with the largest number of paired measurements between PaCO2 and TcCO2 was selected for inclusion in the main analysis, with others included in subgroup meta-analyses where appropriate. For the studies that reported results for patients while receiving both two-lung and one-lung ventilation during thoracic surgery, we used the result for two-lung ventilation in the main analysis. The conventionally cited clinically acceptable agreement between ECT and ZHF sensors is 0.5 $˚C$(ref). It was deemed that outer confidence bounds for 95% LoA between ECT and ZHF (termed as ‘population limits of agreement’) outside of these bounds would be clinically unacceptable. Sensitivity analysis for the primary meta-analysis was performed based on risk of bias, whereby ‘unclear risk of bias’ was treated as ‘high risk’ and ‘high risk of bias’ studies were excluded from analyses. Subgroup analyses were conducted according to the comparator device used to monitor temperature (eg, pulmonary artery, esophagus, rectal and bladder thermostats) to allow clinicians to identify the accuracy of the ZHF temperature sensor relative to their typical core temperature monitoring tools. 
+
+|Table 1 Results of meta-analysis of agreement between transcutaneous and arterial carbon dioxide|
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+|---|Studies|N|n|Bias|SD|tau2|LoAL|LoAU|CIL|CIU|
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+|Subset|Stu-content|N-content|n-content|Bias-content|SD-content|tau2-content|LoAL-content|LoAU-content|CIL-content|CIU-content|
+|Subset|Stu-content|N-content|n-content|Bias-content|SD-content|tau2-content|LoAL-content|LoAU-content|CIL-content|CIU-content|
+
+|Table 2 Summary of findings for accuracy and precision of ZHF core temperature monitoring|
+|---|---|---|---|---|---|
+|Outcome|Summary accuracy and precision (C)|Participants|Study characteristics|Quality|Implications|
+|---|---|---|---|---|---|
+|Out-content|Sum-content|Par-content|Char-content|Qual-content|Impl-content|
+|Out-content|Sum-content|Par-content|Char-content|Qual-content|Impl-content|
+|Out-content|Sum-content|Par-content|Char-content|Qual-content|Impl-content|
+|Out-content|Sum-content|Par-content|Char-content|Qual-content|Impl-content|

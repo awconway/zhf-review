@@ -68,11 +68,24 @@ CI_Lr CI_Ur = Robust variance estimation meta-analysis estimate of CI for LOA
 #Primary meta-analysis (all included studies)
 ```{r}
 library(tidyverse)
-data <- readxl::read_xlsx("ZHF.xlsx")
+data <- readxl::read_xlsx("zhf_extracted.xlsx")
+sum_findings <- readxl::read_xlsx("sum_findings.xlsx")
+
+data <- data %>%
+
+  mutate(c = N/n)
 
 #variance
-data <- data %>% 
-  mutate(s2 = ((upper - bias)/1.96)^2)
+
+data <-  if (data$corrected == "Yes"){
+
+  mutate(data, s2 = ((upper - bias)/1.96)^2)
+
+  } else {
+
+    mutate(data, s2 = ((upper - bias)/1.96)^2)*((N-1)/(N-c))
+
+    }
 
 data <- data %>% 
   mutate(V_bias = s2/n)
@@ -84,41 +97,74 @@ data <- data %>%
   mutate(V_logs2 = 2/(n-1))
 
 data_NPA <- data %>% 
-  filter(comparison=="NPA")
+  filter(comparison == "NPA")
 
+data_SL <- data %>% 
+  filter(comparison == "Sublingual")
 
-data_es <- data %>% 
-  filter(comparison=="Es")
+data_core <- data %>% #need to adjust for Eshragi, want overall only
+  filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac")
 
-data_PA <- data %>% 
-  filter(comparison=="PA")
+data_core_lowrisk <- data_core %>% # need to adjust for eshragi, want overall only
+  filter(RoB_selection == "low" & RoB_spoton == "low" & RoB_comparator == "low" & RoB_flow =="low" & (comments != "Intraoperative, off cardiopulmonary bypass" | comments != "Postoperative"))
 
-data_core <- data %>% 
-  filter(comparison=="PA"|comparison=="Bladder"|comparison=="Es")
+data_core_op <- data_core %>% 
+  filter(clinical_setting=="Intraoperative" & (clinical_setting != "Postoperative" | clinical_setting != "Intra- and Postoperative"))
+
+data_core_icu <- data_core %>% 
+  filter(clinical_setting=="ICU" | clinical_setting=="Postoperative")
 
 ```
 
 
 ```{r}
 out <- loa_maker(data_core$bias,data_core$V_bias,data_core$logs2,data_core$V_logs2)
-names(out) <- c("studies","bias","sd","tau2","LOA_L","LOA_U","CI_Lm","CI_Um","CI_Lr","CI_Ur")
-out[1:10]
-```
-
-```{r}
-out <- loa_maker(data_es$bias,data_es$V_bias,data_es$logs2,data_es$V_logs2)
-names(out) <- c("studies","bias","sd","tau2","LOA_L","LOA_U","CI_Lm","CI_Um","CI_Lr","CI_Ur")
-out[1:10]
-```
-
-```{r}
-out <- loa_maker(data_PA$bias,data_PA$V_bias,data_PA$logs2,data_PA$V_logs2)
-names(out) <- c("studies","bias","sd","tau2","LOA_L","LOA_U","CI_Lm","CI_Um","CI_Lr","CI_Ur")
-out[1:10]
+out <- round(out, digits=3)
+out <- append(out, sum(data_core$n_count, na.rm=T))
+out <- append(out, sum(data_core$N, na.rm = T))
+names(out) <- c("studies","bias","sd","tau2","LOA_L","LOA_U","CI_Lm","CI_Um","CI_Lr","CI_Ur", "n", "N")
+out[1:12]
 ```
 
 ```{r}
 out <- loa_maker(data_NPA$bias,data_NPA$V_bias,data_NPA$logs2,data_NPA$V_logs2)
-names(out) <- c("studies","bias","sd","tau2","LOA_L","LOA_U","CI_Lm","CI_Um","CI_Lr","CI_Ur")
-out[1:10]
+out <- round(out, digits=3)
+out <- append(out, sum(data_NPA$n_count, na.rm=T))
+out <- append(out, sum(data_NPA$N, na.rm = T))
+names(out) <- c("studies","bias","sd","tau2","LOA_L","LOA_U","CI_Lm","CI_Um","CI_Lr","CI_Ur", "n", "N")
+out[1:12]
+```
+
+```{r}
+out <- loa_maker(data_SL$bias,data_SL$V_bias,data_SL$logs2,data_SL$V_logs2)
+out <- round(out, digits=3)
+out <- append(out, sum(data_SL$n_count, na.rm=T))
+out <- append(out, sum(data_SL$N, na.rm = T))
+names(out) <- c("studies","bias","sd","tau2","LOA_L","LOA_U","CI_Lm","CI_Um","CI_Lr","CI_Ur", "n", "N")
+out[1:12]
+```
+
+```{r}
+out <- loa_maker(data_core_lowrisk$bias,data_core_lowrisk$V_bias,data_core_lowrisk$logs2,data_core_lowrisk$V_logs2)
+out <- round(out, digits=3) 
+out <- append(out, sum(data_core_lowrisk$n_count, na.rm=T))
+out <- append(out, sum(data_core_lowrisk$N, na.rm = T))
+names(out) <- c("studies","bias","sd","tau2","LOA_L","LOA_U","CI_Lm","CI_Um","CI_Lr","CI_Ur", "n", "N")
+out[1:12]
+```
+```{r}
+out <- loa_maker(data_core_op$bias,data_core_op$V_bias,data_core_op$logs2,data_core_op$V_logs2)
+out <- round(out, digits=3) 
+out <- append(out, sum(data_core_op$n_count, na.rm=T))
+out <- append(out, sum(data_core_op$N, na.rm = T))
+names(out) <- c("studies","bias","sd","tau2","LOA_L","LOA_U","CI_Lm","CI_Um","CI_Lr","CI_Ur", "n", "N")
+out[1:12]
+```
+```{r}
+out <- loa_maker(data_core_icu$bias,data_core_icu$V_bias,data_core_icu$logs2,data_core_icu$V_logs2)
+out <- round(out, digits=3) 
+out <- append(out, sum(data_core_icu$n_count, na.rm=T))
+out <- append(out, sum(data_core_icu$N, na.rm = T))
+names(out) <- c("studies","bias","sd","tau2","LOA_L","LOA_U","CI_Lm","CI_Um","CI_Lr","CI_Ur", "n", "N")
+out[1:12]
 ```

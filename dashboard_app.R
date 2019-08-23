@@ -1,6 +1,7 @@
-devtools::install_github("rstudio/shinydashboard")
+
 library(shiny)
 library(shinydashboard)
+library(shinydashboardPlus)
 library(tidyverse)
 library(ggplot2)
 library(DT)
@@ -82,17 +83,20 @@ data_NPA <- data %>%
 data_SL <- data %>% 
   filter(comparison == "Sublingual")
 
-data_core <- data %>% 
-  filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac")
+data_core <- data %>% #eshragi overall
+  filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
+  filter(comments != "Intraoperative, off cardiopulmonary bypass" & comments != "Postoperative")
 
-data_core_lowrisk <- data_core %>% 
-  filter((RoB_selection == "low" & RoB_spoton == "low" & RoB_comparator == "low" & RoB_flow =="low") & clinical_setting != "Intra- and Postoperative")
+data_core_lowrisk <- data_core %>% #eshragi overall
+  filter(RoB_selection == "low" & RoB_spoton == "low" & RoB_comparator == "low" & RoB_flow =="low")
 
-data_core_op <- data_core %>% 
-  filter(clinical_setting=="Intraoperative")
+data_core_op <- data%>% #eshragi intraop
+  filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
+  filter (clinical_setting=="Intraoperative")
 
-data_core_icu <- data_core %>% 
-  filter(clinical_setting=="ICU" | clinical_setting =="Postoperative")
+data_core_icu <- data %>% #eshragi postop
+  filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
+  filter(clinical_setting=="ICU" | clinical_setting=="Postoperative")
 
 #clean up comparison
 data$comparison <- sub("NPA", "Nasopharyngeal", data$comparison) 
@@ -102,7 +106,7 @@ data$comparison <- sub("Ax", "Axillary artery", data$comparison)
 data$comparison <- sub("Eso", "Esophageal", data$comparison)
 
 
-ui <- dashboardPage(skin ="red",
+ui <- dashboardPage(skin ="blue",
   dashboardHeader(title=" ZHF Data Visualization"),
   dashboardSidebar(
     sidebarMenu(
@@ -116,56 +120,147 @@ ui <- dashboardPage(skin ="red",
                               "Core (intraoperative only)",
                               "Nasopharyngeal",
                               "Sublingual")), br(), 
-      textInput("test", h4("Select display output:")), #find a way to maintain text appearance without text box
+      h4(htmlOutput("select_format")), #find a way to maintain text appearance without text box
       menuItem("Plot", tabName="Plot", icon=icon("chart-area")),
-      menuItem("Data Table", tabName="DT", icon=icon("table")),
-      menuItem("Summary of Findings", tabName="Findings", icon=icon("file"))
+      menuItem("Data Table", tabName="DT", icon=icon("table"))
+      # ,menuItem("Summary of Findings", tabName="Findings", icon=icon("file"))
 
     ) 
   ),
   dashboardBody(
+    tags$head(tags$style(HTML(
+    '#select_format {
+    padding-left: 15px;}',
+    '#caption {
+    font-size: 8pt;}',
+    '#pLoA th {
+    text-align: center;
+    font-size: 12pt;}',
+    '#dt_grade td {
+      border: none;}',
+    '#dt_sc td {
+      border: none;}',
+    '#dt_grade td {
+      border: none;}',
+    '#dt_impl td {
+      border: none;}',
+    '.skin-blue .main-header .logo {
+      background-color: #02075d;}',
+    '.skin-blue .main-header .logo:hover {
+                              background-color: #002A5F;}',
+    '.skin-blue .main-header .logo:hover {
+      background-color: #02075d;}',
+    '.skin-blue .main-header .navbar {
+                              background-color: #002A5F;
+                              }',
+    '.skin-blue .main-sidebar .sidebar .sidebar-menu a:hover{
+      background-color: #002A5F;}',
+    ' .skin-blue .main-sidebar .sidebar .sidebar-menu .active a{
+                              background-color: #002A5F;}'
+    ))),
+  
+
     tabItems(
-      tabItem(tabName="Plot",
-            column(12, #adding column(12, will give the title the appropriate spacing from the sidebar)
-                   h2(htmlOutput("title_selected_subset")), 
-                   br(),
-                   plotOutput("plot"), 
-                   br(), 
-                   htmlOutput("caption"),
-                   br(),
-                   htmlOutput("selected_subset"), 
-                   br(),
-                   DT::dataTableOutput("summary"))),
-      tabItem(tabName="Findings",
-              column(12,
-              h2(htmlOutput("findings_selected_subset")), br()),
-              box(width=4, title="Study Characteristics", background = "black", solidHeader = F, collapsible=T, "reactive text"),
-              box(width=4, title="Quality" ,  background = "black", solidHeader = T, collapsible=T, "reactive text"),
-              box(width=4, title="Implications" , background = "black", solidHeader = T, collapsible=T, "reactive text")),
+      tabItem(tabName="Plot", 
+             # column(12, h3(htmlOutput("title_selected_subset"))),
+              fluidRow(
+            column(7, #adding column(12, will give the title the appropriate spacing from the sidebar)
+                   plotOutput("plot", height='370px'), 
+                   htmlOutput("caption"), br(),
+                   h4("Pooled summary statistics:"),
+                   DT::dataTableOutput("summary")),
+            #HTML modified to have plus icon and collapsed as default
+            HTML('<div class="row">
+  <div class="col-sm-5">
+    <div class="col-sm-12">
+      <div class="box box-solid bg-black-gradient collapsed-box">
+        <div class="box-header">
+          <i class="fa fa-check-circle"></i>
+          <h3 class="box-title">Population Limits of Agreement</h3>
+          <div class="pull-right box-tools">
+            <button class="btn bg-black btn-sm" data-widget="collapse" type="button">
+              <i class="fa fa-plus"></i>
+            </button>
+          </div>
+        </div>
+        <div class="box-body border-radius-none" id="pLoA" collapsed="TRUE" solidHeader="TRUE">
+          <div id="dt_pLoA" style="width:100%; height:auto; " class="datatables html-widget html-widget-output"></div>
+        </div>
+        <div class="box-footer text-black no-padding"></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-5">
+    <div class="col-sm-12">
+      <div class="box box-solid bg-black-gradient collapsed-box">
+        <div class="box-header">
+          <i class="fa fa-sliders-h"></i>
+          <h3 class="box-title">GRADE Rating of Evidence</h3>
+          <div class="pull-right box-tools">
+            <button class="btn bg-black btn-sm" data-widget="collapse" type="button">
+              <i class="fa fa-plus"></i>
+            </button>
+          </div>
+        </div>
+        <div class="box-body border-radius-none" id="GRADE" collapsed="TRUE" solidHeader="TRUE">
+          <div id="dt_grade" style="width:100%; height:auto; " class="datatables html-widget html-widget-output"></div>
+        </div>
+        <div class="box-footer text-black no-padding"></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-5">
+    <div class="col-sm-12">
+      <div class="box box-solid bg-black-gradient collapsed-box">
+        <div class="box-header">
+          <i class="fa fa-address-card"></i>
+          <h3 class="box-title">Study Characteristics</h3>
+          <div class="pull-right box-tools">
+            <button class="btn bg-black btn-sm" data-widget="collapse" type="button">
+              <i class="fa fa-plus"></i>
+            </button>
+          </div>
+        </div>
+        <div class="box-body border-radius-none" id="SCh" collapsed="TRUE" solidHeader="TRUE">
+          <div id="dt_sc" style="width:100%; height:auto; " class="datatables html-widget html-widget-output"></div>
+        </div>
+        <div class="box-footer text-black no-padding"></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-5">
+    <div class="col-sm-12">
+      <div class="box box-solid bg-black-gradient collapsed-box">
+        <div class="box-header">
+          <i class="fa fa-stethoscope"></i>
+          <h3 class="box-title">Clinical Implications</h3>
+          <div class="pull-right box-tools">
+            <button class="btn bg-black btn-sm" data-widget="collapse" type="button">
+              <i class="fa fa-plus"></i>
+            </button>
+          </div>
+        </div>
+        <div class="box-body border-radius-none" id="Impl" collapsed="TRUE" solidHeader="TRUE">
+          <div id="dt_impl" style="width:100%; height:auto; " class="datatables html-widget html-widget-output"></div>
+        </div>
+        <div class="box-footer text-black no-padding"></div>
+      </div>
+    </div>
+  </div>
+</div>
+')
+            # fluidRow( #box closed default requires boxPlus, but then we cannot put in icons
+            #  column(5, gradientBox(id = "pLoA", width=12, title="Population Limits of Agreement", gradientColor = "black", icon = "fa fa-check-circle",collapsed =T, solidHeader = T, collapsible=T, footer_padding=F, DT::dataTableOutput("dt_pLoA"))),
+            #  column(5, gradientBox(id = "GRADE", width=12, title="GRADE Rating of Evidence", gradientColor = "black", icon = "fa fa-sliders-h", collapsed = T, solidHeader = T, collapsible=T,  footer_padding=F, DT::dataTableOutput("dt_grade"))),
+            #  column(5, gradientBox(id = "SCh",width=12, title="Study Characteristics", gradientColor = "black", icon = "fa fa-address-card",collapsed =T,  solidHeader = T, collapsible=T,  footer_padding=F, DT::dataTableOutput("dt_sc"))),
+            #  column(5, gradientBox(id = "Impl", width=12, title="Clinical Implications", gradientColor = "black", icon = "fa fa-stethoscope", collapsed = T, solidHeader = T, collapsible=T,  footer_padding=F,  DT::dataTableOutput("dt_impl"))))
+    )),
       tabItem(tabName="DT",
               column(12,
-              h2(htmlOutput("dt_selected_subset")), br(),
-              DT::dataTableOutput("dt")))
+                 h2(htmlOutput("dt_selected_subset")), br(),
+                 DT::dataTableOutput("dt")))
   )) #end dashboardBody
 ) #end dashboardPage
-
-
-# studychar <- if (sum_findings$cat == datasetInput()){
-# paste(sum_findings$study_char)
-# } else {paste(NULL)}
-# 
-# data <-  if (sum$corrected == "Yes"){
-#   mutate(data, s2 = ((upper - bias)/1.96)^2)
-# } else {
-#   mutate(data, s2 = ((upper - bias)/1.96)^2)*((N-1)/(N-c))
-# }
-
-
-# if sum_findings$cat == datasetInput(), then reactive text = sum_findings$study_char
-# 
-# if sum_findings$cat == datasetInput(), then reactive text = sum_findings$quality
-# 
-# if sum_findings$cat == datasetInput(), then reactive text = sum_findings$implications
 
 server <- shinyUI(function(input, output) {
   
@@ -187,20 +282,22 @@ server <- shinyUI(function(input, output) {
     out <- round(out, digits=2)
     out <- append(out, sum(datasetInput()$n_count, na.rm = T))
     out <- append(out, sum(datasetInput()$N, na.rm = T))
-    names(out) <- c("Studies","Bias","SD","τ²","LoAᴸ","LoAᵁ","mCIᴸ","mCIᵁ","rCIᴸ","rCIᵁ", "n", "N")
-    out[1:12]
+    names(out) <- c("Studies","Bias","SD","τ²","LoAᴸ","LoAᵁ","mCIᴸ","mCIᵁ","Lower Limit","Upper Limit", "n", "N")
+    out <- out[c("Studies", "n", "N", "Bias", "SD","τ²","LoAᴸ","LoAᵁ","mCIᴸ","mCIᵁ","Lower Limit","Upper Limit")]
+
+    out[1:10]
     
     bias=datasetInput()$bias
     s2_unb = datasetInput()$s2
-    pooled_bias = out[2]
-    pooled_sd = out[3]
-    pooled_tau2 = out[4]
+    pooled_bias = out[4]
+    pooled_sd = out[5]
+    pooled_tau2 = out[6]
     pooled_sd = sqrt(pooled_sd^2 + pooled_tau2)
     
-    LOA_l = out[5]
-    LOA_u = out[6]
-    LOA_l_CI = out[9]
-    LOA_u_CI = out[10]
+    LOA_l = out[7]
+    LOA_u = out[8]
+    LOA_l_CI = out[11]
+    LOA_u_CI = out[12]
     
     g <- ggplot(data.frame(x=seq(-20,20,length=200)), aes(x=x)) + 
       stat_function(fun=dnorm, args = list(bias[1], sd=sqrt(s2_unb[1])), colour = "cornflowerblue", size=0.6, alpha = 0.5) 
@@ -212,11 +309,11 @@ server <- shinyUI(function(input, output) {
     g <- g + stat_function(fun=dnorm, args = list(pooled_bias, pooled_sd), colour ="lightcoral", alpha = 0.05) + 
       stat_function(fun=dnorm, args = list(pooled_bias, pooled_sd), colour = NA, geom="area", fill="lightcoral", alpha = 0.6) + 
       scale_x_continuous(name = paste('\n Difference between', tolower(input$dataset), "and ZHF thermometry (˚C)\n"), limits = c(-3.5,3.5)) +
-      scale_y_continuous(name = "Density \n", limits = c(0,2.5)) +  labs(title = "Outer confidence intervals for pooled limits of agreement\n\nPooled limits of agreement")+
-      theme(plot.title = element_text(hjust = 0.5, margin = margin(t=10, b=-37)),
+      scale_y_continuous(name = "Density \n", limits = c(0,2.5)) +  labs(title = "\nOuter confidence intervals for pooled limits of agreement\n\n  Pooled limits of agreement")+
+      theme(plot.title = element_text(hjust = 0.5, margin = margin(t=10, b=-32), size=10),
             #plot.subtitle = element_text(hjust=0.5, margin=margin(t=0, b=-40)),
-            axis.text=element_text(hjust = 0.5, size=14),                                                                        
-            axis.title=element_text(hjust = 0.5, size=14),
+            axis.text=element_text(hjust = 0.5, size=10),                                                                        
+            axis.title=element_text(hjust = 0.5, size=10),
             axis.line=element_line(colour="black", size=0.2),
             panel.background = element_blank(),
             axis.ticks = element_blank(), 
@@ -237,35 +334,133 @@ server <- shinyUI(function(input, output) {
     # summary stats for pooled data                                                                                        
     output$summary <- DT::renderDataTable ({
       # add hover tags for summary table header
-      datatable(t(out[1:12]),  options = list(paging = FALSE, searching = FALSE, info = FALSE, sort = FALSE, processing = FALSE,
+      datatable(t(out[1:10]),  options = list(paging = FALSE, searching = FALSE, info = FALSE, sort = FALSE, processing = FALSE,
                                               
                                               #JS code to add tooltips, set container: 'body' to prevent shifting of header with mouse hover
                                               initComplete = JS("function(settings, json){
-                                      $('th:eq(0)').each(function(){this.setAttribute( 'title', 'Number of studies included in subset' );});
-                                      $('th:eq(1)').each(function(){this.setAttribute( 'title', 'Pooled estimate of mean differences calculated as comparator-ZHF in ˚C' );});
-                                      $('th:eq(2)').each(function(){this.setAttribute( 'title', 'Pooled standard deviation of differences' );});
-                                      $('th:eq(3)').each(function(){this.setAttribute( 'title', 'Variation in bias between studies' );});
-                                      $('th:eq(4)').each(function(){this.setAttribute( 'title', 'Lower 95% LoA calculated from pooled estimates of bias and standard deviation of differences' );});
-                                      $('th:eq(5)').each(function(){this.setAttribute( 'title', 'Upper 95% LoA calculated from pooled estimates of bias and standard deviation of differences' );});
-                                      $('th:eq(6)').each(function(){this.setAttribute( 'title', 'Model-based random-effects meta-analysis estimate of lower CI for LoA' );});
-                                      $('th:eq(7)').each(function(){this.setAttribute( 'title', 'Model-based random-effects meta-analysis estimate of upper CI for LoA' );});
-                                      $('th:eq(8)').each(function(){this.setAttribute( 'title', 'Robust variance estimation meta-analysis estimate of lower CI for LoA' );});
-                                      $('th:eq(9)').each(function(){this.setAttribute( 'title', 'Robust variance estimation meta-analysis estimate of upper CI for LoA' );});
-                                      $('th:eq(10)').each(function(){this.setAttribute( 'title', 'Number of participants' );});
-                                      $('th:eq(11)').each(function(){this.setAttribute( 'title', 'Number of paired measurements' );});
-                                      $('th').tooltip({container: 'body', position: 'bottom'})
+                                      $('#summary th:eq(0)').each(function(){this.setAttribute( 'title', 'Number of studies included in subset' );});
+                                      $('#summary th:eq(3)').each(function(){this.setAttribute( 'title', 'Pooled estimate of mean differences calculated as comparator-ZHF in ˚C' );});
+                                      $('#summary th:eq(4)').each(function(){this.setAttribute( 'title', 'Pooled standard deviation of differences' );});
+                                      $('#summary th:eq(5)').each(function(){this.setAttribute( 'title', 'Variation in bias between studies' );});
+                                      $('#summary th:eq(6)').each(function(){this.setAttribute( 'title', 'Lower 95% LoA calculated from pooled estimates of bias and standard deviation of differences' );});
+                                      $('#summary th:eq(7)').each(function(){this.setAttribute( 'title', 'Upper 95% LoA calculated from pooled estimates of bias and standard deviation of differences' );});
+                                      $('#summary th:eq(8)').each(function(){this.setAttribute( 'title', 'Model-based random-effects meta-analysis estimate of lower CI for LoA' );});
+                                      $('#summary th:eq(9)').each(function(){this.setAttribute( 'title', 'Model-based random-effects meta-analysis estimate of upper CI for LoA' );});",
+                                      #$('#summary th:eq(10)').each(function(){this.setAttribute( 'title', 'Robust variance estimation meta-analysis estimate of lower CI for LoA' );});
+                                      #$('#summary th:eq(11)').each(function(){this.setAttribute( 'title', 'Robust variance estimation meta-analysis estimate of upper CI for LoA' );});
+                                      "$('#summary th:eq(1)').each(function(){this.setAttribute( 'title', 'Number of participants' );});
+                                      $('#summary th:eq(2)').each(function(){this.setAttribute( 'title', 'Number of paired measurements' );});
+                                      $('#summary th').tooltip({container: 'body'});
+                                      $(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});
+                                      
 
                                      }")), escape =F)
-    }) # end of output$summary
+      
+
+        
+    }) # end of output$summary      
+    
+    # render reactive data for pooled LoA box
+    output$dt_pLoA <- DT::renderDT({
+    DT::datatable(t(out[11:12]), rownames = NULL, options = list(columnDefs=list(list(class="dt-center", targets=c(0,1))), dom = "t", scrollX=T, sort = FALSE, paging=F, scrollY=T,
+                                                                 initComplete = JS("function(settings, json){
+                                                                                   $('#pLoA th:eq(0)').each(function(){this.setAttribute( 'title', 'Robust variance estimation meta-analysis estimate of lower CI for LoA' );});
+                                                                                   $('#pLoA th:eq(1)').each(function(){this.setAttribute( 'title', 'Robust variance estimation meta-analysis estimate of upper CI for LoA' );});
+                                                                                   $('#pLoA th').tooltip({container: 'body'});}"))) %>%
+                                                                 formatStyle(columns =1:2, background = 'white', color = 'black')
+       })
+    
+    
+    
+    # render reactive cell from sum_findings to match selected data set (dt_sc) 
+    output$dt_sc <- DT::renderDT({
+    
+      sum_findings_sc <- sum_findings[,2]
+      sum_findings_sccore <- sum_findings_sc[1:2,]
+      sum_findings_sccorelr <- sum_findings_sc[3:4,]
+      sum_findings_sccoreicu <- sum_findings_sc[5:6,]
+      sum_findings_sccoreop <- sum_findings_sc[7:8,]
+      sum_findings_scnpa <- sum_findings_sc[9:10,]
+      sum_findings_scsl <- sum_findings_sc[11:12,]  
+      
+      dt_sc <- reactive({
+        switch(input$dataset,
+               "Core" = sum_findings_sccore,
+               "Core (low risk studies)" = sum_findings_sccorelr,
+               "Core (ICU only)" = sum_findings_sccoreicu,
+               "Core (intraoperative only)" = sum_findings_sccoreop,
+               "Nasopharyngeal" = sum_findings_scnpa,
+               "Sublingual" = sum_findings_scsl
+        )
+      })
+      
+      DT::datatable(dt_sc(), class = "compact", colnames = NULL, rownames = NULL, options = list(dom = "t", scrollX=T, sort = FALSE, paging=F, scrollY=T)) %>% 
+        formatStyle( columns =1, background = 'white', color = 'black') 
+
+    })
+   
+    # render reactive cell from sum_findings to match selected data set (dt_grade) 
+    output$dt_grade <- DT::renderDT({
+      
+      sum_findings_grade <- sum_findings[,3]
+      sum_findings_gradecore <- sum_findings_grade[1:2,]
+      sum_findings_gradecorelr <- sum_findings_grade[3:4,]
+      sum_findings_gradecoreicu <- sum_findings_grade[5:6,]
+      sum_findings_gradecoreop <- sum_findings_grade[7:8,]
+      sum_findings_gradenpa <- sum_findings_grade[9:10,]
+      sum_findings_gradesl <- sum_findings_grade[11:12,]  
+      
+      dt_grade <- reactive({
+        switch(input$dataset,
+               "Core" = sum_findings_gradecore,
+               "Core (low risk studies)" = sum_findings_gradecorelr,
+               "Core (ICU only)" = sum_findings_gradecoreicu,
+               "Core (intraoperative only)" = sum_findings_gradecoreop,
+               "Nasopharyngeal" = sum_findings_gradenpa,
+               "Sublingual" = sum_findings_gradesl
+        )
+      })
+      
+        DT::datatable(dt_grade(), class = "compact", colnames = NULL, rownames = NULL, options = list(dom = "t", scrollX=T, sort = FALSE, paging=F, scrollY=T)) %>%
+      formatStyle( columns =1, background = 'white', color = 'black')
+      
+      })
+    
+    # render reactive cell from sum_findings to match selected data set (dt_implications) 
+    output$dt_impl <- DT::renderDT({
+      
+      sum_findings_impl <- sum_findings[,4]
+      sum_findings_implcore <- sum_findings_impl[1:2,]
+      sum_findings_implcorelr <- sum_findings_impl[3:4,]
+      sum_findings_implcoreicu <- sum_findings_impl[5:6,]
+      sum_findings_implcoreop <- sum_findings_impl[7:8,]
+      sum_findings_implnpa <- sum_findings_impl[9:10,]
+      sum_findings_implsl <- sum_findings_impl[11:12,]  
+      
+      dt_impl <- reactive({
+        switch(input$dataset,
+               "Core" = sum_findings_implcore,
+               "Core (low risk studies)" = sum_findings_implcorelr,
+               "Core (ICU only)" = sum_findings_implcoreicu,
+               "Core (intraoperative only)" = sum_findings_implcoreop,
+               "Nasopharyngeal" = sum_findings_implnpa,
+               "Sublingual" = sum_findings_implsl)
+      })
+      
+          DT::datatable(dt_impl(), class = "compact", colnames = NULL, rownames = NULL, options = list(dom = "t", scrollX=T, sort = FALSE, paging=F, scrollY=T)) %>%
+      formatStyle( columns =1, background = 'white', color = 'black')
+    })
+  
+    
     
     # render reactive table (dt)
     output$dt<- DT::renderDataTable({
-      datasetInput<-datasetInput()[,c(1,3:17)]
+      datasetInput<-datasetInput()[,c(1,3:18)]
       
       sketch = htmltools::withTags(table(
         class = 'display',
         thead(
-          tr(
+          tr( #change the name of column header, 'title =' will be displayed as tooltip
             th('', title = ''),
             th('Study', title = 'Author, year'),
             th('n', title = 'Number of participants'),
@@ -282,7 +477,8 @@ server <- shinyUI(function(input, output) {
             th('RoB patient selection', title = 'Risk of bias for patient selection'),
             th('RoB ZHF', title = 'Risk of bias for interpretation of ZHF'),
             th('RoB comparator', title = 'Risk of bias for interpretation of comparator device'),
-            th('RoB flow', title = 'Risk of bias for patient flow')
+            th('RoB flow', title = 'Risk of bias for patient flow'),
+            th('Competing interest', title = 'Funding, equipment or conflict with supplying company')
             
           )
         )
@@ -298,20 +494,16 @@ server <- shinyUI(function(input, output) {
     }) # end of render output$dt
     
     g # g (reactive plot) must be the last object mentioned inside curly bracket to show up in app
-    
   
 }) # end of render output$plot ("g")
 
+output$select_format <- renderUI({HTML('Select display format:')})
 
+# reactive title for plot tab
+# output$title_selected_subset <- renderUI({HTML(paste("Comparison between", tolower(input$dataset), "and zero-heat-flux thermometry"))})
 
-# reactive title for summary stats table
-output$selected_subset <- renderUI({HTML("<h2>Pooled summary statistics:")})
-
-output$title_selected_subset <- renderUI({HTML(paste("Comparison between", tolower(input$dataset), "and zero-heat-flux thermometry"))})
-
+# reactive title for dt tab
 output$dt_selected_subset <- renderUI({HTML(paste("Comparison between", tolower(input$dataset), "and zero-heat-flux thermometry"))})
-
-output$findings_selected_subset <- renderUI({HTML(paste("  Comparison between", tolower(input$dataset), "and zero-heat-flux thermometry"))})
 
 # caption under graph
 output$caption <- renderUI({HTML(paste("Blue curves are distributions of the differences between measurements from zero-heat-flux (ZHF) sensors and", tolower(input$dataset),

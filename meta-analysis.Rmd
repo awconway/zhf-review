@@ -102,16 +102,19 @@ data_NPA <- data %>%
 data_SL <- data %>% 
   filter(comparison == "Sublingual")
 
-data_core <- data %>% #need to adjust for Eshragi, want overall only
-  filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac")
+data_core <- data %>% #eshragi overall
+  filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
+  filter(comments != "Intraoperative, off cardiopulmonary bypass" & comments != "Postoperative")
 
-data_core_lowrisk <- data_core %>% # need to adjust for eshragi, want overall only
-  filter(RoB_selection == "low" & RoB_spoton == "low" & RoB_comparator == "low" & RoB_flow =="low" & (comments != "Intraoperative, off cardiopulmonary bypass" | comments != "Postoperative"))
+data_core_lowrisk <- data_core %>% #eshragi overall
+  filter(RoB_selection == "low" & RoB_spoton == "low" & RoB_comparator == "low" & RoB_flow =="low")
 
-data_core_op <- data_core %>% 
-  filter(clinical_setting=="Intraoperative" & (clinical_setting != "Postoperative" | clinical_setting != "Intra- and Postoperative"))
+data_core_op <- data%>% #eshragi intraop
+    filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
+  filter (clinical_setting=="Intraoperative")
 
-data_core_icu <- data_core %>% 
+data_core_icu <- data %>% #eshragi postop
+      filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
   filter(clinical_setting=="ICU" | clinical_setting=="Postoperative")
 
 ```
@@ -168,3 +171,7 @@ out <- append(out, sum(data_core_icu$N, na.rm = T))
 names(out) <- c("studies","bias","sd","tau2","LOA_L","LOA_U","CI_Lm","CI_Um","CI_Lr","CI_Ur", "n", "N")
 out[1:12]
 ```
+,#end fluid Row
+            column(12,
+                   htmlOutput("selected_subset"),
+                   DT::dataTableOutput("summary"))),

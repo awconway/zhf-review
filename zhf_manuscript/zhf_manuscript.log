@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2019.5.10)  19 AUG 2019 17:22
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2019.5.10)  27 AUG 2019 18:35
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -634,191 +634,24 @@ Underfull \hbox (badness 10000) in paragraph at lines 70--76
 
  []
 
-
-Overfull \hbox (261.60893pt too wide) in paragraph at lines 107--119
-\OT1/cmr/m/n/10 sen-sor elim-i-nates heat loss to the en-vi-ron-ment $(\OML/cmm
-/m/it/10 therebycreatinganisothermalpathwaybetweentheskinsurfaceandunderlayingc
-oretissues\OT1/cmr/m/n/10 )$
- []
-
 [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-Overfull \hbox (155.16095pt too wide) in paragraph at lines 120--125
-\OT1/cmr/m/n/10 would aid $\OML/cmm/m/it/10 clinicaldecision \OMS/cmsy/m/n/10 ^
-^@ \OML/cmm/m/it/10 makingregardingtheappropriatecircumstancesinwhichZHFmonitor
-ingmaybeused:$ 
- []
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 123.
 
-
-LaTeX Warning: Command \textquoteleft invalid in math mode on input line 148.
-
-
-LaTeX Warning: Command \textquoteright invalid in math mode on input line 148.
-
-
-LaTeX Warning: Command \textquoteleft invalid in math mode on input line 148.
-
-
-LaTeX Warning: Command \textquoteright invalid in math mode on input line 148.
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 150.
-
-
-
-Overfull \hbox (1064.42934pt too wide) in paragraph at lines 142--151
-\OT1/cmr/m/n/10 uary 2000 to July 2019, $\OML/cmm/m/it/10 aswellasthereferencel
-istsofarticlesidentifiedtoberelevanttothereview:Thissearchstrategyisanefficient
-approachforsystematicreviewsofdiagnostictestaccuracystudies\OT1/cmr/m/n/10 [@\O
-ML/cmm/m/it/10 preston\OT1/cmr/m/n/10 2015\OML/cmm/m/it/10 improving\OT1/cmr/m/
-n/10 ]\OML/cmm/m/it/10 :UnpublishedandongoingstudieswerelocatedbysearchingtheIn
-ternationalClinicalTrialsPlatform:$
- []
-
-
-Overfull \hbox (365.1662pt too wide) in paragraph at lines 142--151
-\OT1/cmr/m/n/10 tions ap-plied dur-ing the search. $\OML/cmm/m/it/10 TheCochran
-e \OMS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 recommendedsearchstrategycombiningterms
-forthe\OT1/cmr/m/n/10 `\OML/cmm/m/it/10 targetcondition[]and\OT1/cmr/m/n/10 `\O
-ML/cmm/m/it/10 indextest[]wasused\OT1/cmr/m/n/10 [@\OML/cmm/m/it/10 mann\OT1/cm
-r/m/n/10 2012\OML/cmm/m/it/10 should\OT1/cmr/m/n/10 ]$.
- []
-
-
-Overfull \hbox (1095.64725pt too wide) in paragraph at lines 166--171
-$\OML/cmm/m/it/10 Informationwasextractedregardingstudycharacteristics\OT1/cmr/
-m/n/10 (\OML/cmm/m/it/10 author; yearofpublication; country; design; samplesize
-; clinicalsetting; numbersstudiedandanalysesforeachoutcome\OT1/cmr/m/n/10 )\OML
-/cmm/m/it/10 ; populationcharacteristics\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 inclu
-sionandexclusioncriteria\OT1/cmr/m/n/10 )\OML/cmm/m/it/10 andZHFcharacteristics
-\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 timingandmethodsofmeasurements; andmethodsofc
-alibration\OT1/cmr/m/n/10 )\OML/cmm/m/it/10 :$
- []
-
-
-Overfull \hbox (173.35591pt too wide) in paragraph at lines 166--171
-\OT1/cmr/m/n/10 lished core tem-per-a-ture mea-sure-ment tool. $\OML/cmm/m/it/1
-0 Informationwasextractedabouthowrepeatedmeasurementswerehandled \OT1/cmr/m/n/1
-0 :
- []
-
-
-Overfull \hbox (675.03517pt too wide) in paragraph at lines 166--171
-\OT1/cmr/m/n/10 (1)\OML/cmm/m/it/10 analysedeachpairofdataseparately\OT1/cmr/m/
-n/10 ; (2)\OML/cmm/m/it/10 treatedeachpairofdataasindependent\OT1/cmr/m/n/10 ; 
-\OML/cmm/m/it/10 or\OT1/cmr/m/n/10 (3)\OML/cmm/m/it/10 usedeitheranalysisofvari
-anceorarandomeffectsmodelasawaytocontrolforthedependentnatureoftherepeatedmeasu
-resdata\OT1/cmr/m/n/10 [@\OML/cmm/m/it/10 myles\OT1/cmr/m/n/10 2007\OML/cmm/m/i
-t/10 using\OT1/cmr/m/n/10 ]\OML/cmm/m/it/10 :$ 
- []
-
-[2]
-Overfull \hbox (25.27835pt too wide) in paragraph at lines 172--192
-[]\OT1/cmr/m/n/10 Using the re-vised Qual-ity As-sess-ment of Di-ag-nos-tic Ac-
-cu-racy Stud-ies (QUADAS-
- []
-
-
-Overfull \hbox (90.83391pt too wide) in paragraph at lines 172--192
-\OT1/cmr/m/n/10 ies (Whit-ing et al. 2011). $\OML/cmm/m/it/10 Reviewersusedguid
-ingquestionstoratetheriskofbiasforpatientselection$\OT1/cmr/m/n/10 ,
- []
-
-
-Overfull \hbox (404.40845pt too wide) in paragraph at lines 172--192
-\OT1/cmr/m/n/10 trial reg-istry (Glasziou et al. 2001). $\OML/cmm/m/it/10 Stati
-sticalanalysestodetectreportingbiaswerenotconductedduetolackofvalidatedmethods\
-OT1/cmr/m/n/10 [@\OML/cmm/m/it/10 begg\OT1/cmr/m/n/10 2005\OML/cmm/m/it/10 syst
-ematic\OT1/cmr/m/n/10 ]\OML/cmm/m/it/10 :Althoughsomemeta \OMS/cmsy/m/n/10 ^^@
- []
-
-
-Overfull \hbox (718.49522pt too wide) in paragraph at lines 172--192
-\OML/cmm/m/it/10 analysesofmethodcomparisonstudieshaveusedtestsfordetectingfunn
-elplotasymmetry\OT1/cmr/m/n/10 [@\OML/cmm/m/it/10 niven\OT1/cmr/m/n/10 2015\OML
-/cmm/m/it/10 accuracy\OT1/cmr/m/n/10 ]\OML/cmm/m/it/10 ; simulationshavereveale
-dthatsuchtestswillresultinpublicationbiasbeingincorrectlyidentifiedtoooften\OT1
-/cmr/m/n/10 [@\OML/cmm/m/it/10 deeks\OT1/cmr/m/n/10 2005\OML/cmm/m/it/10 perfor
-mance\OT1/cmr/m/n/10 ]$.
- []
-
-
-Package hyperref Warning: Suppressing link with empty target on input line 225.
-
-
-
-Overfull \hbox (66.88516pt too wide) in paragraph at lines 197--228
-\OT1/cmr/m/n/10 The ob-jec-tive $\OML/cmm/m/it/10 forthemeta \OMS/cmsy/m/n/10 ^
-^@ \OML/cmm/m/it/10 analysiswastoestimatethepopulationlimitsofagreementbetween$
-
- []
-
-
-Overfull \hbox (458.84407pt too wide) in paragraph at lines 197--228
-\OT1/cmr/m/n/10 ture mea-sure-ment tools. $\OML/cmm/m/it/10 Theframeworkformeta
- \OMS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 analysisofBland \OMS/cmsy/m/n/10 ^^@ \OM
-L/cmm/m/it/10 Altmanmethodcomparisonstudiesbasedonlimitsofagreement\OT1/cmr/m/n
-/10 (\OML/cmm/m/it/10 LoA\OT1/cmr/m/n/10 )\OML/cmm/m/it/10 approachwasused\OT1/
-cmr/m/n/10 [@\OML/cmm/m/it/10 tipton\OT1/cmr/m/n/10 2017\OML/cmm/m/it/10 framew
-ork\OT1/cmr/m/n/10 ]$.
- []
-
-
-Overfull \hbox (144.39607pt too wide) in paragraph at lines 197--228
-\OML/cmm/m/it/10 individualstudies\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 byusingweig
-htsproportionaltothenumberofsamples; notthetotalnumberofmeasurements\OT1/cmr/m/
-n/10 )$.
- []
-
-[3]
-Overfull \hbox (1044.07407pt too wide) in paragraph at lines 229--247
-\OML/cmm/m/it/10 Otherstudiesreportedseparateresultsforanalysesconductedusingdi
-fferentTcCO\OT1/cmr/m/n/10 2\OML/cmm/m/it/10 devicetypesorsensorlocationsperfor
-medonthesamepatients:Onlytheresultwiththelargestnumberofpairedmeasurementsbetwe
-enPaCO\OT1/cmr/m/n/10 2\OML/cmm/m/it/10 andTcCO\OT1/cmr/m/n/10 2\OML/cmm/m/it/1
-0 wasselectedforinclusioninthemainanalysis; withothersincludedinsubgroupmeta \O
-MS/cmsy/m/n/10 ^^@
- []
-
-
-Overfull \hbox (93.85916pt too wide) in paragraph at lines 229--247
-\OML/cmm/m/it/10 analyseswhereappropriate:Forthestudiesthatreportedresultsforpa
-tientswhilereceivingbothtwo \OMS/cmsy/m/n/10 ^^@
- []
-
-
-Overfull \hbox (9.62291pt too wide) in paragraph at lines 229--247
-\OML/cmm/m/it/10 lungandone \OMS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 lungventilati
-onduringthoracicsurgery; weusedtheresultfortwo \OMS/cmsy/m/n/10 ^^@
- []
-
-
-Overfull \hbox (92.84416pt too wide) in paragraph at lines 229--247
-\OML/cmm/m/it/10 lungventilationinthemainanalysis:Theconventionallycitedclinica
-llyacceptableagreementbetween$
- []
-
-
-Overfull \hbox (52.94987pt too wide) in paragraph at lines 229--247
-\OT1/cmr/m/n/10 bias' stud-ies were ex-cluded from anal-y-ses. $\OML/cmm/m/it/1
-0 Asclinicianswouldbeinterestedintheaccuracyof$
- []
-
-
-! LaTeX Error: Environment longtable undefined.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.251 \begin{longtable}
-                       []{@{}lllll@{}} 
+(/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 123.
+! Undefined control sequence.
+l.123 \textbackslash{}\clinical
+                                {decision-making regarding the appropriate c...
+ 
 Here is how much of TeX's memory you used:
- 6242 strings out of 493029
- 87466 string characters out of 6136234
- 184153 words of memory out of 5000000
- 9718 multiletter control sequences out of 15000+600000
+ 6246 strings out of 493029
+ 87444 string characters out of 6136234
+ 182153 words of memory out of 5000000
+ 9730 multiletter control sequences out of 15000+600000
  9897 words of font info for 36 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 29i,7n,30p,638b,338s stack positions out of 5000i,500n,10000p,200000b,80000s
-
+ 29i,5n,30p,253b,338s stack positions out of 5000i,500n,10000p,200000b,80000s
 !  ==> Fatal error occurred, no output PDF file produced!

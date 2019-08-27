@@ -7,7 +7,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(nomnoml)
 ```
-```{nomnoml}
+```{nomnoml, echo=F}
 #import: my-common-styles.nomnoml
 #stroke: black
 #.blob: fill=#DBDBDB visual=italic

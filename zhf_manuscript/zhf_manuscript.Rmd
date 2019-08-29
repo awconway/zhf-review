@@ -111,8 +111,9 @@ be clinically unacceptable. Sensitivity analysis for the primary meta-analysis w
 
 Sixteen studies were eligible for inclusion in this systematic review (Figure 1).
 
-```{r echo=FALSE, fig.height=4.5}
-knitr::include_graphics("figure_one.png")
+```{r fig.align="center", fig.cap="PRISMA Flow Diagram", echo=FALSE }
+img <- magick::image_read("figure_one.png")
+img %>% magick::image_resize("10%")
 ```
 
 

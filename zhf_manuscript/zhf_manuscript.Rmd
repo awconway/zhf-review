@@ -109,28 +109,17 @@ be clinically unacceptable. Sensitivity analysis for the primary meta-analysis w
 
 # Results
 
-Sixteen studies were eligible for inclusion in this systematic review. 
+Sixteen studies were eligible for inclusion in this systematic review (Figure 1).
+
+```{r echo=FALSE, fig.height=4.5}
+knitr::include_graphics("figure_one.png")
+```
+
+
 >The characteristics of each study are in online supplementary [file 1](link to file 1).
 
 Using these studies, we conducted 6 different meta-analyses. The first group compared ZHF to core (eg, arterial, bladder, esophageal, rectal) temperature measurements and included 22 (73%) comparisons from 14 (%) studies, and enrolled 607 participants with 179,821 paired measurements. The second group compared ZHF to core temperature measurements in low risk bias studies studies that scored a low risk of bias in all categories) and included 10 (%) comparisons from 5 (%) studies, and enrolled 273 participants with 104,294 paired measurements. The third group compared ZHF to core temperature measurements in ICU patients and included 7 (23%) comparisons from 5 (31%) studies, and enrolled 246 participants with 155,598 paired measurements. The fourth group compared ZHF to core temperature measurement in intraoperative patients and included 16 (53%) comparisons from  10 (63%) studies, and enrolled 464 participants with 24,223 paired measurements. The fifth group compared ZHF to nasopharyngeal temperature measurements and included 4 (13%) comparisons from  4 (25%) studies, and enrolled 297 participants with 109,819 paired measurements. The sixth group compared ZHF to sublingual temperature measurement and included 2 (7%) comparisons from  2 (13%) studies, and enrolled 107 participants with 22731 paired measurements. The studies included in this systematic review evaluated a ZHF temperature monitoring system manufactured by 3M. Previously known as the SpotOn Temperature Monitoring System, the 3M ZHF device is now referred to as the Bair Hugger Temperature Monitoring System. All comparisons reported adherence to the ZHF device manufacturer instructions and placed the sensor on the forehead of the participants. High risk of bias was associated with patient selection for 13 (43%) comparisons from 9 (56%) studies, conduct of ZHF and comparator measurements in 10(33%) comparisons from 8 (50%) studies and 12 (40%) comparisons 9 (30%) studies, respectively (mostly due to ZHF measurements being taken with knowledge of the comparator measurements and vice versa) and participant flow for 13 (43%) studies. In 19 (50%) comparisons from 8 (50%) studies, the authors had declared a conflict of interest or receipt of funding or equipment from the manufacturer of the ZHF device under evaluation. 
 
-
-Table 1
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-|Table 1 Results of meta-analysis of agreement between transcutaneous and arterial carbon dioxide|
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-|---|Studies|N|n|Bias|SD|tau2|LoA_L|LoA_U|CI_L|CI_U|
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-|Subset|Stu-content|N-content|n-content|Bias-content|SD-content|tau2-content|LoAL-content|LoAU-content|CIL-content|CIU-content|
-|Subset|Stu-content|N-content|n-content|Bias-content|SD-content|tau2-content|LoAL-content|LoAU-content|CIL-content|CIU-content|
-
-Table 2
-|Outcome|Summary accuracy and precision (C)|Participants|Study characteristics|Quality|Implications|
-|---|---|---|---|---|---|
-|Out-content|Sum-content|Par-content|Char-content|Qual-content|Impl-content|
-|Out-content|Sum-content|Par-content|Char-content|Qual-content|Impl-content|
-|Out-content|Sum-content|Par-content|Char-content|Qual-content|Impl-content|
-|Out-content|Sum-content|Par-content|Char-content|Qual-content|Impl-content|
 
 
 ## Study selection and description

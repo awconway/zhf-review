@@ -14,9 +14,10 @@ nomnoml::nomnoml("#import: my-common-styles.nomnoml
   [94 studies screened against title and abstract]->[23 studies assessed for full-text eligibility]
   [94 studies screened against title and abstract]-->[<blob> 71 studies excluded]
 
-[23 studies assessed for full-text eligibility] -> [16 studies included]
+[23 studies assessed for full-text eligibility] -> [15 studies included]
 
  [23 studies assessed for full-text eligibility] --> [<blob> 6 studies excluded | 4 wrong intervention
                                                       1 wrong comparator
                                                       1 wrong study design]
- [23 studies assessed for full-text eligibility] --> [<blob> 1 study awaiting classification]", png = here::here("zhf_manuscript", "figure_one.png"))
+ [23 studies assessed for full-text eligibility] --> [<blob> 2 studies awaiting classification]", 
+                 png = here::here("figure_one.png"))

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.4.16)  29 AUG 2019 15:53
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.4.16)  18 SEP 2019 13:49
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -253,38 +253,197 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 82.
 )
 \Hy@SectionHShift=\skip46
+) (/usr/local/texlive/2018/texmf-dist/tex/latex/booktabs/booktabs.sty
+Package: booktabs 2016/04/27 v1.618033 publication quality tables
+\heavyrulewidth=\dimen129
+\lightrulewidth=\dimen130
+\cmidrulewidth=\dimen131
+\belowrulesep=\dimen132
+\belowbottomsep=\dimen133
+\aboverulesep=\dimen134
+\abovetopsep=\dimen135
+\cmidrulesep=\dimen136
+\cmidrulekern=\dimen137
+\defaultaddspace=\dimen138
+\@cmidla=\count128
+\@cmidlb=\count129
+\@aboverulesep=\dimen139
+\@belowrulesep=\dimen140
+\@thisruleclass=\count130
+\@lastruleclass=\count131
+\@thisrulewidth=\dimen141
+) (/usr/local/texlive/2018/texmf-dist/tex/latex/tools/longtable.sty
+Package: longtable 2014/10/28 v4.11 Multi-page Table package (DPC)
+\LTleft=\skip47
+\LTright=\skip48
+\LTpre=\skip49
+\LTpost=\skip50
+\LTchunksize=\count132
+\LTcapwidth=\dimen142
+\LT@head=\box31
+\LT@firsthead=\box32
+\LT@foot=\box33
+\LT@lastfoot=\box34
+\LT@cols=\count133
+\LT@rows=\count134
+\c@LT@tables=\count135
+\c@LT@chunks=\count136
+\LT@p@ftn=\toks24
+) (/usr/local/texlive/2018/texmf-dist/tex/latex/tools/array.sty
+Package: array 2018/04/07 v2.4g Tabular extension package (FMi)
+\col@sep=\dimen143
+\ar@mcellbox=\box35
+\extrarowheight=\dimen144
+\NC@list=\toks25
+\extratabsurround=\skip51
+\backup@length=\skip52
+\ar@cellbox=\box36
+) (/usr/local/texlive/2018/texmf-dist/tex/latex/multirow/multirow.sty
+Package: multirow 2016/11/25 v2.2 Span multiple rows of a table
+\multirow@colwidth=\skip53
+\multirow@cntb=\count137
+\multirow@dima=\skip54
+\bigstrutjot=\dimen145
+) (/usr/local/texlive/2018/texmf-dist/tex/latex/wrapfig/wrapfig.sty
+\wrapoverhang=\dimen146
+\WF@size=\dimen147
+\c@WF@wrappedlines=\count138
+\WF@box=\box37
+\WF@everypar=\toks26
+Package: wrapfig 2003/01/31  v 3.6
+) (/usr/local/texlive/2018/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count139
+\float@exts=\toks27
+\float@box=\box38
+\@float@everytoks=\toks28
+\@floatcapt=\box39
+) (/usr/local/texlive/2018/texmf-dist/tex/latex/colortbl/colortbl.sty
+Package: colortbl 2012/02/13 v1.0a Color table columns (DPC)
+(/usr/local/texlive/2018/texmf-dist/tex/latex/graphics/color.sty
+Package: color 2016/07/10 v1.1e Standard LaTeX Color (DPC)
+(/usr/local/texlive/2018/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package color Info: Driver file: pdftex.def on input line 147.
+)
+\everycr=\toks29
+\minrowclearance=\skip55
+) (/usr/local/texlive/2018/texmf-dist/tex/latex/oberdiek/pdflscape.sty
+Package: pdflscape 2016/05/14 v0.11 Display of landscape pages in PDF (HO)
+(/usr/local/texlive/2018/texmf-dist/tex/latex/graphics/lscape.sty
+Package: lscape 2000/10/22 v3.01 Landscape Pages (DPC)
+)
+Package pdflscape Info: Auto-detected driver: pdftex on input line 81.
+) (/usr/local/texlive/2018/texmf-dist/tex/latex/tabu/tabu.sty
+Package: tabu 2011/02/26 v2.8 - flexible LaTeX tabulars (FC)
+(/usr/local/texlive/2018/texmf-dist/tex/latex/varwidth/varwidth.sty
+Package: varwidth 2009/03/30 ver 0.92;  Variable-width minipages
+\@vwid@box=\box40
+\sift@deathcycles=\count140
+\@vwid@loff=\dimen148
+\@vwid@roff=\dimen149
+)
+\c@taburow=\count141
+\tabu@nbcols=\count142
+\tabu@cnt=\count143
+\tabu@Xcol=\count144
+\tabu@alloc=\count145
+\tabu@nested=\count146
+\tabu@target=\dimen150
+\tabu@spreadtarget=\dimen151
+\tabu@naturalX=\dimen152
+\tabucolX=\dimen153
+\tabu@Xsum=\dimen154
+\extrarowdepth=\dimen155
+\abovetabulinesep=\dimen156
+\belowtabulinesep=\dimen157
+\tabustrutrule=\dimen158
+\tabu@thebody=\toks30
+\tabu@footnotes=\toks31
+\tabu@box=\box41
+\tabu@arstrutbox=\box42
+\tabu@hleads=\box43
+\tabu@vleads=\box44
+\tabu@cellskip=\skip56
+)
+(/usr/local/texlive/2018/texmf-dist/tex/latex/threeparttable/threeparttable.sty
+Package: threeparttable 2003/06/13  v 3.0
+\@tempboxb=\box45
+)
+(/usr/local/texlive/2018/texmf-dist/tex/latex/threeparttablex/threeparttablex.s
+ty
+Package: threeparttablex 2013/07/23 v0.3 by daleif
+(/usr/local/texlive/2018/texmf-dist/tex/latex/environ/environ.sty
+Package: environ 2014/05/04 v0.3 A new way to define environments
+(/usr/local/texlive/2018/texmf-dist/tex/latex/trimspaces/trimspaces.sty
+Package: trimspaces 2009/09/17 v1.1 Trim spaces around a token list
+))
+\TPTL@width=\skip57
+) (/usr/local/texlive/2018/texmf-dist/tex/generic/ulem/ulem.sty
+\UL@box=\box46
+\UL@hyphenbox=\box47
+\UL@skip=\skip58
+\UL@hook=\toks32
+\UL@height=\dimen159
+\UL@pe=\count147
+\UL@pixel=\dimen160
+\ULC@box=\box48
+Package: ulem 2012/05/18
+\ULdepth=\dimen161
+) (/usr/local/texlive/2018/texmf-dist/tex/latex/makecell/makecell.sty
+Package: makecell 2009/08/03 V0.1e Managing of Tab Column Heads and Cells
+\rotheadsize=\dimen162
+\c@nlinenum=\count148
+\TeXr@lab=\toks33
+) (/usr/local/texlive/2018/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2016/05/11 v2.12 LaTeX color extensions (UK)
+(/usr/local/texlive/2018/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 225.
+LaTeX Info: Redefining \color on input line 709.
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1348.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1352.
+Package xcolor Info: Model `RGB' extended on input line 1364.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1366.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1367.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1370.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1371.
 ) (./zhf_manuscript.aux)
 \openout1 = `zhf_manuscript.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 35.
-LaTeX Font Info:    ... okay on input line 35.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 35.
-LaTeX Font Info:    ... okay on input line 35.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 35.
-LaTeX Font Info:    ... okay on input line 35.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 35.
-LaTeX Font Info:    ... okay on input line 35.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 35.
-LaTeX Font Info:    ... okay on input line 35.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 35.
-LaTeX Font Info:    ... okay on input line 35.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 35.
-LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 49.
+LaTeX Font Info:    ... okay on input line 49.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 49.
+LaTeX Font Info:    ... okay on input line 49.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 49.
+LaTeX Font Info:    ... okay on input line 49.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 49.
+LaTeX Font Info:    ... okay on input line 49.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 49.
+LaTeX Font Info:    ... okay on input line 49.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 49.
+LaTeX Font Info:    ... okay on input line 49.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 49.
+LaTeX Font Info:    ... okay on input line 49.
 Unknown journal: specify \journalname{<name of your journal>} in preambel
 
 (/usr/local/texlive/2018/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count128
-\scratchdimen=\dimen129
-\scratchbox=\box31
-\nofMPsegments=\count129
-\nofMParguments=\count130
-\everyMPshowfont=\toks24
-\MPscratchCnt=\count131
-\MPscratchDim=\dimen130
-\MPnumerator=\count132
-\makeMPintoPDFobject=\count133
-\everyMPtoPDFconversion=\toks25
+\scratchcounter=\count149
+\scratchdimen=\dimen163
+\scratchbox=\box49
+\nofMPsegments=\count150
+\nofMParguments=\count151
+\everyMPshowfont=\toks34
+\MPscratchCnt=\count152
+\MPscratchDim=\dimen164
+\MPnumerator=\count153
+\makeMPintoPDFobject=\count154
+\everyMPtoPDFconversion=\toks35
 ) (/usr/local/texlive/2018/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
 Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
 (/usr/local/texlive/2018/texmf-dist/tex/latex/oberdiek/grfext.sty
@@ -300,18 +459,18 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-\AtBeginShipoutBox=\box32
-Package hyperref Info: Link coloring OFF on input line 35.
+\AtBeginShipoutBox=\box50
+Package hyperref Info: Link coloring OFF on input line 49.
 (/usr/local/texlive/2018/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
 (/usr/local/texlive/2018/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
 Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
-\c@section@level=\count134
+\c@section@level=\count155
 )
-LaTeX Info: Redefining \ref on input line 35.
-LaTeX Info: Redefining \pageref on input line 35.
-LaTeX Info: Redefining \nameref on input line 35.
+LaTeX Info: Redefining \ref on input line 49.
+LaTeX Info: Redefining \pageref on input line 49.
+LaTeX Info: Redefining \nameref on input line 49.
 (./zhf_manuscript.out) (./zhf_manuscript.out)
 \@outlinefile=\write3
 \openout3 = `zhf_manuscript.out'.
@@ -319,86 +478,78 @@ LaTeX Info: Redefining \nameref on input line 35.
 SVJour3 warning: Missing \journalname
 
 LaTeX Font Warning: Font shape `OT1/cmr/bx/n' in size <13> not available
-(Font)              size <12> substituted on input line 68.
+(Font)              size <12> substituted on input line 77.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 70--76
+Underfull \hbox (badness 10000) in paragraph at lines 79--85
 
  []
 
 [1{/usr/local/texlive/2018/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-LaTeX Font Info:    Try loading font information for OML+cmr on input line 144.
 
-(/usr/local/texlive/2018/texmf-dist/tex/latex/base/omlcmr.fd
-File: omlcmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
-)
-LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <10> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 144.
-
-Package hyperref Warning: Suppressing link with empty target on input line 158.
+Package hyperref Warning: Suppressing link with empty target on input line 181.
 
 
-[2]
-Overfull \hbox (25.27835pt too wide) in paragraph at lines 187--203
-[]\OT1/cmr/m/n/10 Using the re-vised Qual-ity As-sess-ment of Di-ag-nos-tic Ac-
-cu-racy Stud-ies (QUADAS-
+[2] [3]
+
+Package hyperref Warning: Suppressing link with empty target on input line 265.
+
+
+
+Overfull \hbox (5.78433pt too wide) in paragraph at lines 267--282
+\OT1/cmr/m/n/10 con-verted into a stan-dard for-mat, with bias mean-ing $\OML/c
+mm/m/it/10 comparatorthermometer \OMS/cmsy/m/n/10 ^^@
  []
-
-
-Overfull \hbox (9.11183pt too wide) in paragraph at lines 218--223
-\OT1/cmr/m/n/10 com-para-tor de-vices. \OML/cmm/m/it/10 >\OT1/cmr/m/n/10 The fr
-ame-work for meta-analysis of Bland-Altman method
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-[3]
-
-Package hyperref Warning: Suppressing link with empty target on input line 253.
-
 
 [4]
-Overfull \hbox (3.19511pt too wide) in paragraph at lines 278--287
-[]\OT1/cmr/m/n/10 be clin-i-cally un-ac-cept-able. Sen-si-tiv-ity anal-y-sis fo
-r the pri-mary meta-analysis
+Overfull \hbox (28.10437pt too wide) in paragraph at lines 283--289
+\OT1/cmr/m/n/10 com-para-tor de-vices is 0.5 $[]\OML/cmm/m/it/10 C$ $\OT1/cmr/m
+/n/10 (\OML/cmm/m/it/10 ref \OMS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 mostofthestud
+iessitethisrangefromEshragi:::\OT1/cmr/m/n/10 )$.
  []
 
-<zhf_manuscript_files/figure-latex/unnamed-chunk-2-1.pdf, id=65, 3838.34pt x 13
-30.9725pt>
-File: zhf_manuscript_files/figure-latex/unnamed-chunk-2-1.pdf Graphic file (typ
-e pdf)
-<use zhf_manuscript_files/figure-latex/unnamed-chunk-2-1.pdf>
-Package pdftex.def Info: zhf_manuscript_files/figure-latex/unnamed-chunk-2-1.pd
-f  used on input line 296.
-(pdftex.def)             Requested size: 317.98755pt x 110.25745pt.
-[5 <./zhf_manuscript_files/figure-latex/unnamed-chunk-2-1.pdf>] [6]
-Underfull \vbox (badness 1314) has occurred while \output is active []
+<zhf_manuscript_files/figure-latex/fig-1-1.pdf, id=67, 380.42125pt x 158.5925pt
+>
+File: zhf_manuscript_files/figure-latex/fig-1-1.pdf Graphic file (type pdf)
+<use zhf_manuscript_files/figure-latex/fig-1-1.pdf>
+Package pdftex.def Info: zhf_manuscript_files/figure-latex/fig-1-1.pdf  used on
+ input line 310.
+(pdftex.def)             Requested size: 351.23224pt x 146.42712pt.
 
-[7]
+Overfull \hbox (13.23224pt too wide) in paragraph at lines 310--311
+ [][] 
+ []
+
+[5pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) 
+has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.358 
+       <./zhf_manuscript_files/figure-latex/fig-1-1.pdf>] [6] [7]
 No file zhf_manuscript.bbl.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 481.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 494.
 [8]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 481.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 494.
 (./zhf_manuscript.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 481.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 481.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 494.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 494.
 Package rerunfilecheck Info: File `zhf_manuscript.out' has not changed.
 (rerunfilecheck)             Checksum: 137BA3BBE115A323F99C5C213A687D25;267.
 
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 1.0pt have occurred.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 481.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 494.
  ) 
 Here is how much of TeX's memory you used:
- 5991 strings out of 492649
- 86328 string characters out of 6129622
- 184647 words of memory out of 5000000
- 9776 multiletter control sequences out of 15000+600000
- 10552 words of font info for 38 fonts, out of 8000000 for 9000
+ 7899 strings out of 492649
+ 111960 string characters out of 6129622
+ 224858 words of memory out of 5000000
+ 11611 multiletter control sequences out of 15000+600000
+ 10658 words of font info for 39 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 28i,8n,30p,247b,338s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 34i,9n,35p,247b,339s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbsy10.pf
 b></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 ></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
@@ -410,10 +561,10 @@ cal/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/loc
 al/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local
 /texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/
 texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb>
-Output written on zhf_manuscript.pdf (8 pages, 521868 bytes).
+Output written on zhf_manuscript.pdf (8 pages, 176052 bytes).
 PDF statistics:
  177 PDF objects out of 1000 (max. 8388607)
  150 compressed objects within 2 object streams
- 54 named destinations out of 1000 (max. 500000)
+ 56 named destinations out of 1000 (max. 500000)
  54 words of extra memory for PDF output out of 10000 (max. 10000000)
 

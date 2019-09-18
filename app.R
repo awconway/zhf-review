@@ -129,8 +129,8 @@ ui <- dashboardPage(skin ="red",
                               "Sublingual")), br(), 
       h4(htmlOutput("select_format")), # "select display format"
       # menu item tabs for plot and data table
-      menuItem("Plot", tabName="Plot", icon=icon("chart-area")),
-      menuItem("Data Table", tabName="DT", icon=icon("table"))
+      menuItem("Results", tabName="Plot", icon=icon("chart-area")),
+      menuItem("Data", tabName="DT", icon=icon("table"))
       
 
     ) 

@@ -88,9 +88,16 @@ A sensitivity analysis for the primary comparison (ZHF versus temperature measur
 
 Fifteen studies were included in this systematic review (Figure 1). Two studies reported only in abstract form were not included and assigned as 'studies awaiting classification' because there was insufficient information provided.
 
-```{r fig-1, fig.align="center", fig.cap="PRISMA Flow Diagram", echo=FALSE}
-img <- magick::image_read("figure_one.png")
-img %>% magick::image_scale("350")
+```{r fig-1, fig.align="center",fig.cap="PRISMA Flow Diagram", echo=FALSE}
+prsm <- PRISMAstatement::flow_exclusions(
+  incl_counts = c(129, 94, 23, 15),
+  total_label = "References imported for screening",
+  incl_labels = c("Studies screened", "Full-text assessed for eligibility", "Included"),
+  excl_labels = c("Duplicates removed", "Excluded", "Full-text excluded"),
+               width = 200, height = 200)
+tiff("figure-one.tiff", width=7.5, height=7, units='in', res=300, compression = 'lzw')
+prsm
+PRISMAstatement:::prisma_pdf(prsm)
 ```
 
 ```{r meta-function, echo=FALSE}

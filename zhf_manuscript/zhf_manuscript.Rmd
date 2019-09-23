@@ -11,6 +11,9 @@ authors:
 - name: Aaron Conway
   address: Peter Munk Cardiac Centre, UHN & Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
   email: aaron.conway@utoronto.ca
+- name: Navpreet Kamboj
+  address: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
+  email: navpreet.kamboj@mail.utoronto.ca
 
 keywords:
 - key

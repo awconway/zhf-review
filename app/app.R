@@ -16,8 +16,8 @@ library(DT)
 
 # Load data ----
 
-data <- readxl::read_xlsx(here::here("data", "zhf_extracted.xlsx"))
-sum_findings <- readxl::read_xlsx(here::here("data", "sum_findings.xlsx"))
+data <- readxl::read_xlsx(here::here("app", "data", "zhf_extracted.xlsx"))
+sum_findings <- readxl::read_xlsx(here::here("app", "data", "sum_findings.xlsx"))
 
 # Functions for calculating the Bland-Altman meta-analysis ----
 

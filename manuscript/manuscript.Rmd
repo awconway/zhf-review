@@ -79,13 +79,12 @@ CI_L_mod <- LOA_L - tcrit*sqrt(V_LOA_mod)
 CI_U_mod <- LOA_U + tcrit*sqrt(V_LOA_mod)
 CI_L_rve <- LOA_L - tcrit*sqrt(V_LOA_rve)
 CI_U_rve <- LOA_U + tcrit*sqrt(V_LOA_rve)
-data.frame(m, bias_mean,sqrt(sd2_est), tau_est, LOA_L, LOA_U, CI_L_mod, CI_U_mod, CI_L_rve, CI_U_rve)
+data.frame(m, bias_mean, sd2_est, tau_est, LOA_L, LOA_U, CI_L_mod, CI_U_mod, CI_L_rve, CI_U_rve)
 }
 ```
 
 ```{r load-data, include=FALSE}
-library(tidyverse)
-data <- readxl::read_xlsx(here::here("data","zhf_extracted.xlsx"))
+data <- readxl::read_xlsx(here::here("data", "zhf_extracted.xlsx"))
 ```
 
 
@@ -158,9 +157,12 @@ out <- out %>%
   mutate(Participants = sum(group$n_count, na.rm=T)) %>% 
   mutate(Measurements = format(sum(group$N, na.rm = T), big.mark=",", scientific = FALSE)) %>% 
   mutate(Studies = length(unique(group$Study))) %>% 
-  select(Studies, m, Participants, Measurements, bias_mean, tau_est, LOA_L, LOA_U, CI_L_rve, CI_U_rve) %>% 
-  rename("Comparisons" = m, "Mean bias" = bias_mean, "Tau-squared" = tau_est, "Lower bound for 95% limit of agreement" = LOA_L, "Upper bound for 95% limits of agreement" = LOA_U, "Outer confidence interval for lower 95% limits of agreement" = CI_L_rve, "Outer confidence interval for upper 95% limits of agreement" = CI_U_rve)
+  select(Studies, m, Participants, Measurements, bias_mean, sd2_est, tau_est, LOA_L, LOA_U, CI_L_rve, CI_U_rve) %>% 
+  rename("Comparisons" = m)
 out
+
+# Better names for columns
+# , "Mean bias" = bias_mean, "Tau-squared" = tau_est, "Lower bound for 95% limit of agreement" = LOA_L, "Upper bound for 95% limits of agreement" = LOA_U, "Outer confidence interval for lower 95% limits of agreement" = CI_L_rve, "Outer confidence interval for upper 95% limits of agreement" = CI_U_rve
 }
 ```
 
@@ -196,15 +198,15 @@ conflict  <- format_results(data_conflict)
 
 # Introduction
 
-Core temperature monitoring is an important intervention within perioperative and intensive care settings. Thermoregulatory dysfunction is commonly associated with the induction of anesthesia and can lead to adverse outcomes including cardiac dysrhythmias, altered hemostasis and increased risk of surgical site infection [@frank1997perioperative; @kurz1996perioperative; @michelson1994reversible; @rohrer1992effect]. The pulmonary artery catheter is the reference standard for continuous core temperature monitoring$(ref - trouble finding a statement regarding this in the literature)$, however, the invasive nature of this method renders an increased risk of bloodstream infections and damage to surrounding tissue[@hadian2006evidence]. Although clinically accurate relative to pulmonary artery temperature measurements, surrogate measures of core temperature at esophageal, rectal, and bladder locations remain mildly invasive interventions$(ref)$. 
+Core temperature monitoring is an important intervention within perioperative and intensive care settings. Thermoregulatory dysfunction is commonly associated with the induction of anesthesia and can lead to adverse outcomes including cardiac dysrhythmias, altered hemostasis and increased risk of surgical site infection [@frank1997perioperative; @kurz1996perioperative; @michelson1994reversible; @rohrer1992effect]. The pulmonary artery catheter is the reference standard for continuous core temperature monitoring, however, the invasive nature of this method renders an increased risk of bloodstream infections and damage to surrounding tissue[@hadian2006evidence]. Although clinically accurate relative to pulmonary artery temperature measurements, surrogate measures of core temperature at esophageal, rectal, and bladder locations remain mildly invasive interventions. 
 
-Zero-heat-flux thermometry is an alternative non-invasive method that allows for continuous monitoring of core temperature. Originally developed in the 1970s, zero-heat-flux technology was recently implemented in the 3M SpotOn (3M, St Paul, MN), a single-use, disposable sensor $(ref)$. In practice, the zero-heat-flux sensor, such as the 3M SpotOn, is placed on the lateral surface of the forehead and initially warmed to equilibrate the temperature of the skin surface to the underlaying core tissues$(ref)$. Equipped with a thermal insulator, the zero-heat-flux sensor eliminates heat loss to the environment to allow for changes in core temperature to be directly reflected by a change in skin surface temperature $(ref)$. 
+Zero-heat-flux thermometry is an alternative non-invasive method that allows for continuous monitoring of core temperature. Originally developed in the 1970s, zero-heat-flux technology was recently implemented in the 3M SpotOn temperature monitoring system (3M, St Paul, MN), as a single-use, disposable sensor. In practice, the zero-heat-flux sensor, such as the 3M SpotOn, is placed on the lateral surface of the forehead and isinitially warmed to equilibrate the temperature of the skin surface to the underlaying core tissues. Equipped with a thermal insulator, the zero-heat-flux sensor eliminates heat loss to the environment to allow for changes in core temperature to be directly reflected by a change in skin surface temperature [@eshraghi2014]. 
 
-The agreement between zero-heat-flux thermometers and core as well as other peripheral thermometers has been investigated in several studies conducted within clinical settings. Appraisal of these studies and synthesis of the results would aid clinicians in deciding the appropriate circumstances in which zero-heat-flux thermometers may be used. We aimed to determine if zero-heat-flux thermometers have clinically acceptable accuracy and precision relative to established core and peripheral temperature measurement devices. Accuracy is defined as the average difference between temperature measurements from the zero-heat-flux and comparator device and precision as the variance (standard deviation) in the differences.
+The agreement between zero-heat-flux thermometers and core as well as other peripheral thermometers has been investigated in multiple studies over the last five years. Appraisal of these studies and synthesis of the results would aid clinicians in deciding the appropriate circumstances in which zero-heat-flux thermometers may be used. We aimed to determine if zero-heat-flux thermometers have clinically acceptable accuracy and precision relative to established core and peripheral temperature measurement devices. Accuracy is defined as the average difference between temperature measurements from the zero-heat-flux and comparator device and precision as the variance (standard deviation) in the differences.
 
 # Methods
 
-A systematic review was conducted in accordance with a predetermined protocol. The protocol was submitted to PROSPERO for registration but due to delays in processing we had started data extraction by the time it was reviewed. Therefore, the protocol did not meet the requirements for registration. A copy of the submitted protocol can be accessed [here](insert link). The primary comparison for this review was temperature measured from a zero-heat-flux thermometer versus a temperature measured from a core site, which we defined as arterial, esophaeal, bladder and rectal sites. Secondary comparisons were made between zero-heat-flux thermometers and temperatures taken at peripheral sites.
+A systematic review was conducted in accordance with a predetermined protocol. The protocol was submitted to PROSPERO for registration but due to delays in processing we had started data extraction by the time it was reviewed. Therefore, the protocol did not meet the requirements for registration. A copy of the submitted protocol can be accessed [here](https://github.com/awconway/zhf-review). The primary comparison for this review was temperature measured from a zero-heat-flux thermometer versus temperature measured from a core site, which we defined as temperature measured at either an arterial, esophaeal, bladder or rectal site. Secondary comparisons were made between zero-heat-flux thermometers and temperatures taken at peripheral sites.
 
 ## Inclusion criteria
 
@@ -212,7 +214,7 @@ Observational studies that reported temperature measurements from a zero-heat-fl
 
 ## Data sources and searches
 
-Published studies were found by searching Medline and EMBASE from January 2000 to July 2019. The Cochrane-recommended search strategy combining terms for the ‘target condition’ and ‘index test’ was used [@mann2012should]. This search strategy is an efficient approach for systematic reviews of diagnostic test accuracy studies.[@preston2015improving] We also conducted forward citation searching, by using Google Scholar to search the citations of the first article published on the accuracy of zero-heat-flux thermometers. The search strategies used for each data base can be located in [file 1](). Selection of studies was undertaken independently by two reviewers using [Covidence](https://www.covidence.org). 
+Published studies were found by searching Medline and EMBASE from January 2000 to July 2019. The Cochrane-recommended search strategy combining terms for the ‘target condition’ and ‘index test’ was used [@mann2012should]. This search strategy is an efficient approach for systematic reviews of diagnostic test accuracy studies.[@preston2015improving] We also conducted forward citation searching, by using Google Scholar to search the citations of the first article published on the accuracy of zero-heat-flux thermometers. The search strategies used for each data base can be located [here](shiny app). Selection of studies was undertaken independently by two reviewers using [Covidence](https://www.covidence.org). 
 
 ## Data extraction and quality assessment
 
@@ -462,16 +464,79 @@ All studies included in this systematic review evaluated the zero-heat-flux temp
 
 High risk of bias was associated with patient selection for 13 (43%) comparisons from 9 (56%) studies, conduct of ZHF and comparator measurements in 10(33%) comparisons from 8 (50%) studies and 12 (40%) comparisons 9 (30%) studies, respectively (mostly due to ZHF measurements being taken with knowledge of the comparator measurements and vice versa) and participant flow for 13 (43%) studies. In 19 (50%) comparisons from 8 (50%) studies, the authors had declared a conflict of interest or receipt of funding or equipment from the manufacturer of the ZHF device under evaluation.
 
-## Agreement between ZHF and core temperature measurements
+
+## Primary comparison: zero-heat-flux thermometer versus core thermometers
+
+The pooled estimate for the mean bias between zero-heat-flux and core temperature measurements was `r primary$bias_mean`$^\circ C$. However, the variation in differences between studies was large, as displayed by the density plot in Figure 2. Consequently, the population limits of agreement, which take into consideration the between-study heterogeneity and sampling error, were wide, spanning from `r primary$CI_L_rve`$^\circ C$ to `r primary$CI_U_rve`$^\circ C$ (`r primary$Measurements` measurements; `r primary$Participants` participants; `r primary$Studies` studies). The quality of evidence for the primary comparison was downgraded to low quality due to concerns about study limitations and inconsistency. Population limits of agreement for the sensitivity analysis restricted to studies rated as having low risk of bias across all the domains of the QADAS-2 were similar to the primary analysis (`r low_risk$Measurements` measurements; `r low_risk$Participants` participants; `r low_risk$Studies` stsudies). The mean bias was again `r low_risk$bias_mean`$^\circ C$ with population agreements spanning from `r low_risk$CI_L_rve`$^\circ C$ to `r low_risk$CI_U_rve`$^\circ C$.
+
+```{r fig-2, fig.align="center", fig.cap="Comparisons between core and zero-heat-flux thermometers within and across studies. Blue curves are distributions of the differences between measurements from zero-heat-flux (ZHF) sensors and core temperature measurements in individual studies. The red curve is the distribution of the pooled estimate.", echo=FALSE, fig.width=5.1, fig.path=""}
 
 
+    bias=data_core$bias
+    s2_unb = data_core$s2
+    pooled_bias = primary$bias_mean
+    pooled_sd = primary$sd2_est
+    pooled_tau2 = primary$tau_est
+    pooled_sd = sqrt(pooled_sd^2 + pooled_tau2)
+    
+    LOA_l = primary$LOA_L
+    LOA_u = primary$LOA_U
+    LOA_l_CI = primary$CI_L_rve
+    LOA_u_CI = primary$CI_U_rve
+
+g <- ggplot(data.frame(x=seq(-20,20,length=200)), aes(x=x)) + 
+      stat_function(fun=dnorm, args = list(bias[1], sd=sqrt(s2_unb[1])), colour = "cornflowerblue", size=0.6, alpha = 0.5) 
+    
+    for (i in 2:length(bias)){
+      g <- g + stat_function(fun=dnorm, args = list(bias[i], sd=sqrt(s2_unb[i])), color = "cornflowerblue", size = 0.6, alpha = 0.5)
+    } 
+    
+    g <- g + stat_function(fun=dnorm, args = list(pooled_bias, pooled_sd), colour ="lightcoral", alpha = 0.05) + 
+      stat_function(fun=dnorm, args = list(pooled_bias, pooled_sd), colour = NA, geom="area", fill="lightcoral", alpha = 0.6) + 
+      scale_x_continuous(limits = c(-3.5,3.5)) + labs(x = expression('Difference between core and ZHF temperature measurements in'*~degree*C*''))+
+      scale_y_continuous(name = "Density \n", limits = c(0,2.5)) +  
+      #labs(title = "\nOuter confidence intervals for pooled limits of agreement\n\n  Pooled limits of agreement")+
+      theme(plot.title = element_text(hjust = 0.5, margin = margin(t=10, b=-32), size=10),
+            axis.text=element_text(hjust = 0.5, size=10),                                                                        
+            axis.title=element_text(hjust = 0.5, size=10),
+            axis.line=element_line(colour="black", size=0.2),
+            panel.background = element_blank(),
+            axis.ticks = element_blank(), 
+            plot.caption = element_text(hjust = 0)) #+ 
+      #CI lines that extend to arrow tips
+      # geom_segment(aes(x=LOA_u, y=0, xend=LOA_u, yend=2.25), size = 0.3, linetype="dashed")+ 
+      # geom_segment(aes(x=LOA_l, y=0, xend=LOA_l, yend=2.25), size = 0.3, linetype="dashed")+
+      # geom_segment(aes(x=LOA_u_CI, y=0, xend=LOA_u_CI, yend=2.48), size = 0.3)+
+      # geom_segment(aes(x=LOA_l_CI, y=0, xend=LOA_l_CI, yend=2.48), size = 0.3)#+
+      # 
+      # geom_segment(aes(x=0, y=2.48, xend=LOA_u_CI, yend=2.48), size = 0.4, arrow = arrow(length = unit(0.03, "npc")))+ #R arrow high
+      # geom_segment(aes(x=0, y=2.48, xend=LOA_l_CI, yend=2.48), size = 0.4, arrow = arrow(length = unit(0.03, "npc")))+ #L arrow high
+      # geom_segment(aes(x=0, y=2.25, xend=LOA_u, yend=2.25), size = 0.4,  arrow = arrow(length = unit(0.03, "npc")))+ #R arrow low
+      # geom_segment(aes(x=0, y=2.25, xend=LOA_l, yend=2.25), size = 0.4,  arrow = arrow(length = unit(0.03, "npc"))) #L arrow low
+g
+```
 
 
+We conducted two subgroup analyses for the primary comparison according to the clinical setting in which the study was conducted. In the subset of studies conducted in the ICU, the mean bias was `r ICU$bias_mean` $^\circ C$ with population limits of agreement between `r ICU$CI_L_rve` $^\circ C$ and `r ICU$CI_U_rve` $^\circ C$. Whereas in the subset of studies that evaluated the use of zero-heat-flux thermometers during surgery found a mean bias of `r OT$bias_mean` $^\circ C$ with population limits of agreement from `r OT$CI_L_rve` $^\circ C$ to `r OT$CI_U_rve` $^\circ C$. The quality of evidence for these subgroup analyses was similarly rated as low quality due to concerns about study limitations and inconsistency.
+
+## Secondary comparisons: zero-heat-flux thermometer versus peripheral thermometers
+
+Zero-heat-flux thermometers were compared with sublingual thermometers and nasopharyngeal thermometers in the studies included in this review. The mean bias between zero-heat-flux and sublingual temperature measurements in meta-analysis of results from `r SL$Studies` studies was `r SL$bias_mean` $^\circ C$. Due to the limited number of studies and measurements, population limits of agreement were extremely wide, spanning from `r SL$CI_L_rve` $^\circ C$ to `r SL$CI_U_rve` $^\circ C$. The quality of evidence for this comparison was rated as very low quality due to serious concerns about imprecision.
+
+The mean bias between zero-heat-flux and nasopharyngeal temperature measurements in meta-analysis of results from `r NPA$Studies` studies was `r NPA$bias_mean` $^\circ C$. Population limits of agreement were `r NPA$CI_L_rve` $^\circ C$ to `r NPA$CI_U_rve` $^\circ C$. We downgraded the quality of evidence to low, again due to concerns about inconsistency and study limitations.
 
 # Discussion
 
+Results from this systematic review have important implications for practice. Clinicians should consider the potential that a temperature measurement from a zero-heat-flux thermometer could be as much as one $^\circ C$ higher or lower than the true core temperature. This is similar to results from previous meta-analyses that compared other peripheral thermometers with core temperature measurements. However, these previous meta-analyses used statistical approaches that did not incorporate the magnitude of heteroogeneity in results between studies or sampling error. As such, it is possible that the zero-heat-flux thermometer is still more precise than these other peripheral thermometers.
+
+Whether or not teh zero-heat-flux thermometer is sufficiently accurate to be used in place of nasopharyngeal thermometers is unclear.
+
 ## Limitations
 
+
+
 # Conclusion
+
+
 
 # References

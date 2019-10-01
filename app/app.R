@@ -1,9 +1,7 @@
-
 library(shiny)
 library(shinydashboard)
 library(shinydashboardPlus)
 library(tidyverse)
-library(ggplot2)
 library(DT)
 
 # Manuscript screenshot resolution ----
@@ -16,7 +14,7 @@ library(DT)
 
 # Load data ----
 
-data <- readxl::read_xlsx(here::here("app", "data", "zhf_extracted.xlsx"))
+data <- readxl::read_xlsx(here::here("app", "data", "zhf_extracted.xlsx"), n_max = 27)
 sum_findings <- readxl::read_xlsx(here::here("app", "data", "sum_findings.xlsx"))
 
 # Functions for calculating the Bland-Altman meta-analysis ----
@@ -62,18 +60,19 @@ loa_maker <- function(bias,V_bias,logs2,V_logs2) {
   CI_U_mod <- LOA_U + tcrit*sqrt(V_LOA_mod)
   CI_L_rve <- LOA_L - tcrit*sqrt(V_LOA_rve)
   CI_U_rve <- LOA_U + tcrit*sqrt(V_LOA_rve)
-  c(m, bias_mean,sqrt(sd2_est), tau_est, LOA_L, LOA_U, CI_L_mod, CI_U_mod, CI_L_rve, CI_U_rve)}
+  data.frame(m, bias_mean, sd2_est, tau_est, LOA_L, LOA_U, CI_L_mod, CI_U_mod, CI_L_rve, CI_U_rve)
+}
 
 #Primary meta-analysis (all included studies)
 data <- data %>%
   mutate(c = N/n)
 
 #variance
-data <-  if (data$corrected == "Yes"){
-  mutate(data, s2 = ((upper - bias)/1.96)^2)
-} else {
-  mutate(data, s2 = ((upper - bias)/1.96)^2)*((N-1)/(N-c))
-}
+data <- data %>% 
+  mutate(s2 = case_when(corrected == "Yes"  ~ ((upper - bias)/1.96)^2,
+                        corrected == "No" ~  ((upper - bias)/1.96)^2*(N-1)/(N-c)
+  )
+  )
 
 data <- data %>% 
   mutate(V_bias = s2/n)
@@ -97,7 +96,7 @@ data_core <- data %>% #eshragi overall
 data_core_lowrisk <- data_core %>% #eshragi overall
   filter(RoB_selection == "low" & RoB_spoton == "low" & RoB_comparator == "low" & RoB_flow =="low")
 
-data_core_op <- data%>% #eshragi intraop
+data_core_op <- data %>% #eshragi intraop
   filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
   filter (clinical_setting=="Intraoperative")
 
@@ -112,27 +111,44 @@ data$comparison <- sub("Iliac", "Iliac artery", data$comparison)
 data$comparison <- sub("Ax", "Axillary artery", data$comparison) 
 data$comparison <- sub("Eso", "Esophageal", data$comparison)
 
+format_results <- function(group){
+  out <- loa_maker(group$bias,group$V_bias, group$logs2, group$V_logs2)
+  out <- round(out, digits=3)
+  out <- out %>% 
+    mutate(Participants = sum(group$n_count, na.rm=T)) %>% 
+    mutate(Measurements = format(sum(group$N, na.rm = T), big.mark=",", scientific = FALSE)) %>% 
+    mutate(Studies = length(unique(group$Study))) %>% 
+    select(Studies, m, Participants, Measurements, bias_mean, sd2_est, tau_est, LOA_L, LOA_U, CI_L_rve, CI_U_rve) %>% 
+    rename("Comparisons" = m)
+  out
+}
 
-ui <- dashboardPage(skin ="red",
-  dashboardHeader(title=" ZHF Data Visualization"),
+
+ui <- dashboardPage(
+  skin ="red",
+  dashboardHeader(title="Options"),
   dashboardSidebar(
     sidebarMenu(
       br(),
+      # menu item tabs
+      menuItem("Home", tabName="landing_page", icon=icon("home")),
+      menuItem("Search strategy", tabName="search", icon=icon("search")),
+      menuItem("Results", tabName="Plot", icon=icon("chart-area")),
+      menuItem("Data used in meta-analysis", tabName="DT", icon=icon("table")),
+      menuItem("Extracted data", tabName="frame", icon=icon("file-excel")), 
+      
+      br(), 
       
       radioButtons(inputId = "dataset", 
-                   h4("Select a subset of studies to display:"), 
+                   h4("Select a subset of studies to display in results:"), 
                    choices= c("Core",
                               "Core (low risk studies)",
                               "Core (ICU only)",
-                              "Core (intraoperative only)",
+                              "Core (Intraoperative only)",
                               "Nasopharyngeal",
-                              "Sublingual")), br(), 
-      h4(htmlOutput("select_format")), # "select display format"
-      # menu item tabs for plot and data table
-      menuItem("Results", tabName="Plot", icon=icon("chart-area")),
-      menuItem("Data", tabName="DT", icon=icon("table"))
+                              "Sublingual",
+                              "No conflicts of interest"))
       
-
     ) 
   ),
   dashboardBody(
@@ -142,7 +158,7 @@ ui <- dashboardPage(skin ="red",
     padding-left: 15px;}',
     #resize fontin caption beneath graph
     '#caption {
-    font-size: 8pt;}',
+    font-size: 12pt;}',
     #center and resize pLoA box content
     '#pLoA th {
     text-align: center;
@@ -180,11 +196,20 @@ ui <- dashboardPage(skin ="red",
       tabItem(tabName="Plot", 
              # column(12, h3(htmlOutput("title_selected_subset"))),
               fluidRow(
-            column(7, 
-                   plotOutput("plot", height='370px'), 
-                   htmlOutput("caption"), br(), # caption = caption under the plot
+            column(12, 
                    h4("Pooled summary statistics:"), # title above summary stats table
                    DT::dataTableOutput("summary")), # summary = pooled summary stats table under the plot
+                   plotOutput("plot"), 
+                   br(),
+            br(),
+            br(),
+            br(),
+            br(),
+            br(),
+                   h2("This plot shows comparisons between core and zero-heat-flux thermometers within and across studies.") ,
+                   h4("Blue curves are distributions of the differences between measurements from zero-heat-flux (ZHF) sensors and core temperature measurements in individual studies. The red curve is the distribution of the pooled estimate."),  # caption = caption under the plot
+            
+            
             # original shiny code for boxes -----
             # fluidRow( #box closed default requires boxPlus, but then we cannot put in icons
             #  column(5, gradientBox(id = "pLoA", width=12, title="Population Limits of Agreement", gradientColor = "black", icon = "fa fa-check-circle",collapsed =T, solidHeader = T, collapsible=T, footer_padding=F, DT::dataTableOutput("dt_pLoA"))),
@@ -194,7 +219,7 @@ ui <- dashboardPage(skin ="red",
             
             # HTML used to modify boxes to have plus icon and collapsed as default ----
             HTML('<div class="row">
-  <div class="col-sm-5">
+  <div class="col-sm-12">
     <div class="col-sm-12">
       <div class="box box-solid bg-black-gradient collapsed-box">
         <div class="box-header">
@@ -213,7 +238,7 @@ ui <- dashboardPage(skin ="red",
       </div>
     </div>
   </div>
-  <div class="col-sm-5">
+  <div class="col-sm-12">
     <div class="col-sm-12">
       <div class="box box-solid bg-black-gradient collapsed-box">
         <div class="box-header">
@@ -232,7 +257,7 @@ ui <- dashboardPage(skin ="red",
       </div>
     </div>
   </div>
-  <div class="col-sm-5">
+  <div class="col-sm-12">
     <div class="col-sm-12">
       <div class="box box-solid bg-black-gradient collapsed-box">
         <div class="box-header">
@@ -251,7 +276,7 @@ ui <- dashboardPage(skin ="red",
       </div>
     </div>
   </div>
-  <div class="col-sm-5">
+  <div class="col-sm-12">
     <div class="col-sm-12">
       <div class="box box-solid bg-black-gradient collapsed-box">
         <div class="box-header">
@@ -277,12 +302,119 @@ ui <- dashboardPage(skin ="red",
               column(12,
                  h2(htmlOutput("dt_selected_subset")), # reactive title above table
                  br(), 
-                 DT::dataTableOutput("dt")))
+                 DT::dataTableOutput("dt"))),
+      tabItem(tabName="search",
+              fluidRow(
+                boxPlus(
+                  title = "Medline Search Strategy",
+                  closable = FALSE,
+                  status = "black",
+                  solidHeader = FALSE,
+                  collapsible = TRUE,
+                  p("1.	zero-heat flux"),
+                  p("2.	zero-flux"),
+                  p("3.	1 OR 2"),
+                  p("4.	(SpotON) OR (Temple Touch Pro)"),
+                  p("5.	3 OR 4"),
+                  p("6.	Accuracy OR precision OR reliability OR validity OR validation OR standard deviation"),
+                  p("7.	Bias OR mean difference OR limit of agreement OR Bland Altman"),
+                  p("8.	6 OR 7"),
+                  p("9.	(exp “diagnostic errors” / OR exp “sensitivity and specificity” / OR (accura* OR reliability* OR target* OR utilt* OR discriminat* OR differentiat*)
+10.	8 OR 9"),
+                  p("11.	5 AND 10")
+                ),
+                boxPlus(
+                  title = "Embase Search Strategy",
+                  closable = FALSE,
+                  status = "black",
+                  solidHeader = FALSE,
+                  collapsible = TRUE,
+                  p("1.	zero-heat flux"),
+                  p("2.	zero-flux"),
+                  p("3.	1 OR 2"),
+                  p("4.	(SpotON) OR (Temple Touch Pro)"),
+                  p("5.	3 OR 4"),
+                  p("6.	Accuracy OR precision OR reliability OR validity OR validation OR standard deviation"),
+                  p("7.	Bias OR mean difference OR limit of agreement OR Bland Altman"),
+                  p("8.	6 OR 7"),
+                  p("9.	('diagnostic accuracy'/de OR 'diagnostic test accuracy study'/de OR 'diagnostic error'/exp OR 'diagnostic value'/de OR 'sensitivity and specificity'/de OR 'predictive value'/de OR (accura* OR reliabilit* OR target* OR utilit* OR discriminat* OR differentiat*)"),
+                  p("11.	5 AND 10")
+                )
+              )),
+      tabItem(tabName="frame",
+              column(12, 
+                     htmlOutput("frame"))),
+      tabItem(tabName="landing_page",
+              fluidRow(
+              column(12, 
+                     div(class = "jumbotron", style="background:transparent !important", 
+                         h1("Accuracy of zero-heat-flux temperature monitoring"), p("A systematic review and meta-analysis"),
+                         p(a(class = "btn btn-primary btn-lg button", id='tabBut', "Click here to access the full review (link will work when available)")))
+                     ),
+              HTML('<div class="row">
+  <div class="col-sm-12">
+    <div class="col-sm-12">
+      <div class="box box-solid bg-black-gradient collapsed-box">
+        <div class="box-header">
+          <i class="fa fa-info"></i>
+          <h3 class="box-title">Information</h3>
+          <div class="pull-right box-tools">
+            <button class="btn bg-black btn-sm" data-widget="collapse" type="button">
+              <i class="fa fa-plus"></i>
+            </button>
+          </div>
+        </div>
+        <div class="box-body border-radius-none" id="pLoA" collapsed="TRUE" solidHeader="TRUE">
+          <div style="width:100%; height:auto;" class="datatables html-widget html-widget-output">          
+          </div>
+        </div>
+        <div class="box-footer text-black">
+                  <p>This webpage contains supplementary information for the systematic review. In the results and data pages, users can select a subset of studies to view. We also provide source documents for the data that were extracted from the study.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+'),
+                HTML('<div class="row">
+  <div class="col-sm-12">
+    <div class="col-sm-12">
+      <div class="box box-solid bg-black-gradient collapsed-box">
+        <div class="box-header">
+          <i class="fa fa-users"></i>
+          <h3 class="box-title">Authors</h3>
+          <div class="pull-right box-tools">
+            <button class="btn bg-black btn-sm" data-widget="collapse" type="button">
+              <i class="fa fa-plus"></i>
+            </button>
+          </div>
+        </div>
+        <div class="box-body border-radius-none" id="pLoA" collapsed="TRUE" solidHeader="TRUE">
+          <div style="width:100%; height:auto;" class="datatables html-widget html-widget-output">          
+          </div>
+        </div>
+        <div class="box-footer text-black">
+                  <p>Aaron Conway</p>
+                  <p>Megan Bittner</p>
+                  <p>Dan Phan</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+')
+              ))
   )) #end dashboardBody
 ) #end dashboardPage
 
 server <- shinyUI(function(input, output) {
   
+  
+  
+  output$frame <- renderUI({
+   shinyLP::iframe(url_link = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSR9-h4cb4ONj7d5Yw9ksyEysVngocRSrMQ6vVjny-6f-d_0CZlhe3HhNG-zaQSJ6rWpBLCb5mVYcYK/pubhtml?widget=true&amp;headers=false", 
+                   height=600, width="100%")
+  })
   
   output$plot <- renderPlot({ 
     
@@ -293,30 +425,26 @@ server <- shinyUI(function(input, output) {
              "Core (ICU only)" = data_core_icu,
              "Core (intraoperative only)" = data_core_op,
              "Nasopharyngeal" = data_NPA,
-             "Sublingual" = data_SL
+             "Sublingual" = data_SL,
+             "No conflicts of interest" = data_conflict
+             
       )
     })
     
-    out <- loa_maker(datasetInput()$bias,datasetInput()$V_bias,datasetInput()$logs2,datasetInput()$V_logs2)
-    out <- round(out, digits=2)
-    out <- append(out, sum(datasetInput()$n_count, na.rm = T))
-    out <- append(out, sum(datasetInput()$N, na.rm = T))
-    names(out) <- c("Studies","Bias","SD","τ²","LoAᴸ","LoAᵁ","mCIᴸ","mCIᵁ","Lower Limit","Upper Limit", "n", "N")
-    out <- out[c("Studies", "n", "N", "Bias", "SD","τ²","LoAᴸ","LoAᵁ","mCIᴸ","mCIᵁ","Lower Limit","Upper Limit")]
+    out <- format_results(datasetInput())
 
-    out[1:10]
-    
+
     bias=datasetInput()$bias
     s2_unb = datasetInput()$s2
-    pooled_bias = out[4]
-    pooled_sd = out[5]
-    pooled_tau2 = out[6]
+    pooled_bias = out$bias_mean
+    pooled_sd = out$sd2_est
+    pooled_tau2 = out$tau_est
     pooled_sd = sqrt(pooled_sd^2 + pooled_tau2)
     
-    LOA_l = out[7]
-    LOA_u = out[8]
-    LOA_l_CI = out[11]
-    LOA_u_CI = out[12]
+    LOA_l = out$LOA_L
+    LOA_u = out$LOA_U
+    LOA_l_CI = out$CI_L_rve
+    LOA_u_CI = out$CI_U_rve
     
     g <- ggplot(data.frame(x=seq(-20,20,length=200)), aes(x=x)) + 
       stat_function(fun=dnorm, args = list(bias[1], sd=sqrt(s2_unb[1])), colour = "cornflowerblue", size=0.6, alpha = 0.5) 
@@ -327,8 +455,8 @@ server <- shinyUI(function(input, output) {
     
     g <- g + stat_function(fun=dnorm, args = list(pooled_bias, pooled_sd), colour ="lightcoral", alpha = 0.05) + 
       stat_function(fun=dnorm, args = list(pooled_bias, pooled_sd), colour = NA, geom="area", fill="lightcoral", alpha = 0.6) + 
-      scale_x_continuous(name = paste('\n Difference between', tolower(input$dataset), "and ZHF thermometry (˚C)\n"), limits = c(-3.5,3.5)) +
-      scale_y_continuous(name = "Density \n", limits = c(0,2.5)) +  labs(title = "\nOuter confidence intervals for pooled limits of agreement\n\n  Pooled limits of agreement")+
+      scale_x_continuous(name = paste('\n Difference between', tolower(input$dataset), "and ZHF thermometry (˚C)\n"), breaks = c(-2, -1, 0, 1, 2), limits = c(-3.5,3.5)) +
+      scale_y_continuous(name = "Density \n") +  labs(title = "\nOuter confidence intervals for pooled limits of agreement\n\n  Pooled limits of agreement")+
       theme(plot.title = element_text(hjust = 0.5, margin = margin(t=10, b=-32), size=10),
             axis.text=element_text(hjust = 0.5, size=10),                                                                        
             axis.title=element_text(hjust = 0.5, size=10),
@@ -350,10 +478,9 @@ server <- shinyUI(function(input, output) {
     
     
     # summary stats table for pooled data  ----                                                                                      
-    output$summary <- DT::renderDataTable ({
+    output$summary <- DT::renderDataTable({
       # add hover tags for summary table header
-      datatable(t(out[1:10]),  options = list(paging = FALSE, searching = FALSE, info = FALSE, sort = FALSE, processing = FALSE,
-                                              
+      DT::datatable(out, width = "100%",   options = list(scrollX = TRUE, paging = FALSE, searching = FALSE, info = FALSE, sort = FALSE, processing = FALSE, 
                                               #JS code to add tooltips, set container: 'body' to prevent shifting of header with mouse hover
                                               initComplete = JS("function(settings, json){
                                       $('#summary th:eq(0)').each(function(){this.setAttribute( 'title', 'Number of studies included in subset' );});
@@ -370,7 +497,9 @@ server <- shinyUI(function(input, output) {
                                       $(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});
                                       
 
-                                     }")), escape =F)
+                                     }")), rownames = FALSE
+                    ,
+                    escape =F)
       
 
         
@@ -378,14 +507,19 @@ server <- shinyUI(function(input, output) {
     
     # render reactive data for pooled LoA box
     output$dt_pLoA <- DT::renderDT({
-    DT::datatable(t(round(out[11:12], 1)), rownames = NULL, options = list(columnDefs=list(list(class="dt-center", targets=c(0,1))), dom = "t", scrollX=T, sort = FALSE, paging=F, scrollY=T,
+    DT::datatable(out %>%
+                    select(CI_L_rve, CI_U_rve) %>% 
+                    rename("Outer confidence interval for lower 95% limits of agreement" = CI_L_rve, 
+                           "Outer confidence interval for upper 95% limits of agreement" = CI_U_rve), rownames = NULL, 
+                  options = list(columnDefs=list(list(class="dt-center", targets=c(0,1))), dom = "t", 
+                                 scrollX=T, sort = FALSE, paging=F, scrollY=T,
                                                                  initComplete = JS("function(settings, json){
                                                                                    $('#pLoA th:eq(0)').each(function(){this.setAttribute( 'title', 'Robust variance estimation meta-analysis estimate of lower CI for LoA' );});
                                                                                    $('#pLoA th:eq(1)').each(function(){this.setAttribute( 'title', 'Robust variance estimation meta-analysis estimate of upper CI for LoA' );});
-                                                                                   $('#pLoA th').tooltip({container: 'body'});}"))) %>%
+                                                                                   $('#pLoA th').tooltip({container: 'body'});}")
+                                 )) %>%
                                                                  formatStyle(columns =1:2, background = 'white', color = 'black')
        })
-    
     
     
     # render reactive cell from sum_findings to match selected data set (dt_sc) 
@@ -522,12 +656,13 @@ output$select_format <- renderUI({HTML('Select display format:')})
 output$dt_selected_subset <- renderUI({HTML(paste("Comparison between", tolower(input$dataset), "and zero-heat-flux thermometry"))})
 
 # caption under graph
-output$caption <- renderUI({HTML(paste("Blue curves are distributions of the differences between measurements from zero-heat-flux (ZHF) sensors and", tolower(input$dataset),
-                                       "thermometers in individual studies. Solid curve filled with red is the distribution of the pooled estimate of the difference between", tolower(input$dataset),
-                                       "and ZHF thermometry. Dotted vertical lines indicate bounds for the pooled estimates for limits of agreement between", tolower(input$dataset), 
-                                       "and ZHF thermometry. Solid vertical lines indicate bounds for the outer 95% confidence intervals (CIs) for the pooled 
-                                         estimates of limits of agreement (LoA) between", tolower(input$dataset), "and ZHF thermometry (ie. population LoA)."))
-}) # end of output$caption
+#output$caption <- renderUI({HTML(paste("Blue curves are distributions of the differences between measurements from zero-heat-flux (ZHF) sensors and", tolower(input$dataset),
+#                                        "thermometers in individual studies. Solid curve filled with red is the distribution of the pooled estimate of the difference between", tolower(input$dataset),
+#                                        "and ZHF thermometry. Dotted vertical lines indicate bounds for the pooled estimates for limits of agreement between", tolower(input$dataset), 
+#                                        "and ZHF thermometry. Solid vertical lines indicate bounds for the outer 95% confidence intervals (CIs) for the pooled 
+#                                          estimates of limits of agreement (LoA) between", tolower(input$dataset), "and ZHF thermometry (ie. population LoA)."))
+# #}) # end of output$caption
+
 
 }) # end of server
 

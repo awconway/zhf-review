@@ -104,6 +104,9 @@ data_core_icu <- data %>% #eshragi postop
   filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
   filter(clinical_setting=="ICU" | clinical_setting=="Postoperative")
 
+data_conflict <- data_core %>% 
+  filter(`Funding/equipment/conflict with ZHF company` == "Yes")
+
 #clean up comparison column, change to full word
 data$comparison <- sub("NPA", "Nasopharyngeal", data$comparison) 
 data$comparison <- sub("PA", "Pulmonary artery", data$comparison) 
@@ -113,14 +116,12 @@ data$comparison <- sub("Eso", "Esophageal", data$comparison)
 
 format_results <- function(group){
   out <- loa_maker(group$bias,group$V_bias, group$logs2, group$V_logs2)
-  out <- round(out, digits=3)
   out <- out %>% 
     mutate(Participants = sum(group$n_count, na.rm=T)) %>% 
     mutate(Measurements = format(sum(group$N, na.rm = T), big.mark=",", scientific = FALSE)) %>% 
     mutate(Studies = length(unique(group$Study))) %>% 
     select(Studies, m, Participants, Measurements, bias_mean, sd2_est, tau_est, LOA_L, LOA_U, CI_L_rve, CI_U_rve) %>% 
     rename("Comparisons" = m)
-  out
 }
 
 
@@ -143,8 +144,8 @@ ui <- dashboardPage(
                    h4("Select a subset of studies to display in results:"), 
                    choices= c("Core",
                               "Core (low risk studies)",
-                              "Core (ICU only)",
-                              "Core (Intraoperative only)",
+                              "Core (ICU studies)",
+                              "Core (Intra-operative studies)",
                               "Nasopharyngeal",
                               "Sublingual",
                               "No conflicts of interest"))
@@ -422,8 +423,8 @@ server <- shinyUI(function(input, output) {
       switch(input$dataset,
              "Core" = data_core,
              "Core (low risk studies)" = data_core_lowrisk,
-             "Core (ICU only)" = data_core_icu,
-             "Core (intraoperative only)" = data_core_op,
+             "Core (ICU studies)" = data_core_icu,
+             "Core (Intra-operative studies)" = data_core_op,
              "Nasopharyngeal" = data_NPA,
              "Sublingual" = data_SL,
              "No conflicts of interest" = data_conflict
@@ -480,6 +481,8 @@ server <- shinyUI(function(input, output) {
     # summary stats table for pooled data  ----                                                                                      
     output$summary <- DT::renderDataTable({
       # add hover tags for summary table header
+      out %>% 
+        mutate_if(is.numeric, ~round(., 1)) %>% 
       DT::datatable(out, width = "100%",   options = list(scrollX = TRUE, paging = FALSE, searching = FALSE, info = FALSE, sort = FALSE, processing = FALSE, 
                                               #JS code to add tooltips, set container: 'body' to prevent shifting of header with mouse hover
                                               initComplete = JS("function(settings, json){
@@ -499,7 +502,7 @@ server <- shinyUI(function(input, output) {
 
                                      }")), rownames = FALSE
                     ,
-                    escape =F)
+                    escape =F) 
       
 
         
@@ -507,7 +510,8 @@ server <- shinyUI(function(input, output) {
     
     # render reactive data for pooled LoA box
     output$dt_pLoA <- DT::renderDT({
-    DT::datatable(out %>%
+    DT::datatable(out %>% 
+                    mutate_if(is.numeric, ~round(., 1)) %>% 
                     select(CI_L_rve, CI_U_rve) %>% 
                     rename("Outer confidence interval for lower 95% limits of agreement" = CI_L_rve, 
                            "Outer confidence interval for upper 95% limits of agreement" = CI_U_rve), rownames = NULL, 
@@ -537,8 +541,8 @@ server <- shinyUI(function(input, output) {
         switch(input$dataset,
                "Core" = sum_findings_sccore,
                "Core (low risk studies)" = sum_findings_sccorelr,
-               "Core (ICU only)" = sum_findings_sccoreicu,
-               "Core (intraoperative only)" = sum_findings_sccoreop,
+               "Core (ICU studies)" = sum_findings_sccoreicu,
+               "Core (Intra-operative studies)" = sum_findings_sccoreop,
                "Nasopharyngeal" = sum_findings_scnpa,
                "Sublingual" = sum_findings_scsl
         )
@@ -564,8 +568,8 @@ server <- shinyUI(function(input, output) {
         switch(input$dataset,
                "Core" = sum_findings_gradecore,
                "Core (low risk studies)" = sum_findings_gradecorelr,
-               "Core (ICU only)" = sum_findings_gradecoreicu,
-               "Core (intraoperative only)" = sum_findings_gradecoreop,
+               "Core (ICU studies)" = sum_findings_gradecoreicu,
+               "Core (Intra-operative studies)" = sum_findings_gradecoreop,
                "Nasopharyngeal" = sum_findings_gradenpa,
                "Sublingual" = sum_findings_gradesl
         )
@@ -591,8 +595,8 @@ server <- shinyUI(function(input, output) {
         switch(input$dataset,
                "Core" = sum_findings_implcore,
                "Core (low risk studies)" = sum_findings_implcorelr,
-               "Core (ICU only)" = sum_findings_implcoreicu,
-               "Core (intraoperative only)" = sum_findings_implcoreop,
+               "Core (ICU studies)" = sum_findings_implcoreicu,
+               "Core (Intra-operative studies)" = sum_findings_implcoreop,
                "Nasopharyngeal" = sum_findings_implnpa,
                "Sublingual" = sum_findings_implsl)
       })

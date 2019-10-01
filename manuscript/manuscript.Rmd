@@ -30,9 +30,6 @@ output: rticles::springer_article
 ```{r echo=FALSE, include=FALSE}
 library(tidyverse)
 library(kableExtra)
-library(purrr)
-library(ggplot2)
-library(dplyr)
 library(qwraps2)
 library(knitr)
 ```
@@ -84,26 +81,21 @@ data.frame(m, bias_mean, sd2_est, tau_est, LOA_L, LOA_U, CI_L_mod, CI_U_mod, CI_
 ```
 
 ```{r load-data, include=FALSE}
-data <- readxl::read_xlsx(here::here("data", "zhf_extracted.xlsx"))
+data <- readxl::read_xlsx(here::here("app", "data", "zhf_extracted.xlsx"))
 ```
 
 
 ```{r meta-analysis-prep, include=FALSE}
 data <- data %>%
-
   mutate(c = N/n)
 
 #variance
 
-data <-  if (data$corrected == "Yes"){
-
-  mutate(data, s2 = ((upper - bias)/1.96)^2)
-
-  } else {
-
-    mutate(data, s2 = ((upper - bias)/1.96)^2)*((N-1)/(N-c))
-
-    }
+data <- data %>% 
+  mutate(s2 = case_when(corrected == "Yes"  ~ ((upper - bias)/1.96)^2,
+         corrected == "No" ~  ((upper - bias)/1.96)^2*(N-1)/(N-c)
+                        )
+        )
 
 data <- data %>% 
   mutate(V_bias = s2/n)
@@ -129,7 +121,7 @@ data_core <- data %>% #eshragi overall
   filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
   filter(comments != "Intraoperative, off cardiopulmonary bypass" & comments != "Postoperative")
 
-data_core_op <- data%>% #eshragi intraop
+data_core_op <- data %>% #eshragi intraop
     filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
   filter (clinical_setting=="Intraoperative")
 
@@ -152,7 +144,7 @@ data_conflict <- data_core %>%
 ```{r format-result-function, include=FALSE}
 format_results <- function(group){
 out <- loa_maker(group$bias,group$V_bias, group$logs2, group$V_logs2)
-out <- round(out, digits=1)
+out <- round(out, digits=2)
 out <- out %>% 
   mutate(Participants = sum(group$n_count, na.rm=T)) %>% 
   mutate(Measurements = format(sum(group$N, na.rm = T), big.mark=",", scientific = FALSE)) %>% 
@@ -493,7 +485,7 @@ g <- ggplot(data.frame(x=seq(-20,20,length=200)), aes(x=x)) +
     
     g <- g + stat_function(fun=dnorm, args = list(pooled_bias, pooled_sd), colour ="lightcoral", alpha = 0.05) + 
       stat_function(fun=dnorm, args = list(pooled_bias, pooled_sd), colour = NA, geom="area", fill="lightcoral", alpha = 0.6) + 
-      scale_x_continuous(limits = c(-3.5,3.5)) + labs(x = expression('Difference between core and ZHF temperature measurements in'*~degree*C*''))+
+      scale_x_continuous(limits = c(-3.5,3.5), breaks = c(-2, -1, 0, 1, 2)) + labs(x = expression('Difference between core and ZHF temperature measurements in'*~degree*C*''))+
       scale_y_continuous(name = "Density \n", limits = c(0,2.5)) +  
       #labs(title = "\nOuter confidence intervals for pooled limits of agreement\n\n  Pooled limits of agreement")+
       theme(plot.title = element_text(hjust = 0.5, margin = margin(t=10, b=-32), size=10),
@@ -530,6 +522,8 @@ The mean bias between zero-heat-flux and nasopharyngeal temperature measurements
 Results from this systematic review have important implications for practice. Clinicians should consider the potential that a temperature measurement from a zero-heat-flux thermometer could be as much as one $^\circ C$ higher or lower than the true core temperature. This is similar to results from previous meta-analyses that compared other peripheral thermometers with core temperature measurements. However, these previous meta-analyses used statistical approaches that did not incorporate the magnitude of heteroogeneity in results between studies or sampling error. As such, it is possible that the zero-heat-flux thermometer is still more precise than these other peripheral thermometers.
 
 Whether or not teh zero-heat-flux thermometer is sufficiently accurate to be used in place of nasopharyngeal thermometers is unclear.
+
+We did not include studies that used the Temple Touch Pro. This is a thermometer similar to the zero-heat-flux device in that it is placed cutaneously, but the underlying technology is different. There have been x studies that evaluated the Temple Touch Pro device with promising results.
 
 ## Limitations
 

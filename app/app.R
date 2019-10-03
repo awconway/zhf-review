@@ -1,15 +1,10 @@
 library(shiny)
+library(shinyLP)
 library(shinydashboard)
 library(shinydashboardPlus)
 library(tidyverse)
 library(DT)
 
-# Manuscript screenshot resolution ----
-# resolution to be set to 600 DP for springer articles
-# screenshot image and open in preview, then go to tools > adjust size... 
-# 1. enter new desired resolution 
-# 2. check box for 'resample image' to ensure new image is created with additional pixels
-# note that this will new image retains the same dimensions as original picture but has extra pixels
 
 
 # Load data ----

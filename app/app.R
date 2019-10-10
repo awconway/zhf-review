@@ -4,6 +4,7 @@ library(shinydashboard)
 library(shinydashboardPlus)
 library(tidyverse)
 library(DT)
+library(robvis)
 
 
 
@@ -132,6 +133,7 @@ ui <- dashboardPage(
       menuItem("Results", tabName="Plot", icon=icon("chart-area")),
       menuItem("Data used in meta-analysis", tabName="DT", icon=icon("table")),
       menuItem("Extracted data", tabName="frame", icon=icon("file-excel")), 
+      menuItem("Risk-of-bias", tabName = "Rob", icon = icon("exclamation-circle")),
       
       br(), 
       
@@ -189,7 +191,19 @@ ui <- dashboardPage(
   
 
     tabItems(
-      tabItem(tabName="Plot", 
+      tabItem(tabName="Rob",
+              fluidRow(
+                tabBox(width = 12,
+                       tabPanel(p("Risk of bias across studies"),
+                                plotOutput("Rob_summary")
+                       ),
+                       tabPanel(p("Risk of bias in individual studies"),
+                                plotOutput("Rob_traffic_light")
+                       )
+                )
+              )
+      ),
+      tabItem(tabName="Plot",
              # column(12, h3(htmlOutput("title_selected_subset"))),
               fluidRow(
             column(12, 
@@ -405,7 +419,35 @@ ui <- dashboardPage(
 
 server <- shinyUI(function(input, output) {
   
+  output$Rob_summary <- renderPlot({
+    frame <- read_excel(here::here("manuscript", "data", "zhf_extracted.xlsx"))
+    
+    RoB <- frame %>% 
+      select(Study, RoB_selection, RoB_spoton, RoB_comparator, RoB_flow) %>% 
+      mutate(RoB_overall = if_else(RoB_selection == "low" &
+                                     RoB_spoton == "low" &
+                                     RoB_comparator == "low" &
+                                     RoB_flow == "low", "low", "high"))
+    
+    RoB[RoB == "unclear"] <- "some concerns"
+    
+    rob_summary(data = RoB, tool = "QUADAS-2", weighted = FALSE)
+  })
   
+  output$Rob_traffic_light <- renderPlot({
+    frame <- read_excel(here::here("manuscript", "data", "zhf_extracted.xlsx"))
+    
+    RoB <- frame %>% 
+      select(Study, RoB_selection, RoB_spoton, RoB_comparator, RoB_flow) %>% 
+      mutate(RoB_overall = if_else(RoB_selection == "low" &
+                                     RoB_spoton == "low" &
+                                     RoB_comparator == "low" &
+                                     RoB_flow == "low", "low", "high"))
+    
+    RoB[RoB == "unclear"] <- "some concerns"
+    
+    rob_traffic_light(data = RoB, tool = "QUADAS-2")
+  })
   
   output$frame <- renderUI({
    shinyLP::iframe(url_link = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSR9-h4cb4ONj7d5Yw9ksyEysVngocRSrMQ6vVjny-6f-d_0CZlhe3HhNG-zaQSJ6rWpBLCb5mVYcYK/pubhtml?widget=true&amp;headers=false", 
@@ -427,6 +469,7 @@ server <- shinyUI(function(input, output) {
       )
     })
     
+  
     out <- format_results(datasetInput())
 
 

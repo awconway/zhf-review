@@ -130,10 +130,11 @@ ui <- dashboardPage(
       # menu item tabs
       menuItem("Home", tabName="landing_page", icon=icon("home")),
       menuItem("Search strategy", tabName="search", icon=icon("search")),
+      menuItem("PRISMA flow diagram", tabName = "prisma", icon = icon("project-diagram")),
       menuItem("Results", tabName="Plot", icon=icon("chart-area")),
       menuItem("Data used in meta-analysis", tabName="DT", icon=icon("table")),
       menuItem("Extracted data", tabName="frame", icon=icon("file-excel")), 
-      menuItem("Risk-of-bias", tabName = "Rob", icon = icon("exclamation-circle")),
+      menuItem("Risk-of-bias", tabName = "rob", icon = icon("exclamation-circle")),
       
       br(), 
       
@@ -191,16 +192,21 @@ ui <- dashboardPage(
   
 
     tabItems(
-      tabItem(tabName="Rob",
+      tabItem(tabName = "rob",
               fluidRow(
                 tabBox(width = 12,
                        tabPanel(p("Risk of bias across studies"),
-                                plotOutput("Rob_summary")
+                                plotOutput("rob_summary")
                        ),
                        tabPanel(p("Risk of bias in individual studies"),
-                                plotOutput("Rob_traffic_light")
+                                plotOutput("rob_traffic_light")
                        )
                 )
+              )
+      ),
+      tabItem(tabName = "prisma",
+              fluidRow(width  = 12,
+                       plotOutput("prisma_diagram")
               )
       ),
       tabItem(tabName="Plot",
@@ -419,7 +425,7 @@ ui <- dashboardPage(
 
 server <- shinyUI(function(input, output) {
   
-  output$Rob_summary <- renderPlot({
+  output$rob_summary <- renderPlot({
     frame <- read_excel(here::here("manuscript", "data", "zhf_extracted.xlsx"))
     
     RoB <- frame %>% 
@@ -434,7 +440,7 @@ server <- shinyUI(function(input, output) {
     rob_summary(data = RoB, tool = "QUADAS-2", weighted = FALSE)
   })
   
-  output$Rob_traffic_light <- renderPlot({
+  output$rob_traffic_light <- renderPlot({
     frame <- read_excel(here::here("manuscript", "data", "zhf_extracted.xlsx"))
     
     RoB <- frame %>% 
@@ -447,6 +453,10 @@ server <- shinyUI(function(input, output) {
     RoB[RoB == "unclear"] <- "some concerns"
     
     rob_traffic_light(data = RoB, tool = "QUADAS-2")
+  })
+  
+  output$prisma_diagram <- renderPlot({
+    ggprisma::ggprisma(retrieved = 129, included = 15, duplicates = 35, full_text = 21, wrong_intervention = 4, wrong_comparator = 2, wrong_design = 1, awaiting_classification = 2)
   })
   
   output$frame <- renderUI({

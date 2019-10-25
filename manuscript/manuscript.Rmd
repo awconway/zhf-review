@@ -81,7 +81,7 @@ data.frame(m, bias_mean, sd2_est, tau_est, LOA_L, LOA_U, CI_L_mod, CI_U_mod, CI_
 ```
 
 ```{r load-data, include=FALSE}
-data <- readxl::read_xlsx(here::here("app", "data", "zhf_extracted.xlsx"))
+data <- readxl::read_xlsx(here::here("data", "zhf_extracted.xlsx"))
 ```
 
 

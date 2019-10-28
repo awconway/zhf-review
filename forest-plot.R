@@ -1,23 +1,37 @@
-library(ggimage)
-data_core$image <- sample("user.png",
-                          size=19, replace = TRUE)
-data_core$ruler <- sample("ruler.png",
-                          size=19, replace = TRUE)
+# library(ggimage)
+# data_core$image <- sample("user.png",
+#                           size=19, replace = TRUE)
+# data_core$ruler <- sample("ruler.png",
+#                           size=19, replace = TRUE)
 
+
+library(ggfittext)
+
+year <- data_core %>%
+  separate(Study, c("Study", "Year"), sep = ", ")  %>% 
+  mutate(Study = as.factor(Study)) %>% 
+  ggplot()+
+  geom_fit_text(aes(x=Study, y=0, label=Year, hjust="left"), place = "left", reflow=TRUE, grow = FALSE,
+                 position = position_dodge(width = 0.99), show.legend=FALSE)+
+  theme_void()+
+  coord_flip()
 
 study <- data_core %>% 
-  mutate(id = row_number()) %>% 
+  separate(Study, c("Study", "Year"), sep = ", ")  %>% 
+  mutate(id = row_number()) %>%  
+  mutate(Study = as.factor(Study)) %>% 
   ggplot()+
-  geom_text(aes(x=id, y=0, label=Study, hjust="left"))+
+  geom_fit_text(aes(x=Study, y=0, label=Study, hjust="left"), place = "left", reflow=TRUE, grow = FALSE,
+                position = position_dodge(width = 0.99), show.legend=FALSE)+
   theme_void()+
   coord_flip()
 
 
 results <- data_core %>% 
-  mutate(id = row_number()) %>% 
-  ggplot()+
-  geom_point(aes(x=id, y=bias), colour = "#6D9EC1")+
-  geom_linerange(aes(x=id, ymin=lower, ymax=upper), colour = "#6D9EC1", size=1)+
+  mutate(id = row_number()) %>%
+  ggplot(aes(x=Study, y=bias))+
+  geom_point(aes(x=Study, y=bias, colour=group), position = position_dodge(width = 0.99), show.legend=FALSE)+
+  geom_linerange(aes(x=Study, ymin=lower, ymax=upper, colour=group), size=1, position = position_dodge(width = 0.99), show.legend=FALSE)+
   coord_flip()+ 
   theme_void()+
   theme(
@@ -28,15 +42,18 @@ results <- data_core %>%
     panel.grid.minor = element_line(size = 0.25, linetype = 'solid',
                                     colour = "white")
         )+
-  scale_x_continuous(breaks = NULL)
-
-
+  scale_color_brewer(palette="Dark2")
 
 participants <- data_core %>% 
   mutate(id = row_number()) %>% 
-  ggplot()+
-    geom_linerange(aes(x=id, ymin=0, ymax=n), colour = "#930093", size=2)+
-  geom_label(aes(x=id, y=n, label = n), colour="#930093")+
+  mutate(Study = as.factor(Study)) %>% 
+  ggplot(aes(x=Study, y=n))+
+    geom_linerange(aes(x=Study, ymin=0, ymax=n, colour=group), 
+                   # colour = "#930093", 
+                   size=2, position = position_dodge(width = 0.99), show.legend=FALSE)+
+  geom_label(aes(x=Study, y=n, label = n, colour=group), 
+             # colour="#930093", 
+             position = position_dodge(width = 0.99), show.legend=FALSE)+
   theme_void()+
   coord_flip()+
   theme_void()+
@@ -46,16 +63,25 @@ participants <- data_core %>%
     panel.grid.major = element_line(size = 0.1, linetype = 'solid',
                                     colour = "#ffceff")
   )+
-  scale_x_continuous(breaks = NULL)+
-  geom_image(aes(x=id, y=-5, image=image), hjust="left")
+  scale_x_discrete(breaks = NULL)+ #removes horizontal grid lines
+  geom_text(aes( x=Study, y=-5, colour=group), 
+            label =  "\uf0c0", 
+            family =  "FontAwesome", 
+            size =  3.5,
+            # colour = "#930093",
+            vjust="center", position = position_dodge(width = 0.99), show.legend=FALSE)+
+  scale_color_brewer(palette="Dark2")+
+  scale_y_continuous(expand = expand_scale(mult = c(0.1, .1)))
+
 
 comparison <- data_core %>% 
   mutate(id = row_number()) %>% 
   ggplot()+
-  geom_text(aes(x=id, y=0, label = comparison), hjust="left")+
+  geom_fit_text(aes(x=Study, y=0, label = comparison, colour=group), place = "left", reflow=TRUE, grow = FALSE,
+            position = position_dodge(width = 0.99), show.legend=FALSE)+
   theme_void()+
-  coord_flip()
-
+  coord_flip()+
+  scale_color_brewer(palette="Dark2")
 # ruler <- data_core %>% 
 #   mutate(id = row_number()) %>% 
 #   ggplot()+
@@ -67,9 +93,24 @@ comparison <- data_core %>%
 patients <- data_core %>% 
   mutate(id = row_number()) %>% 
   ggplot()+
-  geom_text(aes(x=id, y=0, label = patients), hjust="left")+
+  geom_fit_text(aes(x=Study, y=0, label = patients, colour=group), place = "left", reflow=TRUE, grow = FALSE,
+                position = position_dodge(width = 0.99), show.legend=FALSE)+
   theme_void()+
-  coord_flip()
+  coord_flip()+
+  scale_color_brewer(palette="Dark2")
+
+comments <-  data_core %>% 
+  mutate(id = row_number()) %>% 
+  ggplot()+
+  geom_fit_text(aes(x=Study, y=0, label = comments, colour=group), place = "left", reflow=TRUE, grow = FALSE,
+                position = position_dodge(width = 0.99), show.legend=FALSE)+
+  # geom_text(aes(x=Study, y=0, label = comments, colour=group), hjust="left",
+  #           position = position_dodge(width = 0.99), show.legend=FALSE)+
+  theme_void()+
+  coord_flip()+
+  scale_color_brewer(palette="Dark2")
+
+
 
 # measurements <- data_core %>% 
 #   mutate(id = row_number()) %>% 
@@ -86,16 +127,18 @@ patients <- data_core %>%
 #   )+
 #   scale_x_continuous(breaks = NULL)
 
+####
 
-
-combined <- gridExtra::grid.arrange(study, 
+combined <- gridExtra::grid.arrange(study,
+                                    year,
                                     participants, 
                                     #measurements,
                                     # ruler,
                                     comparison,
                                     patients,
+                                    comments,
                                     results,
-                                    widths=c(5,6,2,5,7),
-                                    ncol=5)
+                                    ncol=7)
+
   
 ggsave(plot = combined, device = "pdf", "forest-plot.pdf", width = 500, units = "mm")

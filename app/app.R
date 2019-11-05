@@ -11,8 +11,8 @@ library(ggprisma)
 
 # Load data ----
 
-data <- readxl::read_xlsx(here::here("app", "data", "zhf_extracted.xlsx"))
-sum_findings <- readxl::read_xlsx(here::here("app", "data", "sum_findings.xlsx"))
+data <- readxl::read_xlsx(here::here("data", "zhf_extracted.xlsx"))
+sum_findings <- readxl::read_xlsx(here::here( "data", "sum_findings.xlsx"))
 
 # create additional columns for meta-analysis
 data <- data %>%
@@ -387,7 +387,7 @@ ui <- dashboardPage(
 server <- shinyUI(function(input, output) {
   
   output$Rob_summary <- renderPlot({
-    frame <- read_excel(here::here("app", "data", "zhf_extracted.xlsx"))
+    frame <- read_excel(here::here("data", "zhf_extracted.xlsx"))
     
     RoB <- frame %>% 
       select(Study, RoB_selection, RoB_spoton, RoB_comparator, RoB_flow) %>% 
@@ -402,7 +402,7 @@ server <- shinyUI(function(input, output) {
   })
   
   output$Rob_traffic_light <- renderPlot({
-    frame <- read_excel(here::here("app", "data", "zhf_extracted.xlsx"))
+    frame <- read_excel(here::here("data", "zhf_extracted.xlsx"))
     
     RoB <- frame %>% 
       select(Study, RoB_selection, RoB_spoton, RoB_comparator, RoB_flow) %>% 

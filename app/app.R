@@ -10,7 +10,7 @@ library(readxl)
 
 # Load data ----
 
-data <- readxl::read_xlsx(here::here("app", "data", "zhf_extracted.xlsx"), n_max = 27)
+data <- readxl::read_xlsx(here::here("app", "data", "zhf_extracted.xlsx"))
 sum_findings <- readxl::read_xlsx(here::here("app", "data", "sum_findings.xlsx"))
 
 # Functions for calculating the Bland-Altman meta-analysis ----
@@ -101,7 +101,7 @@ data_core_icu <- data %>% #eshragi postop
   filter(clinical_setting=="ICU" | clinical_setting=="Postoperative")
 
 data_conflict <- data_core %>% 
-  filter(`Funding/equipment/conflict with ZHF company` == "Yes")
+  filter(`Funding/equipment/conflict with ZHF company` == "No")
 
 #clean up comparison column, change to full word
 data$comparison <- sub("NPA", "Nasopharyngeal", data$comparison) 

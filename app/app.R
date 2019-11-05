@@ -6,60 +6,15 @@ library(tidyverse)
 library(DT)
 library(robvis)
 library(readxl)
-
+library(bama) #awconway/bama
+library(ggprisma)
 
 # Load data ----
 
 data <- readxl::read_xlsx(here::here("app", "data", "zhf_extracted.xlsx"))
 sum_findings <- readxl::read_xlsx(here::here("app", "data", "sum_findings.xlsx"))
 
-# Functions for calculating the Bland-Altman meta-analysis ----
-
-meta <-  function(Te,V_T){
-  m <- length(Te)
-  wt_FE=1/V_T
-  T_FE <- sum(Te*wt_FE)/sum(wt_FE)
-  Q <- sum(wt_FE*(Te - T_FE)^2)
-  S1 <- sum(wt_FE)
-  S2 <- sum(wt_FE^2)
-  o2 <- (Q - (m - 1))/(S1 - S2/S1)
-  wt_RE <- 1/(V_T + o2)
-  T_RE <- sum(Te*wt_RE)/sum(wt_RE)
-  V_T_RE_mod <- 1/sum(wt_RE)
-  V_T_RE_rve <- (m/(m-1))*sum(wt_RE^2*(Te - T_RE)^2)/(sum(wt_RE))^2
-  c(m,T_RE,o2,V_T_RE_mod, V_T_RE_rve)
-}
-loa_maker <- function(bias,V_bias,logs2,V_logs2) {
-  bias_row=meta(bias, V_bias)
-  logs2_row=meta(logs2, V_logs2)
-  bias_mean <- bias_row[2]
-  sd2_est <- exp(logs2_row[2])
-  tau_est <- bias_row[3]
-  LOA_L <- bias_mean - 2*sqrt(sd2_est + tau_est)
-  LOA_U <- bias_mean + 2*sqrt(sd2_est + tau_est)
-  m <- bias_row[1]
-  tcrit <- qt(1-.05/2,m-1)
-  B1 <- sd2_est^2/(sd2_est + tau_est)
-  B2 <- tau_est^2/(sd2_est + tau_est)
-  wt <- 1/V_bias
-  S1 <- sum(wt)
-  S2 <- sum(wt^2)
-  S3 <- sum(wt^3)
-  A0 <- 2*(m-1)/(S1-S2/S1)^2
-  A1 <- 4/(S1 - S2/S1)
-  A2 <- 2*(S2-2*S3/S1+S2^2/S1^2)/(S1-S2/S1)^2
-  V_logT2 <- A0/tau_est^2 + A1/tau_est + A2
-  V_logT2 <- 2/sum((V_bias + tau_est)^(-2))
-  V_LOA_mod <- bias_row[4] + B1*logs2_row[4] + B2*V_logT2
-  V_LOA_rve <- bias_row[5] + B1*logs2_row[5] + B2*V_logT2
-  CI_L_mod <- LOA_L - tcrit*sqrt(V_LOA_mod)
-  CI_U_mod <- LOA_U + tcrit*sqrt(V_LOA_mod)
-  CI_L_rve <- LOA_L - tcrit*sqrt(V_LOA_rve)
-  CI_U_rve <- LOA_U + tcrit*sqrt(V_LOA_rve)
-  data.frame(m, bias_mean, sd2_est, tau_est, LOA_L, LOA_U, CI_L_mod, CI_U_mod, CI_L_rve, CI_U_rve)
-}
-
-#Primary meta-analysis (all included studies)
+# create additional columns for meta-analysis
 data <- data %>%
   mutate(c = N/n)
 
@@ -78,6 +33,8 @@ data <- data %>%
 
 data <- data %>% 
   mutate(V_logs2 = 2/(n-1))
+
+# Create subgroups
 
 data_NPA <- data %>% 
   filter(comparison == "NPA")
@@ -110,8 +67,9 @@ data$comparison <- sub("Iliac", "Iliac artery", data$comparison)
 data$comparison <- sub("Ax", "Axillary artery", data$comparison) 
 data$comparison <- sub("Eso", "Esophageal", data$comparison)
 
+# Clean up results
 format_results <- function(group){
-  out <- loa_maker(group$bias,group$V_bias, group$logs2, group$V_logs2)
+  out <- bama::loa_maker(group$bias,group$V_bias, group$logs2, group$V_logs2)
   out <- out %>% 
     mutate(Participants = sum(group$n_count, na.rm=T)) %>% 
     mutate(Measurements = format(sum(group$N, na.rm = T), big.mark=",", scientific = FALSE)) %>% 
@@ -130,10 +88,11 @@ ui <- dashboardPage(
       # menu item tabs
       menuItem("Home", tabName="landing_page", icon=icon("home")),
       menuItem("Search strategy", tabName="search", icon=icon("search")),
-      menuItem("Results", tabName="Plot", icon=icon("chart-area")),
+      menuItem("Study selection", tabName="selection", icon=icon("hand-pointer")),
+      menuItem("Meta-analysis results", tabName="Plot", icon=icon("chart-area")),
       menuItem("Data used in meta-analysis", tabName="DT", icon=icon("table")),
       menuItem("Extracted data", tabName="frame", icon=icon("file-excel")), 
-      menuItem("Risk-of-bias", tabName = "Rob", icon = icon("exclamation-circle")),
+      menuItem("Risk of bias", tabName = "Rob", icon = icon("exclamation-circle")),
       
       br(), 
       
@@ -203,21 +162,29 @@ ui <- dashboardPage(
                 )
               )
       ),
+      
+      tabItem(tabName = "selection",
+              fluidRow(align="center",
+                       column(12,
+                              img(src="figure-one.png", height="60%", width="60%")
+                              )
+                       )
+        
+      ),
+      
+      
       tabItem(tabName="Plot",
              # column(12, h3(htmlOutput("title_selected_subset"))),
-              fluidRow(
+              fluidRow(align="center",
             column(12, 
-                   h4("Pooled summary statistics:"), # title above summary stats table
                    DT::dataTableOutput("summary")), # summary = pooled summary stats table under the plot
                    plotOutput("plot"), 
                    br(),
             br(),
             br(),
             br(),
-            br(),
-            br(),
                    h2("This plot shows comparisons between core and zero-heat-flux thermometers within and across studies.") ,
-                   h4("Blue curves are distributions of the differences between measurements from zero-heat-flux (ZHF) sensors and core temperature measurements in individual studies. The red curve is the distribution of the pooled estimate."),  # caption = caption under the plot
+                   h4("Blue curves are distributions of the differences in individual studies. The red curve is the distribution of the pooled estimate."),  # caption = caption under the plot
             
             
             # original shiny code for boxes -----
@@ -420,7 +387,7 @@ ui <- dashboardPage(
 server <- shinyUI(function(input, output) {
   
   output$Rob_summary <- renderPlot({
-    frame <- read_excel(here::here("manuscript", "data", "zhf_extracted.xlsx"))
+    frame <- read_excel(here::here("app", "data", "zhf_extracted.xlsx"))
     
     RoB <- frame %>% 
       select(Study, RoB_selection, RoB_spoton, RoB_comparator, RoB_flow) %>% 
@@ -435,7 +402,7 @@ server <- shinyUI(function(input, output) {
   })
   
   output$Rob_traffic_light <- renderPlot({
-    frame <- read_excel(here::here("manuscript", "data", "zhf_extracted.xlsx"))
+    frame <- read_excel(here::here("app", "data", "zhf_extracted.xlsx"))
     
     RoB <- frame %>% 
       select(Study, RoB_selection, RoB_spoton, RoB_comparator, RoB_flow) %>% 
@@ -520,25 +487,24 @@ server <- shinyUI(function(input, output) {
     output$summary <- DT::renderDataTable({
       # add hover tags for summary table header
       out %>% 
-        mutate_if(is.numeric, ~round(., 1)) %>% 
-      DT::datatable(out, width = "100%",   options = list(scrollX = TRUE, paging = FALSE, searching = FALSE, info = FALSE, sort = FALSE, processing = FALSE, 
+        mutate_if(is.numeric, ~round(., 1)) %>%
+        select(Studies, Comparisons, Participants, Measurements) %>% 
+      DT::datatable(width = "100%",   
+                    options = list(scrollX = TRUE,
+                                   columnDefs = list(list(className = 'dt-center', targets = "_all")),
+                                   paging = FALSE, 
+                                   searching = FALSE, 
+                                   info = FALSE, 
+                                   sort = FALSE, 
+                                   processing = FALSE, 
                                               #JS code to add tooltips, set container: 'body' to prevent shifting of header with mouse hover
                                               initComplete = JS("function(settings, json){
-                                      $('#summary th:eq(0)').each(function(){this.setAttribute( 'title', 'Number of studies included in subset' );});
-                                      $('#summary th:eq(3)').each(function(){this.setAttribute( 'title', 'Pooled estimate of mean differences calculated as comparator-ZHF in ˚C' );});
-                                      $('#summary th:eq(4)').each(function(){this.setAttribute( 'title', 'Pooled standard deviation of differences' );});
-                                      $('#summary th:eq(5)').each(function(){this.setAttribute( 'title', 'Variation in bias between studies' );});
-                                      $('#summary th:eq(6)').each(function(){this.setAttribute( 'title', 'Lower 95% LoA calculated from pooled estimates of bias and standard deviation of differences' );});
-                                      $('#summary th:eq(7)').each(function(){this.setAttribute( 'title', 'Upper 95% LoA calculated from pooled estimates of bias and standard deviation of differences' );});
-                                      $('#summary th:eq(8)').each(function(){this.setAttribute( 'title', 'Model-based random-effects meta-analysis estimate of lower CI for LoA' );});
-                                      $('#summary th:eq(9)').each(function(){this.setAttribute( 'title', 'Model-based random-effects meta-analysis estimate of upper CI for LoA' );});
-                                      $('#summary th:eq(1)').each(function(){this.setAttribute( 'title', 'Number of participants' );});
-                                      $('#summary th:eq(2)').each(function(){this.setAttribute( 'title', 'Number of paired measurements' );});
                                       $('#summary th').tooltip({container: 'body'});
                                       $(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});
-                                      
 
-                                     }")), rownames = FALSE
+
+                                     }")
+                                   ), rownames = FALSE
                     ,
                     escape =F) 
       
@@ -642,8 +608,8 @@ server <- shinyUI(function(input, output) {
           DT::datatable(dt_impl(), class = "compact", colnames = NULL, rownames = NULL, options = list(dom = "t", scrollX=T, sort = FALSE, paging=F, scrollY=T)) %>%
       formatStyle( columns =1, background = 'white', color = 'black')
     })
+
   
-    
     
     # render reactive table (dt)
     output$dt<- DT::renderDataTable({

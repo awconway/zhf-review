@@ -89,10 +89,10 @@ ui <- dashboardPage(
       menuItem("Home", tabName="landing_page", icon=icon("home")),
       menuItem("Search strategy", tabName="search", icon=icon("search")),
       menuItem("Study selection", tabName="selection", icon=icon("hand-pointer")),
+      menuItem("Risk of bias", tabName = "Rob", icon = icon("exclamation-circle")),
       menuItem("Meta-analysis results", tabName="Plot", icon=icon("chart-area")),
       menuItem("Data used in meta-analysis", tabName="DT", icon=icon("table")),
       menuItem("Extracted data", tabName="frame", icon=icon("file-excel")), 
-      menuItem("Risk of bias", tabName = "Rob", icon = icon("exclamation-circle")),
       
       br(), 
       
@@ -183,7 +183,7 @@ ui <- dashboardPage(
             br(),
             br(),
             br(),
-                   h2("This plot shows comparisons between core and zero-heat-flux thermometers within and across studies.") ,
+                   h2("This plot shows comparisons between comparator and zero-heat-flux thermometers within and across studies.") ,
                    h4("Blue curves are distributions of the differences in individual studies. The red curve is the distribution of the pooled estimate."),  # caption = caption under the plot
             
             

@@ -8,7 +8,7 @@ library(robvis)
 library(readxl)
 library(bama) #awconway/bama
 library(ggprisma)
-
+library(waiter)
 # Load data ----
 
 data <- readxl::read_xlsx(here::here("data", "zhf_extracted.xlsx"))
@@ -108,7 +108,9 @@ ui <- dashboardPage(
       
     ) 
   ),
-  dashboardBody(
+  dashboardBody(  
+    use_waiter(include_js = FALSE),
+
     tags$head(tags$style(HTML(
     # increase padding on "select display format" in side bar  
     '#select_format {
@@ -381,10 +383,12 @@ ui <- dashboardPage(
 </div>
 ')
               ))
-  )) #end dashboardBody
+  )  ,  show_waiter_on_load(spin_folding_cube()) 
+) #end dashboardBody
 ) #end dashboardPage
 
 server <- shinyUI(function(input, output) {
+  Sys.sleep(3) # do something that takes time
   
   output$Rob_summary <- renderPlot({
     frame <- read_excel(here::here("data", "zhf_extracted.xlsx"))
@@ -671,6 +675,7 @@ output$dt_selected_subset <- renderUI({HTML(paste("Comparison between", tolower(
 #                                          estimates of limits of agreement (LoA) between", tolower(input$dataset), "and ZHF thermometry (ie. population LoA)."))
 # #}) # end of output$caption
 
+hide_waiter()
 
 }) # end of server
 

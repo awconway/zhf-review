@@ -328,7 +328,7 @@ ui <- dashboardPage(
               column(12, 
                      div(class = "jumbotron", style="background:transparent !important", 
                          h1("Accuracy of zero-heat-flux temperature monitoring"), p("A systematic review and meta-analysis"),
-                         p(a(class = "btn btn-primary btn-lg button", id='tabBut', "Click here to access the full review (link will work when available)")))
+                         p(a(class = "btn btn-primary btn-lg button", id='tabBut', "Click here to access the full review")))
                      ),
               HTML('<div class="row">
   <div class="col-sm-12">

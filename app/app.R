@@ -8,11 +8,11 @@ library(robvis)
 library(readxl)
 library(bama) #awconway/bama
 library(ggprisma)
-
+library(waiter)
 # Load data ----
 
-data <- readxl::read_xlsx(here::here("app", "data", "zhf_extracted.xlsx"))
-sum_findings <- readxl::read_xlsx(here::here("app", "data", "sum_findings.xlsx"))
+data <- readxl::read_xlsx(here::here("data", "zhf_extracted.xlsx"))
+sum_findings <- readxl::read_xlsx(here::here( "data", "sum_findings.xlsx"))
 
 # create additional columns for meta-analysis
 data <- data %>%
@@ -89,10 +89,10 @@ ui <- dashboardPage(
       menuItem("Home", tabName="landing_page", icon=icon("home")),
       menuItem("Search strategy", tabName="search", icon=icon("search")),
       menuItem("Study selection", tabName="selection", icon=icon("hand-pointer")),
+      menuItem("Risk of bias", tabName = "Rob", icon = icon("exclamation-circle")),
       menuItem("Meta-analysis results", tabName="Plot", icon=icon("chart-area")),
       menuItem("Data used in meta-analysis", tabName="DT", icon=icon("table")),
       menuItem("Extracted data", tabName="frame", icon=icon("file-excel")), 
-      menuItem("Risk of bias", tabName = "Rob", icon = icon("exclamation-circle")),
       
       br(), 
       
@@ -108,7 +108,9 @@ ui <- dashboardPage(
       
     ) 
   ),
-  dashboardBody(
+  dashboardBody(  
+    use_waiter(include_js = FALSE),
+
     tags$head(tags$style(HTML(
     # increase padding on "select display format" in side bar  
     '#select_format {
@@ -183,7 +185,7 @@ ui <- dashboardPage(
             br(),
             br(),
             br(),
-                   h2("This plot shows comparisons between core and zero-heat-flux thermometers within and across studies.") ,
+                   h2("This plot shows comparisons between comparator and zero-heat-flux thermometers within and across studies.") ,
                    h4("Blue curves are distributions of the differences in individual studies. The red curve is the distribution of the pooled estimate."),  # caption = caption under the plot
             
             
@@ -381,13 +383,15 @@ ui <- dashboardPage(
 </div>
 ')
               ))
-  )) #end dashboardBody
+  )  ,  show_waiter_on_load(spin_folding_cube()) 
+) #end dashboardBody
 ) #end dashboardPage
 
 server <- shinyUI(function(input, output) {
+  Sys.sleep(3) # do something that takes time
   
   output$Rob_summary <- renderPlot({
-    frame <- read_excel(here::here("app", "data", "zhf_extracted.xlsx"))
+    frame <- read_excel(here::here("data", "zhf_extracted.xlsx"))
     
     RoB <- frame %>% 
       select(Study, RoB_selection, RoB_spoton, RoB_comparator, RoB_flow) %>% 
@@ -402,7 +406,7 @@ server <- shinyUI(function(input, output) {
   })
   
   output$Rob_traffic_light <- renderPlot({
-    frame <- read_excel(here::here("app", "data", "zhf_extracted.xlsx"))
+    frame <- read_excel(here::here("data", "zhf_extracted.xlsx"))
     
     RoB <- frame %>% 
       select(Study, RoB_selection, RoB_spoton, RoB_comparator, RoB_flow) %>% 
@@ -671,6 +675,7 @@ output$dt_selected_subset <- renderUI({HTML(paste("Comparison between", tolower(
 #                                          estimates of limits of agreement (LoA) between", tolower(input$dataset), "and ZHF thermometry (ie. population LoA)."))
 # #}) # end of output$caption
 
+hide_waiter()
 
 }) # end of server
 

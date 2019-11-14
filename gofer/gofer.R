@@ -84,11 +84,12 @@ year <- data_core %>%
   distinct(Study,.keep_all = TRUE) %>% 
   separate(Study, c("Study", "Year"), sep = ", ")  %>% 
   mutate(Study = as.factor(Study)) %>% 
-  ggplot(aes(x=Study, y=0,  label=Year))+
+  mutate(Year = as.numeric(Year)) %>%
+  ggplot(aes(x=reorder(Study, Year), y=0,  label=Year))+
   geom_label(fill="#d4007f", colour = "white", fontface = "bold")+
   theme_void()+
   coord_flip()
-
+year
 study <- data_core %>% 
   distinct(Study,.keep_all = TRUE) %>% 
   separate(Study, c("Study", "Year"), sep = ", ")  %>% 
@@ -106,6 +107,7 @@ results <- data_core %>%
   ggplot()+
   geom_point(aes(x=Study, y=bias, alpha=group, size=n), colour = "#002a60", position = position_dodge(width = dodge_width), show.legend=FALSE)+
   geom_linerange(aes(x=Study, ymin=lower, ymax=upper, alpha=group), colour = "#002a60",size=1, position = position_dodge(width = dodge_width), show.legend=FALSE)+
+  geom_hline(yintercept = primary$bias_mean, linetype = 2, col = "#002a60") +
   scale_alpha_discrete(range = c(rep(1,4)))+
   coord_flip()+ 
   theme_void()+
@@ -290,18 +292,20 @@ demographics <- readxl::read_xlsx("~/zhf-review/gofer/study-characteristics.xlsx
 
 # Age  
   age <- ggplot(demographics) +
-    geom_pointrange(aes(x = Study, y = mean_age, ymin = lower_mean, ymax = upper_mean), col = "blue") +
-    geom_point(aes(x = Study, y = median_age), col = "red", shape = "diamond", size = 4) +
-    geom_errorbar(aes(x = Study, ymin = lower_IQR, ymax = upper_IQR), col = "red", width = 0.5) +
+    geom_point(aes(x = Study, y = mean_age), size = 2, col = "orange red") +
+    geom_linerange(aes(x = Study, ymin = lower_mean, ymax = upper_mean), size = 1, col = "orange red") +
+    geom_point(aes(x = Study, y = median_age), size = 3, col = "orange", shape = "diamond") +
+    geom_errorbar(aes(x = Study, ymin = lower_IQR, ymax = upper_IQR), size = 1, col = "orange", width = 0.5) +
+    
+    theme_void() +
     
     coord_flip() +
     
-    theme_void()+
     theme(
-      panel.background = element_rect(fill = "gray", colour = "white",
+      panel.background = element_rect(fill = "white", colour = "white",
                                       size = 2, linetype = "solid"),
       panel.grid.major = element_line(size = 0.5, linetype = 'solid',
-                                      colour = "white"), 
+                                      colour = "#FFE5CC"), 
       panel.grid.minor = element_blank(),
       axis.text.x=element_text()
     )+
@@ -345,16 +349,16 @@ demographics <- readxl::read_xlsx("~/zhf-review/gofer/study-characteristics.xlsx
   
  temp <- ggplot(demographics, aes(x = Study, ymin = lower_temp, ymax = upper_temp)) +
     
-    geom_errorbar(size = 1, color = "orange", width = 0.5) +
+    geom_errorbar(size = 1, color = "#990099", width = 0.5) +
     
     coord_flip() +
  
  theme_void()+
    theme(
-     panel.background = element_rect(fill = "#FFE5CC", colour = "white",
+     panel.background = element_rect(fill = "white", colour = "white",
                                      size = 2, linetype = "solid"),
      panel.grid.major = element_line(size = 0.5, linetype = 'solid',
-                                     colour = "white"), 
+                                     colour = "#FFCCFF"), 
      panel.grid.minor = element_blank(),
      axis.text.x=element_text()
    )+
@@ -545,7 +549,7 @@ gt <- gt_grid  %>%
   
   # Comparison column 
   
-  gtable_add_grob(ggplotGrob(comparison), t=4, l=12, b=17) %>% 
+  gtable_add_grob(ggplotGrob(comparison), t=4, l=14, b=17) %>% 
   gtable_add_grob(ggplotGrob(ggplot(data=NULL,
                                     aes(x=0,y=0, 
                                         label = "Comparison"))+
@@ -555,11 +559,11 @@ gt <- gt_grid  %>%
                                  reflow = TRUE)+
                                theme_void()+
                                theme(plot.background = element_rect(fill = "white"))
-  ), t=3,l=12) %>% 
+  ), t=3,l=14) %>% 
   
   # temperature range column
   
-  gtable_add_grob(temp_grob, t=4,l=13, b=17) %>%
+  gtable_add_grob(temp_grob, t=4,l=12, b=17) %>%
   gtable_add_grob(ggplotGrob(ggplot(data=NULL,
                                     aes(x=0,y=0, 
                                         label = "Range (°C)"))+
@@ -568,19 +572,19 @@ gt <- gt_grid  %>%
                                  place = "center")+
                                theme_void()+
                                theme(plot.background = element_rect(fill = "white"))
-  ), t=3,l=13) %>% 
+  ), t=3,l=12) %>% 
   
-  gtable_add_grob(temp_axis, t=18,l=13) %>% # takes axis text from ma and adds to bottom
+  gtable_add_grob(temp_axis, t=18,l=12) %>% # takes axis text from ma and adds to bottom
   
   
   # Comments column
   
-  gtable_add_grob(ggplotGrob(comments), t=4, l=14, b=17) %>% 
+  gtable_add_grob(ggplotGrob(comments), t=4, l=15, b=17) %>% 
   
   
   # Sample size 
   
-  gtable_add_grob(ggplotGrob(participants), t=4,l=15, b=17) %>%
+  gtable_add_grob(ggplotGrob(participants), t=4,l=13, b=17) %>%
   gtable_add_grob(ggplotGrob(ggplot(data=NULL,
                                     aes(x=0,y=0, 
                                         label = "Sample size"))+
@@ -589,7 +593,7 @@ gt <- gt_grid  %>%
                                  place = "center")+
                                theme_void()+
                                theme(plot.background = element_rect(fill = "white"))
-  ), t=3,l=15) %>% 
+  ), t=3,l=13) %>% 
   
   # paired measurements
   

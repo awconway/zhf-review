@@ -30,7 +30,7 @@ study <- data_core %>%
 
 results <- data_core %>% 
   ggplot()+
-  geom_point(aes(x=Study, y=bias, alpha=group), colour = "#002a60", position = position_dodge(width = dodge_width), show.legend=FALSE)+
+  geom_point(aes(x=Study, y=bias, alpha=group, size=n), colour = "#002a60", position = position_dodge(width = dodge_width), show.legend=FALSE)+
   geom_linerange(aes(x=Study, ymin=lower, ymax=upper, alpha=group), colour = "#002a60",size=1, position = position_dodge(width = dodge_width), show.legend=FALSE)+
   scale_alpha_discrete(range = c(rep(1,4)))+
   coord_flip()+ 
@@ -107,6 +107,9 @@ measurements <- data_core %>%
 
 
 comparison <- data_core %>% 
+  mutate(comparison = recode(comparison, Eso = "Esophageal")) %>%
+  mutate(comparison = recode(comparison, PA = "Pulmonary artery")) %>% 
+  mutate(comparison = recode(comparison, Ax = "Axillary")) %>% 
   ggplot()+
   geom_fit_text(aes(x=Study, y=0, label = comparison, alpha=group), place = "center", reflow=TRUE, 
             position = position_dodge(width = dodge_width), show.legend=FALSE)+
@@ -178,12 +181,17 @@ RoB_text <- data_core %>%
   scale_alpha_discrete(range = c(rep(1,4)))
   
 
-  ma <- primary %>% 
-  ggplot()+
-  geom_point(aes(x=0, y=bias_mean), colour="#002a60")+
-  geom_linerange(aes(x=0, ymin=CI_L_rve, ymax=CI_U_rve), size=1, colour="#002a60")+
-  coord_flip()+ 
-  theme_void()+
+  ma <-  ggplot() +
+    geom_polygon(aes(x = c(primary$CI_U_rve, primary$bias_mean, primary$CI_L_rve, primary$bias_mean), 
+                     y = c(primary$bias_mean, 1, primary$bias_mean, -1)),
+                 colour = "#002a60",
+                 fill=NA,
+                 size=2)+
+    geom_segment(aes(x=primary$bias_mean,xend=primary$bias_mean, y=-1, yend=1),
+                 colour = "#002a60",
+                 fill=NA,
+                 size=2)+
+    theme_void()+
   theme(
     panel.background = element_rect(fill = "#BFD5E3", colour = "white",
                                     size = 2, linetype = "solid"),
@@ -192,10 +200,10 @@ RoB_text <- data_core %>%
     panel.grid.minor = element_blank(),
     axis.text.x=element_text()
   )+
-  scale_x_continuous(expand=c(0,0), limits=c(-1,1))+
-  scale_y_continuous(expand=c(0.1,0.1), limits=c(min(data_core$lower),max(data_core$upper)))+
-  scale_x_discrete(breaks = NULL)  #removes horizontal grid lines
-
+  scale_y_continuous(expand=c(0,0), limits=c(-1,1))+
+  scale_x_continuous(expand=c(0.1,0.1), limits=c(min(data_core$lower),max(data_core$upper)))+
+  scale_y_discrete(breaks = NULL)  #removes horizontal grid lines
+  
   ma_grob <- ggplotGrob(ma)
   ma_axis <- ma_grob$grobs[[which(ma_grob$layout$name == "axis-b")]]$children$axis[2] 
   
@@ -203,27 +211,36 @@ RoB_text <- data_core %>%
   ma_grob$heights[ma_grob$layout$t[which(ma_grob$layout$name == "axis-b")]] <- unit(0, "cm")
   
 # using gtable seems to be the best option - see here for documentation: https://gtable.r-lib.org/index.html
-RoB_img <- png::readPNG("RoB-wide.png")
+RoB_img <- png::readPNG("RoB_wide.png")
   
 gt_grid <- gtable(widths = unit(c(0.05, #left space
                                   1,# First author
                                   0.5,# Year
                                   0.5, # Country
-                                  1, #population
-                                  0.6,#Rob_text
+                                  1.2, #population
+                                  0.2, # space around RoB
+                                  0.8,#Rob_text
                                   0.2,#Rob_icon
+                                  0.2, #Space around RoB
                                   1, # Age,
                                   1, # Sex
-                                  1,#Comparison thermometer
+                                  1.3,#Comparison thermometer
                                   1, #temperature range
                                   1,# Comments
-                                  1,# Participants
+                                  1.3,# Participants
                                   1.8,# Paired measurements
                                   1.5,# Results
                                   0.1, # right space for meta-analysis
                                   0.05 #Right space
                                   ), 'null'), 
-                  heights = unit(c(0.1,0.5,0.5,rep(1,length(unique(data_core$Study))),0.5,0.2, 0.1), 'null'))
+                  heights = unit(c(0.1, # top outer space
+                                   0.5, # section headers
+                                   0.5, # Column headers
+                                   rep(1,length(unique(data_core$Study))),# study rows
+                                   0.5, # meta-analysis and other axis text row
+                                   0.2, # meta-analysis axis text row
+                                   0.1 # bottom outer space
+                                   ), 'null'))
 
 gtable_show_layout(gt_grid) # use this to see layout
 gt <- gt_grid  %>%
@@ -232,8 +249,9 @@ gt <- gt_grid  %>%
   
   gtable_add_grob(ggplotGrob(ggplot(data=NULL,
                                     aes(x=0,y=0, 
-                                        label = "STUDY DESIGN"))+
-                               geom_fit_text(colour = "white",
+                                        label = "\uf05a STUDY DESIGN"))+
+                               geom_fit_text(family='fontawesome',
+                                            colour = "white",
                                              fontface="bold",
                                              place = "center",
                                              grow = FALSE)+
@@ -290,23 +308,25 @@ gt <- gt_grid  %>%
   
   # RoB_text column
   
-  gtable_add_grob(ggplotGrob(RoB_text), t=4, l=6, b=17) %>% 
-  gtable_add_grob(ggplotGrob(RoB_icon), t=4, l=7, b=17) %>%
-  gtable_add_grob(rasterGrob(RoB_img), t=3, l=6, r=7) %>% 
+  gtable_add_grob(ggplotGrob(RoB_text), t=4, l=7, b=17) %>% 
+  gtable_add_grob(ggplotGrob(RoB_icon), t=4, l=8, b=17) %>%
+  gtable_add_grob(rasterGrob(RoB_img), t=3, l=6, r=9) %>% 
   gtable_add_grob(ggplotGrob(ggplot(data=NULL,
                                     aes(x=0,y=0, 
-                                        label = "STUDY QUALITY"))+
-                               geom_fit_text(colour = "white",
+                                        label = "\uf046 RISK OF BIAS"))+
+                               geom_fit_text(
+                                 family="fontawesome",
+                                 colour = "white",
                                              fontface="bold",
                                              place = "center",
                                              grow = FALSE)+
                                theme_void()+
                                theme(plot.background = element_rect(fill = "#52ae32"))
-  ), t=2,l=6, r=7) %>% 
+  ), t=2,l=6, r=9) %>% 
   
   # Age column
   
-  gtable_add_grob(nullGrob(), t=4,l=8, b=17) %>%
+  gtable_add_grob(nullGrob(), t=4,l=10, b=17) %>%
   gtable_add_grob(ggplotGrob(ggplot(data=NULL,
                                     aes(x=0,y=0, 
                                         label = "Age"))+
@@ -315,11 +335,11 @@ gt <- gt_grid  %>%
                                  place = "center")+
                                theme_void()+
                                theme(plot.background = element_rect(fill = "white"))
-  ), t=3,l=8) %>% 
+  ), t=3,l=10) %>% 
   
   # Sex column
   
-  gtable_add_grob(nullGrob(), t=4,l=9, b=17) %>%
+  gtable_add_grob(nullGrob(), t=4,l=11, b=17) %>%
   gtable_add_grob(ggplotGrob(ggplot(data=NULL,
                                     aes(x=0,y=0, 
                                         label = "Sex"))+
@@ -328,36 +348,39 @@ gt <- gt_grid  %>%
                                  place = "center")+
                                theme_void()+
                                theme(plot.background = element_rect(fill = "white"))
-  ), t=3,l=9) %>% 
+  ), t=3,l=11) %>% 
   
   # Participants section header 
   gtable_add_grob(ggplotGrob(ggplot(data=NULL,
                                     aes(x=0,y=0, 
-                                        label = "PARTICIPANTS"))+
-                               geom_fit_text(colour = "white",
+                                        label = "\uf007 PARTICIPANTS"))+
+                               geom_fit_text(
+                                 family="fontawesome",
+                                 colour = "white",
                                              fontface="bold",
                                              place = "center",
                                              grow = FALSE)+
                                theme_void()+
                                theme(plot.background = element_rect(fill = "#ee7219"))
-  ), t=2,l=8, r=9) %>% 
+  ), t=2,l=10, r=11) %>% 
   
   # Temperature section header
   
   gtable_add_grob(ggplotGrob(ggplot(data=NULL,
                                     aes(x=0,y=0, 
-                                        label = "TEMPERATURE"))+
+                                        label = "\uf06d TEMPERATURE MEASUREMENTS"))+
                                geom_fit_text(colour = "white",
+                                             family = "fontawesome",
                                              fontface="bold",
                                              place = "center",
                                              grow = FALSE)+
                                theme_void()+
                                theme(plot.background = element_rect(fill = "#930093"))
-  ), t=2,l=10, r=14) %>% 
+  ), t=2,l=12, r=16) %>% 
   
   # Comparison column 
   
-  gtable_add_grob(ggplotGrob(comparison), t=4, l=10, b=17) %>% 
+  gtable_add_grob(ggplotGrob(comparison), t=4, l=12, b=17) %>% 
   gtable_add_grob(ggplotGrob(ggplot(data=NULL,
                                     aes(x=0,y=0, 
                                         label = "Comparison"))+
@@ -367,29 +390,29 @@ gt <- gt_grid  %>%
                                  reflow = TRUE)+
                                theme_void()+
                                theme(plot.background = element_rect(fill = "white"))
-  ), t=3,l=10) %>% 
+  ), t=3,l=12) %>% 
   
   # temperature range column
   
-  gtable_add_grob(nullGrob(), t=4,l=11, b=17) %>%
+  gtable_add_grob(nullGrob(), t=4,l=13, b=17) %>%
   gtable_add_grob(ggplotGrob(ggplot(data=NULL,
                                     aes(x=0,y=0, 
-                                        label = "Temperature range"))+
+                                        label = "Range (°C)"))+
                                geom_fit_text(
                                  fontface="bold",
                                  place = "center")+
                                theme_void()+
                                theme(plot.background = element_rect(fill = "white"))
-  ), t=3,l=11) %>% 
+  ), t=3,l=13) %>% 
   
   # Comments column
   
-  gtable_add_grob(ggplotGrob(comments), t=4, l=12, b=17) %>% 
+  gtable_add_grob(ggplotGrob(comments), t=4, l=14, b=17) %>% 
   
   
   # Sample size 
   
-  gtable_add_grob(ggplotGrob(participants), t=4,l=13, b=17) %>%
+  gtable_add_grob(ggplotGrob(participants), t=4,l=15, b=17) %>%
   gtable_add_grob(ggplotGrob(ggplot(data=NULL,
                                     aes(x=0,y=0, 
                                         label = "Sample size"))+
@@ -398,11 +421,11 @@ gt <- gt_grid  %>%
                                  place = "center")+
                                theme_void()+
                                theme(plot.background = element_rect(fill = "white"))
-  ), t=3,l=13) %>% 
+  ), t=3,l=15) %>% 
   
   # paired measurements
   
-  gtable_add_grob(ggplotGrob(measurements), t=4, l=14, b=17) %>% 
+  gtable_add_grob(ggplotGrob(measurements), t=4, l=16, b=17) %>% 
   gtable_add_grob(ggplotGrob(ggplot(data=NULL,
                                     aes(x=0,y=0, 
                                         label = "Paired measurements"))+
@@ -412,24 +435,26 @@ gt <- gt_grid  %>%
                                  reflow = TRUE)+
                                theme_void()+
                                theme(plot.background = element_rect(fill = "white"))
-  ), t=3,l=14) %>% 
+  ), t=3,l=16) %>% 
   
   # Results section header
   
     gtable_add_grob(ggplotGrob(ggplot(data=NULL,
                                       aes(x=0,y=0, 
-                                          label = "RESULTS"))+
-                                        geom_fit_text(colour = "white",
+                                          label = "\uf1fe RESULTS"))+
+                                        geom_fit_text(
+                                          family='fontawesome',
+                                          colour = "white",
                                                       fontface="bold",
                                                       place = "center",
                                                       grow = FALSE)+
                                         theme_void()+
                                         theme(plot.background = element_rect(fill = "#002a60"))
-                                      ), t=2,l=15) %>%
+                                      ), t=2,l=17) %>%
     
   # Results column
   
-  gtable_add_grob(ggplotGrob(results), t=4,l=15, b=17) %>% 
+  gtable_add_grob(ggplotGrob(results), t=4,l=17, b=17) %>% 
   
   gtable_add_grob(ggplotGrob(ggplot(data=NULL,
                                     aes(x=0,y=0, 
@@ -440,12 +465,12 @@ gt <- gt_grid  %>%
                                  reflow = TRUE)+
                                theme_void()+
                                theme(plot.background = element_rect(fill = "white"))
-  ), t=3,l=15) %>% 
+  ), t=3,l=17) %>% 
   
   # Meta-analysis column
   
-  gtable_add_grob(ma_grob, t=18,l=15) %>% 
-  gtable_add_grob(ma_axis, t=19,l=15) %>% # takes axis text from ma and adds to bottom
+  gtable_add_grob(ma_grob, t=18,l=17) %>% 
+  gtable_add_grob(ma_axis, t=19,l=17) %>% # takes axis text from ma and adds to bottom
 
   
   # Meta-analysis grob to left of results
@@ -467,7 +492,7 @@ gt <- gt_grid  %>%
                                  )+
                                  scale_y_continuous(expand=c(0.1,0.1))
                                #   theme(plot.background = element_rect(fill = "#002a60"))
-                              ), t=18, l=12, r=14) %>% 
+                              ), t=18, l=14, r=16) %>% 
 
   # Dark blue on right of meta-analysis result
 
@@ -482,14 +507,14 @@ gt <- gt_grid  %>%
                              )+
                              scale_y_continuous(expand=c(0.1,0.1))
                            #   theme(plot.background = element_rect(fill = "#002a60"))
-), t=2, l=16, b=18)
+), t=18, l=18)
 
 
 # function to add rectangles around each study
 addrectgrobs<-function(gt){
   for (i in 1:length(unique(data_core$Study))+3){ 
     gt<-gt %>% gtable_add_grob(roundrectGrob(gp=gpar(fill="transparent", col="gray")),
-                               t=i,l=2,r=16) 
+                               t=i,l=2,r=18) 
   }
   return(gt)
 }

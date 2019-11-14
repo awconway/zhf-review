@@ -89,13 +89,14 @@ year <- data_core %>%
   geom_label(fill="#d4007f", colour = "white", fontface = "bold")+
   theme_void()+
   coord_flip()
-year
+
 study <- data_core %>% 
   distinct(Study,.keep_all = TRUE) %>% 
   separate(Study, c("Study", "Year"), sep = ", ")  %>% 
   mutate(Study = as.factor(Study)) %>% 
+  mutate(Year = as.numeric(Year)) %>%
   ggplot()+
-  geom_fit_text(aes(x=Study, y=0, label=Study), 
+  geom_fit_text(aes(x=reorder(Study, Year), y=0, label=Study), 
                 place = "left", reflow=TRUE, 
                 fontface="plain",
                 position = position_dodge(width = dodge_width), show.legend=FALSE)+

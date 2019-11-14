@@ -1,8 +1,82 @@
+library(tidyverse)
 library(ggfittext)
 library(gridExtra)
 library(grid)
 library(gtable)
 library(naniar)
+library(ggimage)
+
+data <- readxl::read_xlsx("~/zhf-review/manuscript/data/zhf_extracted.xlsx")
+data <- data %>%
+  mutate(c = N/n)
+
+#variance
+
+data <- data %>% 
+  mutate(s2 = case_when(corrected == "Yes"  ~ ((upper - bias)/1.96)^2,
+                        corrected == "No" ~  ((upper - bias)/1.96)^2*(N-1)/(N-c)
+  )
+  )
+
+data <- data %>% 
+  mutate(V_bias = s2/n)
+
+data <- data %>% 
+  mutate(logs2 = log(s2)+1/(n-1))
+
+data <- data %>% 
+  mutate(V_logs2 = 2/(n-1))
+
+# meta-analyses categories
+
+data_NPA <- data %>% 
+  filter(comparison == "NPA")
+
+data_SL <- data %>% 
+  filter(comparison == "Sublingual")
+
+#eshragi overall
+data_core <- data %>% 
+  filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
+  filter(comments != "Intraoperative, off cardiopulmonary bypass" & comments != "Postoperative")
+
+data_core_op <- data %>% #eshragi intraop
+  filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
+  filter (clinical_setting=="Intraoperative")
+
+data_core_icu <- data %>% #eshragi postop
+  filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
+  filter(clinical_setting=="ICU" | clinical_setting=="Postoperative")
+
+# ROB 
+
+data_core_lowrisk <- data_core %>% #eshragi overall
+  filter(RoB_selection == "low" & RoB_spoton == "low" & RoB_comparator == "low" & RoB_flow =="low")
+
+# conflict of interests
+
+data_conflict <- data_core %>% 
+  filter(`Funding/equipment/conflict with ZHF company` == "No")
+
+format_results <- function(group){
+  out <- bama::loa_maker(group$bias,group$V_bias, group$logs2, group$V_logs2)
+  out <- round(out, digits=2)
+  out <- out %>% 
+    mutate(Participants = sum(group$n_count, na.rm=T)) %>% 
+    mutate(Measurements = format(sum(group$N, na.rm = T), big.mark=",", scientific = FALSE)) %>% 
+    mutate(Studies = length(unique(group$Study))) %>% 
+    select(Studies, m, Participants, Measurements, bias_mean, sd2_est, tau_est, LOA_L, LOA_U, CI_L_rve, CI_U_rve) %>% 
+    rename("Comparisons" = m)
+  out
+  
+  # Better names for columns
+  # , "Mean bias" = bias_mean, "Tau-squared" = tau_est, "Lower bound for 95% limit of agreement" = LOA_L, "Upper bound for 95% limits of agreement" = LOA_U, "Outer confidence interval for lower 95% limits of agreement" = CI_L_rve, "Outer confidence interval for upper 95% limits of agreement" = CI_U_rve
+}
+
+
+
+primary <- format_results(data_core)
+
 
 dodge_width = 0.7
 
@@ -210,9 +284,94 @@ RoB_text <- data_core %>%
   ma_grob$grobs[[which(ma_grob$layout$name == "axis-b")]] <- zeroGrob()
   ma_grob$heights[ma_grob$layout$t[which(ma_grob$layout$name == "axis-b")]] <- unit(0, "cm")
   
-# using gtable seems to be the best option - see here for documentation: https://gtable.r-lib.org/index.html
-RoB_img <- png::readPNG("RoB_wide.png")
   
+# Study characteristics data
+demographics <- readxl::read_xlsx("~/zhf-review/gofer/study-characteristics.xlsx")
+
+# Age  
+  age <- ggplot(demographics) +
+    geom_pointrange(aes(x = Study, y = mean_age, ymin = lower_mean, ymax = upper_mean), col = "blue") +
+    geom_point(aes(x = Study, y = median_age), col = "red", shape = "diamond", size = 4) +
+    geom_errorbar(aes(x = Study, ymin = lower_IQR, ymax = upper_IQR), col = "red", width = 0.5) +
+    
+    coord_flip() +
+    
+    theme_void()+
+    theme(
+      panel.background = element_rect(fill = "gray", colour = "white",
+                                      size = 2, linetype = "solid"),
+      panel.grid.major = element_line(size = 0.5, linetype = 'solid',
+                                      colour = "white"), 
+      panel.grid.minor = element_blank(),
+      axis.text.x=element_text()
+    )+
+    
+    scale_x_discrete(breaks = NULL)  
+  
+  age_grob <- ggplotGrob(age)
+  age_axis <- age_grob$grobs[[which(age_grob$layout$name == "axis-b")]]$children$axis[2] 
+  
+  age_grob$grobs[[which(age_grob$layout$name == "axis-b")]] <- zeroGrob()
+  age_grob$heights[age_grob$layout$t[which(age_grob$layout$name == "axis-b")]] <- unit(0, "cm")
+
+
+  
+  sex <- demographics %>% 
+    pivot_longer(cols = c("female", "male"), names_to = "sex", values_to = "values") %>% 
+    ggplot(aes(x = Study, y = values, fill = sex)) +
+    
+    geom_col(position = "fill", show.legend = FALSE,
+             width = 0.3) +
+    scale_fill_manual(values = c("female" = "#ff8ea2", "male" = "#8edaff"))+
+  
+    # geom_text(label = "\uf183", family = "FontAwesome", x = 13.25, y = -0.25, size = 7, show.legend = FALSE) +
+    # geom_text(label = "\uf182", family = "FontAwesome", x = 13.25, y = 1.25, fill = "salmon", color = "salmon") +
+    # 
+    coord_flip() +
+    
+    # expand_limits(y = -0.35) +
+    # expand_limits(y = 1.35) +
+    
+    theme_void()
+  
+  flags <- ggplot(demographics, aes(x = Study, y = Country)) +
+    
+    geom_flag(y = 0.5, aes(image = code), size = 0.2) +
+    
+    coord_flip() +
+    
+    theme_void()
+  
+  
+ temp <- ggplot(demographics, aes(x = Study, ymin = lower_temp, ymax = upper_temp)) +
+    
+    geom_errorbar(size = 1, color = "orange", width = 0.5) +
+    
+    coord_flip() +
+ 
+ theme_void()+
+   theme(
+     panel.background = element_rect(fill = "#FFE5CC", colour = "white",
+                                     size = 2, linetype = "solid"),
+     panel.grid.major = element_line(size = 0.5, linetype = 'solid',
+                                     colour = "white"), 
+     panel.grid.minor = element_blank(),
+     axis.text.x=element_text()
+   )+
+   
+   scale_x_discrete(breaks = NULL)  
+ 
+ temp_grob <- ggplotGrob(temp)
+ temp_axis <- temp_grob$grobs[[which(temp_grob$layout$name == "axis-b")]]$children$axis[2] 
+ 
+ temp_grob$grobs[[which(temp_grob$layout$name == "axis-b")]] <- zeroGrob()
+ temp_grob$heights[temp_grob$layout$t[which(temp_grob$layout$name == "axis-b")]] <- unit(0, "cm")
+ 
+    
+# using gtable seems to be the best option - see here for documentation: https://gtable.r-lib.org/index.html
+RoB_img <- png::readPNG("~/zhf-review/gofer/RoB_wide.png")
+sex_img <- png::readPNG("~/zhf-review/gofer/sex.png")
+
 gt_grid <- gtable(widths = unit(c(0.05, #left space
                                   1,# First author
                                   0.5,# Year
@@ -260,51 +419,51 @@ gt <- gt_grid  %>%
   ), t=2,l=2, r=5) %>% 
   # First author column
   gtable_add_grob(ggplotGrob(study), t=4,l=2, b=17) %>% 
-  gtable_add_grob(ggplotGrob(ggplot(data=NULL,
-                                    aes(x=0,y=0, 
-                                        label = "First author"))+
-                               geom_fit_text(fontface="bold",
-                                             place = "center")+
-                               theme_void()+
-                               theme(plot.background = element_rect(fill = "white"))
-  ), t=3,l=2) %>% 
+  # gtable_add_grob(ggplotGrob(ggplot(data=NULL,
+  #                                   aes(x=0,y=0, 
+  #                                       label = "First author"))+
+  #                              geom_fit_text(fontface="bold",
+  #                                            place = "center")+
+  #                              theme_void()+
+  #                              theme(plot.background = element_rect(fill = "white"))
+  # ), t=3,l=2) %>% 
   # Year column
   gtable_add_grob(ggplotGrob(year), t=4, l=3, b=17) %>% 
-  gtable_add_grob(ggplotGrob(ggplot(data=NULL,
-                                    aes(x=0,y=0, 
-                                        label = "Year"))+
-                               geom_fit_text(
-                                 fontface="bold",
-                                 place = "center")+
-                               theme_void()+
-                               theme(plot.background = element_rect(fill = "white"))
-  ), t=3,l=3) %>% 
+  # gtable_add_grob(ggplotGrob(ggplot(data=NULL,
+  #                                   aes(x=0,y=0, 
+  #                                       label = "Year"))+
+  #                              geom_fit_text(
+  #                                fontface="bold",
+  #                                place = "center")+
+  #                              theme_void()+
+  #                              theme(plot.background = element_rect(fill = "white"))
+  # ), t=3,l=3) %>% 
   
   # Country column
   
-  gtable_add_grob(nullGrob(), t=4,l=4, b=17) %>%
-  gtable_add_grob(ggplotGrob(ggplot(data=NULL,
-                                    aes(x=0,y=0, 
-                                        label = "Country"))+
-                               geom_fit_text(
-                                 fontface="bold",
-                                 place = "center")+
-                               theme_void()+
-                               theme(plot.background = element_rect(fill = "white"))
-  ), t=3,l=4) %>% 
+  gtable_add_grob(ggplotGrob(flags), t=4,l=4, b=17) %>%
+  # gtable_add_grob(ggplotGrob(ggplot(data=NULL,
+  #                                   aes(x=0,y=0, 
+  #                                       label = "Country"))+
+  #                              geom_fit_text(
+  #                                fontface="bold",
+  #                                place = "center")+
+  #                              theme_void()+
+  #                              theme(plot.background = element_rect(fill = "white"))
+  # ), t=3,l=4) %>% 
   
   # Population column
   
   gtable_add_grob(ggplotGrob(patients), t=4, l=5, b=17) %>% 
-  gtable_add_grob(ggplotGrob(ggplot(data=NULL,
-                                    aes(x=0,y=0, 
-                                        label = "Population"))+
-                               geom_fit_text(
-                                 fontface="bold",
-                                 place = "center")+
-                               theme_void()+
-                               theme(plot.background = element_rect(fill = "white"))
-  ), t=3,l=5) %>% 
+  # gtable_add_grob(ggplotGrob(ggplot(data=NULL,
+  #                                   aes(x=0,y=0, 
+  #                                       label = "Population"))+
+  #                              geom_fit_text(
+  #                                fontface="bold",
+  #                                place = "center")+
+  #                              theme_void()+
+  #                              theme(plot.background = element_rect(fill = "white"))
+  # ), t=3,l=5) %>% 
   
   # RoB_text column
   
@@ -326,7 +485,7 @@ gt <- gt_grid  %>%
   
   # Age column
   
-  gtable_add_grob(nullGrob(), t=4,l=10, b=17) %>%
+  gtable_add_grob(age_grob, t=4,l=10, b=17) %>%
   gtable_add_grob(ggplotGrob(ggplot(data=NULL,
                                     aes(x=0,y=0, 
                                         label = "Age"))+
@@ -336,19 +495,25 @@ gt <- gt_grid  %>%
                                theme_void()+
                                theme(plot.background = element_rect(fill = "white"))
   ), t=3,l=10) %>% 
+  gtable_add_grob(age_axis, t=18,l=10) %>% # takes axis text from ma and adds to bottom
+  
+  
   
   # Sex column
   
-  gtable_add_grob(nullGrob(), t=4,l=11, b=17) %>%
-  gtable_add_grob(ggplotGrob(ggplot(data=NULL,
-                                    aes(x=0,y=0, 
-                                        label = "Sex"))+
-                               geom_fit_text(
-                                 fontface="bold",
-                                 place = "center")+
-                               theme_void()+
-                               theme(plot.background = element_rect(fill = "white"))
-  ), t=3,l=11) %>% 
+  gtable_add_grob(ggplotGrob(sex), t=4,l=11, b=17) %>%
+  # gtable_add_grob(ggplotGrob(ggplot(data=NULL,
+  #                                   aes(x=0,y=0, 
+  #                                       label = "Sex"))+
+  #                              geom_fit_text(
+  #                                fontface="bold",
+  #                                place = "center")+
+  #                              theme_void()+
+  #                              theme(plot.background = element_rect(fill = "white"))
+  # ), t=3,l=11) %>% 
+  
+  gtable_add_grob(rasterGrob(sex_img), t=3, l=11) %>% 
+  
   
   # Participants section header 
   gtable_add_grob(ggplotGrob(ggplot(data=NULL,
@@ -394,7 +559,7 @@ gt <- gt_grid  %>%
   
   # temperature range column
   
-  gtable_add_grob(nullGrob(), t=4,l=13, b=17) %>%
+  gtable_add_grob(temp_grob, t=4,l=13, b=17) %>%
   gtable_add_grob(ggplotGrob(ggplot(data=NULL,
                                     aes(x=0,y=0, 
                                         label = "Range (°C)"))+
@@ -404,6 +569,9 @@ gt <- gt_grid  %>%
                                theme_void()+
                                theme(plot.background = element_rect(fill = "white"))
   ), t=3,l=13) %>% 
+  
+  gtable_add_grob(temp_axis, t=18,l=13) %>% # takes axis text from ma and adds to bottom
+  
   
   # Comments column
   
@@ -525,5 +693,5 @@ grid.newpage() # use newpage and grid.draw to plot the gtable
 
 grid.draw(gt)
 
-ggsave(plot = gt, device = "tiff", "gtable-plot.tiff", width = 420,height = 297, units = "mm",dpi=300, compression = 'lzw') #A3 size
+# ggsave(plot = gt, device = "tiff", "gtable-plot.tiff", width = 420,height = 297, units = "mm",dpi=300, compression = 'lzw') #A3 size
 

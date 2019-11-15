@@ -324,12 +324,20 @@ RoB_text <- data_core %>%
 # Study characteristics data
 demographics <- readxl::read_xlsx("~/zhf-review/gofer/study-characteristics.xlsx")
 
+df %>% select(Study, median_age, mean_age, female, male, lower_temp, upper_temp) %>% view()
+
 # Age  
-  age <- ggplot(demographics) +
-    geom_point(aes(x = Study, y = mean_age), size = 2, col = "orange red") +
-    geom_linerange(aes(x = Study, ymin = lower_mean, ymax = upper_mean), size = 1, col = "orange red") +
-    geom_point(aes(x = Study, y = median_age), size = 3, col = "orange", shape = "diamond") +
-    geom_errorbar(aes(x = Study, ymin = lower_IQR, ymax = upper_IQR), size = 1, col = "orange", width = 0.5) +
+  age <- data_core %>%
+    right_join(demographics) %>% 
+    separate(Study, c("Study", "Year"), sep = ", ")  %>% 
+    mutate(Study = as.factor(Study)) %>% 
+    mutate(Year = as.numeric(Year)) %>%
+    distinct(Study,.keep_all = TRUE) %>% 
+    ggplot(aes(x=reorder(Study, Year), y=0)) +
+    geom_point(aes(x = reorder(Study, Year), y = mean_age), size = 2, col = "orange red") +
+    geom_linerange(aes(x = reorder(Study, Year), ymin = lower_mean, ymax = upper_mean), size = 1, col = "orange red") +
+    geom_point(aes(x = reorder(Study, Year), y = median_age), size = 3, col = "orange", shape = "diamond") +
+    geom_errorbar(aes(x = reorder(Study, Year), ymin = lower_IQR, ymax = upper_IQR), size = 1, col = "orange", width = 0.5) +
     
     theme_void() +
     
@@ -354,10 +362,14 @@ demographics <- readxl::read_xlsx("~/zhf-review/gofer/study-characteristics.xlsx
 
 
   
-  sex <- demographics %>% 
+  sex <- data_core %>%
+    right_join(demographics) %>% 
+    separate(Study, c("Study", "Year"), sep = ", ")  %>% 
+    mutate(Study = as.factor(Study)) %>% 
+    mutate(Year = as.numeric(Year)) %>%
+    distinct(Study,.keep_all = TRUE) %>% 
     pivot_longer(cols = c("female", "male"), names_to = "sex", values_to = "values") %>% 
-    ggplot(aes(x = Study, y = values, fill = sex)) +
-    
+    ggplot(aes(x=reorder(Study, Year), y=values, fill = sex)) + 
     geom_col(position = "fill", show.legend = FALSE,
              width = 0.3) +
     scale_fill_manual(values = c("female" = "#ff8ea2", "male" = "#8edaff"))+
@@ -372,8 +384,13 @@ demographics <- readxl::read_xlsx("~/zhf-review/gofer/study-characteristics.xlsx
     
     theme_void()
   
-  flags <- ggplot(demographics, aes(x = Study, y = Country)) +
-    
+  flags <- data_core %>%
+    right_join(demographics) %>% 
+    separate(Study, c("Study", "Year"), sep = ", ")  %>% 
+    mutate(Study = as.factor(Study)) %>% 
+    mutate(Year = as.numeric(Year)) %>%
+    distinct(Study,.keep_all = TRUE) %>% 
+    ggplot(aes(x=reorder(Study, Year), y=Country)) +
     geom_flag(y = 0.5, aes(image = code), size = 0.2) +
     
     coord_flip() +
@@ -381,8 +398,13 @@ demographics <- readxl::read_xlsx("~/zhf-review/gofer/study-characteristics.xlsx
     theme_void()
   
   
- temp <- ggplot(demographics, aes(x = Study, ymin = lower_temp, ymax = upper_temp)) +
-    
+ temp <-  data_core %>%
+   right_join(demographics) %>% 
+   separate(Study, c("Study", "Year"), sep = ", ")  %>% 
+   mutate(Study = as.factor(Study)) %>% 
+   mutate(Yeademr = as.numeric(Year)) %>%
+   distinct(Study,.keep_all = TRUE) %>% 
+   ggplot(aes(x=reorder(Study, Year), ymin = lower_temp, ymax = upper_temp)) +
     geom_errorbar(size = 1, color = "#990099", width = 0.5) +
     
     coord_flip() +
@@ -470,7 +492,7 @@ participants_section_r <- 11
 
 temp_section_l <- 12
 
-temp_section_r <- 16
+temp_section_r <- 15
 
 ## results section
 

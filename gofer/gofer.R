@@ -7,6 +7,12 @@ library(naniar)
 library(ggimage)
 
 data <- readxl::read_xlsx("~/zhf-review/manuscript/data/zhf_extracted.xlsx")
+
+
+# Study characteristics data
+demographics <- readxl::read_xlsx("~/zhf-review/gofer/study-characteristics.xlsx")
+
+
 data <- data %>%
   mutate(c = N/n)
 
@@ -320,11 +326,6 @@ RoB_text <- data_core %>%
   ma_grob$grobs[[which(ma_grob$layout$name == "axis-b")]] <- zeroGrob()
   ma_grob$heights[ma_grob$layout$t[which(ma_grob$layout$name == "axis-b")]] <- unit(0, "cm")
   
-  
-# Study characteristics data
-demographics <- readxl::read_xlsx("~/zhf-review/gofer/study-characteristics.xlsx")
-
-df %>% select(Study, median_age, mean_age, female, male, lower_temp, upper_temp) %>% view()
 
 # Age  
   age <- data_core %>%

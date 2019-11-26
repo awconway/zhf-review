@@ -184,6 +184,12 @@ ui <- dashboardPage(
                        ),
                        tabPanel(p("ZHF vs nasopharyngeal"),
                                 img(src="gofer_NPA.png", height="100%", width="100%")
+                       ),
+                       tabPanel(p("ZHF vs sublingual"),
+                                img(src="gofer_SL.png", height="100%", width="100%")
+                       ),
+                       tabPanel(p("Studies without industry funding - ZHF vs core"),
+                                  img(src="gofer_no_conflict.png", height="100%", width="100%")
                        )
                 )
               )

@@ -4,15 +4,15 @@ library(shinydashboard)
 library(shinydashboardPlus)
 library(tidyverse)
 library(DT)
-# library(robvis)
-# library(readxl)
+library(robvis)
+library(readxl)
 # library(bama) #awconway/bama
 # library(ggprisma)
 library(waiter)
 # Load data ----
 # 
 data <- readxl::read_xlsx(here::here("data", "zhf_extracted.xlsx"))
-sum_findings <- readxl::read_xlsx(here::here("data", "sum_findings.xlsx"))
+# sum_findings <- readxl::read_xlsx(here::here("data", "sum_findings.xlsx"))
 
 # create additional columns for meta-analysis
 data <- data %>%
@@ -66,17 +66,17 @@ data$comparison <- sub("PA", "Pulmonary artery", data$comparison)
 data$comparison <- sub("Iliac", "Iliac artery", data$comparison)
 data$comparison <- sub("Ax", "Axillary artery", data$comparison)
 data$comparison <- sub("Eso", "Esophageal", data$comparison)
-# 
-# # Clean up results
-# format_results <- function(group){
-#   out <- bama::loa_maker(group$bias,group$V_bias, group$logs2, group$V_logs2)
-#   out <- out %>% 
-#     mutate(Participants = sum(group$n_count, na.rm=T)) %>% 
-#     mutate(Measurements = format(sum(group$N, na.rm = T), big.mark=",", scientific = FALSE)) %>% 
-#     mutate(Studies = length(unique(group$Study))) %>% 
-#     select(Studies, m, Participants, Measurements, bias_mean, sd2_est, tau_est, LOA_L, LOA_U, CI_L_rve, CI_U_rve) %>% 
-#     rename("Comparisons" = m)
-# }
+
+# Clean up results
+format_results <- function(group){
+  out <- bama::loa_maker(group$bias,group$V_bias, group$logs2, group$V_logs2)
+  out <- out %>%
+    mutate(Participants = sum(group$n_count, na.rm=T)) %>%
+    mutate(Measurements = format(sum(group$N, na.rm = T), big.mark=",", scientific = FALSE)) %>%
+    mutate(Studies = length(unique(group$Study))) %>%
+    select(Studies, m, Participants, Measurements, bias_mean, sd2_est, tau_est, LOA_L, LOA_U, CI_L_rve, CI_U_rve) %>%
+    rename("Comparisons" = m)
+}
 
 ######UI#########
 ui <- dashboardPage(
@@ -150,10 +150,10 @@ ui <- dashboardPage(
               fluidRow(
                 tabBox(width = 12,
                        tabPanel(p("Risk of bias across studies"),
-                                img(src="RoB_across.png", height="10%", width="50%")
+                                plotOutput("Rob_summary")
                        ),
                        tabPanel(p("Risk of bias in individual studies"),
-                                img(src="RoB_within.png", height="10%", width="50%")
+                                plotOutput("Rob_traffic_light")
                        )
                 )
               )
@@ -407,9 +407,22 @@ ui <- dashboardPage(
           </div>
         </div>
         <div class="box-footer text-black">
-                  <p>Aaron Conway</p>
-                  <p>Megan Bittner</p>
-                  <p>Dan Phan</p>
+
+ <p><a href="https://www.aaronconway.info"> Aaron Conway </a> (Peter Munk Cardiac Centre, UHN &amp; Lawrence S. Bloomberg Faculty of Nursing, University of Toronto)</p>
+  
+<p>Megan Bittner  (Lawrence S. Bloomberg Faculty of Nursing, University of Toronto)
+  
+<p>Dan Phan  (Lawrence S. Bloomberg Faculty of Nursing, University of Toronto)
+  
+<p>Navpreet Kamboj  (Lawrence S. Bloomberg Faculty of Nursing, University of Toronto)
+  
+<p>Kristina Chang  (Toronto General Hospital, UHN)
+  
+<p>Peter Collins  (Toronto General Hospital, UHN)
+  
+<p>Matteo Parotto  (Toronto General Hospital, UHN)
+
+
         </div>
       </div>
     </div>
@@ -424,35 +437,35 @@ ui <- dashboardPage(
 server <- shinyUI(function(input, output) {
   Sys.sleep(3) # do something that takes time
   
-  # output$Rob_summary <- renderPlot({
-  #   frame <- read_excel(here::here("data", "zhf_extracted.xlsx"))
-  #   
-  #   RoB <- frame %>% 
-  #     select(Study, RoB_selection, RoB_spoton, RoB_comparator, RoB_flow) %>% 
-  #     mutate(RoB_overall = if_else(RoB_selection == "low" &
-  #                                    RoB_spoton == "low" &
-  #                                    RoB_comparator == "low" &
-  #                                    RoB_flow == "low", "low", "high"))
-  #   
-  #   RoB[RoB == "unclear"] <- "some concerns"
-  #   
-  #   rob_summary(data = RoB, tool = "QUADAS-2", weighted = FALSE)
-  # })
-  # 
-  # output$Rob_traffic_light <- renderPlot({
-  #   frame <- read_excel(here::here("data", "zhf_extracted.xlsx"))
-  #   
-  #   RoB <- frame %>% 
-  #     select(Study, RoB_selection, RoB_spoton, RoB_comparator, RoB_flow) %>% 
-  #     mutate(RoB_overall = if_else(RoB_selection == "low" &
-  #                                    RoB_spoton == "low" &
-  #                                    RoB_comparator == "low" &
-  #                                    RoB_flow == "low", "low", "high"))
-  #   
-  #   RoB[RoB == "unclear"] <- "some concerns"
-  #   
-  #   rob_traffic_light(data = RoB, tool = "QUADAS-2")
-  # })
+  output$Rob_summary <- renderPlot({
+    frame <- read_excel(here::here("data", "zhf_extracted.xlsx"))
+
+    RoB <- frame %>%
+      select(Study, RoB_selection, RoB_spoton, RoB_comparator, RoB_flow) %>%
+      mutate(RoB_overall = if_else(RoB_selection == "low" &
+                                     RoB_spoton == "low" &
+                                     RoB_comparator == "low" &
+                                     RoB_flow == "low", "low", "high"))
+
+    RoB[RoB == "unclear"] <- "some concerns"
+
+    rob_summary(data = RoB, tool = "QUADAS-2", weighted = FALSE)
+  })
+
+  output$Rob_traffic_light <- renderPlot({
+    frame <- read_excel(here::here("data", "zhf_extracted.xlsx"))
+
+    RoB <- frame %>%
+      select(Study, RoB_selection, RoB_spoton, RoB_comparator, RoB_flow) %>%
+      mutate(RoB_overall = if_else(RoB_selection == "low" &
+                                     RoB_spoton == "low" &
+                                     RoB_comparator == "low" &
+                                     RoB_flow == "low", "low", "high"))
+
+    RoB[RoB == "unclear"] <- "some concerns"
+
+    rob_traffic_light(data = RoB, tool = "QUADAS-2")
+  })
   
   output$frame <- renderUI({
    shinyLP::iframe(url_link = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSR9-h4cb4ONj7d5Yw9ksyEysVngocRSrMQ6vVjny-6f-d_0CZlhe3HhNG-zaQSJ6rWpBLCb5mVYcYK/pubhtml?widget=true&amp;headers=false", 
@@ -651,7 +664,7 @@ server <- shinyUI(function(input, output) {
 #     
     # render reactive table (dt)
     output$dt<- DT::renderDataTable({
-      datasetInput<-datasetInput()[,c(1,3:18)]
+      datasetInput<-datasetInput()
 
       sketch = htmltools::withTags(table(
         class = 'display',
@@ -679,7 +692,7 @@ server <- shinyUI(function(input, output) {
           )
         )
       ))
-      DT::datatable(datasetInput, container = sketch, extensions = "Buttons", options = list(dom = "Bt", scrollX=T, buttons = c('copy', 'csv', 'excel'), sort = FALSE, paging=F, scrollY=T,
+      DT::datatable(datasetInput[,c(1,4:19)], container = sketch, extensions = "Buttons", options = list(dom = "Bt", scrollX=T, buttons = c('copy', 'csv', 'excel'), sort = FALSE, paging=F, scrollY=T,
                                                                                              #use 'title' previously noted in column header as tooltip
                                                                                              initComplete = JS("function(settings, json){",
                                                                                                                "$('th').tooltip({container: 'body'});

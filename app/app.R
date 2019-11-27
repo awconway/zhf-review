@@ -2,8 +2,8 @@ library(shiny)
 library(shinyLP)
 library(shinydashboard)
 library(shinydashboardPlus)
-# library(tidyverse)
-# library(DT)
+library(tidyverse)
+library(DT)
 # library(robvis)
 # library(readxl)
 # library(bama) #awconway/bama
@@ -11,61 +11,61 @@ library(shinydashboardPlus)
 library(waiter)
 # Load data ----
 # 
-# data <- readxl::read_xlsx(here::here("app", "data", "zhf_extracted.xlsx"))
-# sum_findings <- readxl::read_xlsx(here::here("app", "data", "sum_findings.xlsx"))
-# 
-# # create additional columns for meta-analysis
-# data <- data %>%
-#   mutate(c = N/n)
-# 
-# #variance
-# data <- data %>% 
-#   mutate(s2 = case_when(corrected == "Yes"  ~ ((upper - bias)/1.96)^2,
-#                         corrected == "No" ~  ((upper - bias)/1.96)^2*(N-1)/(N-c)
-#   )
-#   )
-# 
-# data <- data %>% 
-#   mutate(V_bias = s2/n)
-# 
-# data <- data %>% 
-#   mutate(logs2 = log(s2)+1/(n-1))
-# 
-# data <- data %>% 
-#   mutate(V_logs2 = 2/(n-1))
-# 
-# # Create subgroups
-# 
-# data_NPA <- data %>% 
-#   filter(comparison == "NPA")
-# 
-# data_SL <- data %>% 
-#   filter(comparison == "Sublingual")
-# 
-# data_core <- data %>% #eshragi overall
-#   filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
-#   filter(comments != "Intraoperative, off cardiopulmonary bypass" & comments != "Postoperative")
-# 
-# data_core_lowrisk <- data_core %>% #eshragi overall
-#   filter(RoB_selection == "low" & RoB_spoton == "low" & RoB_comparator == "low" & RoB_flow =="low")
-# 
-# data_core_op <- data %>% #eshragi intraop
-#   filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
-#   filter (clinical_setting=="Intraoperative")
-# 
-# data_core_icu <- data %>% #eshragi postop
-#   filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
-#   filter(clinical_setting=="ICU" | clinical_setting=="Postoperative")
-# 
-# data_conflict <- data_core %>% 
-#   filter(`Funding/equipment/conflict with ZHF company` == "No")
-# 
-# #clean up comparison column, change to full word
-# data$comparison <- sub("NPA", "Nasopharyngeal", data$comparison) 
-# data$comparison <- sub("PA", "Pulmonary artery", data$comparison) 
-# data$comparison <- sub("Iliac", "Iliac artery", data$comparison) 
-# data$comparison <- sub("Ax", "Axillary artery", data$comparison) 
-# data$comparison <- sub("Eso", "Esophageal", data$comparison)
+data <- readxl::read_xlsx(here::here("data", "zhf_extracted.xlsx"))
+sum_findings <- readxl::read_xlsx(here::here("data", "sum_findings.xlsx"))
+
+# create additional columns for meta-analysis
+data <- data %>%
+  mutate(c = N/n)
+
+#variance
+data <- data %>%
+  mutate(s2 = case_when(corrected == "Yes"  ~ ((upper - bias)/1.96)^2,
+                        corrected == "No" ~  ((upper - bias)/1.96)^2*(N-1)/(N-c)
+  )
+  )
+
+data <- data %>%
+  mutate(V_bias = s2/n)
+
+data <- data %>%
+  mutate(logs2 = log(s2)+1/(n-1))
+
+data <- data %>%
+  mutate(V_logs2 = 2/(n-1))
+
+# Create subgroups
+
+data_NPA <- data %>%
+  filter(comparison == "NPA")
+
+data_SL <- data %>%
+  filter(comparison == "Sublingual")
+
+data_core <- data %>% #eshragi overall
+  filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
+  filter(comments != "Intraoperative, off cardiopulmonary bypass" & comments != "Postoperative")
+
+data_core_lowrisk <- data_core %>% #eshragi overall
+  filter(RoB_selection == "low" & RoB_spoton == "low" & RoB_comparator == "low" & RoB_flow =="low")
+
+data_core_op <- data %>% #eshragi intraop
+  filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
+  filter (clinical_setting=="Intraoperative")
+
+data_core_icu <- data %>% #eshragi postop
+  filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
+  filter(clinical_setting=="ICU" | clinical_setting=="Postoperative")
+
+data_conflict <- data_core %>%
+  filter(`Funding/equipment/conflict with ZHF company` == "No")
+
+#clean up comparison column, change to full word
+data$comparison <- sub("NPA", "Nasopharyngeal", data$comparison)
+data$comparison <- sub("PA", "Pulmonary artery", data$comparison)
+data$comparison <- sub("Iliac", "Iliac artery", data$comparison)
+data$comparison <- sub("Ax", "Axillary artery", data$comparison)
+data$comparison <- sub("Eso", "Esophageal", data$comparison)
 # 
 # # Clean up results
 # format_results <- function(group){
@@ -91,22 +91,14 @@ ui <- dashboardPage(
       menuItem("Study selection", tabName="selection", icon=icon("hand-pointer")),
       menuItem("Risk of bias", tabName = "Rob", icon = icon("exclamation-circle")),
       menuItem("Graphical overview of findings", tabName="gofer", icon=icon("chart-area")), 
+      menuItem("Data used in meta-analysis", tabName="DT", icon=icon("table")), 
       #menuItem("Meta-analysis results", tabName="Plot", icon=icon("chart-area")),
-      #menuItem("Data used in meta-analysis", tabName="DT", icon=icon("table")),
-      menuItem("Extracted data", tabName="frame", icon=icon("file-excel"))
+      menuItem("All data extracted from source", tabName="frame", icon=icon("file-excel"))
       
       # 
       # br(), 
       # 
-      # radioButtons(inputId = "dataset", 
-      #              h4("Select a subset of studies to display in results:"), 
-      #              choices= c("Core",
-      #                         "Core (low risk studies)",
-      #                         "Core (ICU studies)",
-      #                         "Core (Intra-operative studies)",
-      #                         "Nasopharyngeal",
-      #                         "Sublingual",
-      #                         "No conflicts of interest"))
+      
       
     ) 
   ),
@@ -309,11 +301,21 @@ ui <- dashboardPage(
 # </div>
 # ')
 #             )), #end of tabItem
-#       tabItem(tabName="DT",
-#               column(12,
-#                  h2(htmlOutput("dt_selected_subset")), # reactive title above table
-#                  br(), 
-#                  DT::dataTableOutput("dt"))),
+      tabItem(tabName="DT",
+              column(12,
+                     radioButtons(inputId = "dataset",
+                                  h4("Select a subset of studies to display:"),
+                                  inline = TRUE,
+                                  choices= c("Core",
+                                             "Core (low risk studies)",
+                                             "Core (ICU studies)",
+                                             "Core (Intra-operative studies)",
+                                             "Nasopharyngeal",
+                                             "Sublingual",
+                                             "No conflicts of interest")),
+                 h2(htmlOutput("dt_selected_subset")), # reactive title above table
+                 br(),
+                 DT::dataTableOutput("dt"))),
       tabItem(tabName="search",
               fluidRow(
                 boxPlus(
@@ -423,7 +425,7 @@ server <- shinyUI(function(input, output) {
   Sys.sleep(3) # do something that takes time
   
   # output$Rob_summary <- renderPlot({
-  #   frame <- read_excel(here::here("app", "data", "zhf_extracted.xlsx"))
+  #   frame <- read_excel(here::here("data", "zhf_extracted.xlsx"))
   #   
   #   RoB <- frame %>% 
   #     select(Study, RoB_selection, RoB_spoton, RoB_comparator, RoB_flow) %>% 
@@ -438,7 +440,7 @@ server <- shinyUI(function(input, output) {
   # })
   # 
   # output$Rob_traffic_light <- renderPlot({
-  #   frame <- read_excel(here::here("app", "data", "zhf_extracted.xlsx"))
+  #   frame <- read_excel(here::here("data", "zhf_extracted.xlsx"))
   #   
   #   RoB <- frame %>% 
   #     select(Study, RoB_selection, RoB_spoton, RoB_comparator, RoB_flow) %>% 
@@ -459,18 +461,18 @@ server <- shinyUI(function(input, output) {
   
 #   output$plot <- renderPlot({ 
 #     
-#     datasetInput <- reactive({
-#       switch(input$dataset,
-#              "Core" = data_core,
-#              "Core (low risk studies)" = data_core_lowrisk,
-#              "Core (ICU studies)" = data_core_icu,
-#              "Core (Intra-operative studies)" = data_core_op,
-#              "Nasopharyngeal" = data_NPA,
-#              "Sublingual" = data_SL,
-#              "No conflicts of interest" = data_conflict
-#              
-#       )
-#     })
+    datasetInput <- reactive({
+      switch(input$dataset,
+             "Core" = data_core,
+             "Core (low risk studies)" = data_core_lowrisk,
+             "Core (ICU studies)" = data_core_icu,
+             "Core (Intra-operative studies)" = data_core_op,
+             "Nasopharyngeal" = data_NPA,
+             "Sublingual" = data_SL,
+             "No conflicts of interest" = data_conflict
+
+      )
+    })
 #     
 #   
 #     out <- format_results(datasetInput())
@@ -647,45 +649,45 @@ server <- shinyUI(function(input, output) {
 # 
 #   
 #     
-#     # render reactive table (dt)
-#     output$dt<- DT::renderDataTable({
-#       datasetInput<-datasetInput()[,c(1,3:18)]
-#       
-#       sketch = htmltools::withTags(table(
-#         class = 'display',
-#         thead(
-#           tr( #change the name of column header, 'title =' will be displayed as tooltip
-#             th('', title = ''),
-#             th('Study', title = 'Author, year'),
-#             th('n', title = 'Number of participants'),
-#             th('N', title = 'Number of paired measurements'),
-#             th('Mean bias', title = 'Mean differences calculated as comparator-ZHF in ˚C'),
-#             th('LoAᴸ', title = 'Lower 95% limit of agreement'),
-#             th('LoAᵁ', title = 'Upper 95% limit of agreement'),
-#             th('Corrected', title = 'Data corrected for repeated measures'),
-#             th('Comparator', title = 'Location of comparator thermometer'),
-#             th('Multiple', title = 'Multiple measures taken for each participant'),
-#             th('Patient population', title = 'Patient population'),
-#             th('Comments', title = 'Comments'),
-#             th('Clinical setting', title = 'Clinical setting'),
-#             th('RoB patient selection', title = 'Risk of bias for patient selection'),
-#             th('RoB ZHF', title = 'Risk of bias for interpretation of ZHF'),
-#             th('RoB comparator', title = 'Risk of bias for interpretation of comparator device'),
-#             th('RoB flow', title = 'Risk of bias for patient flow'),
-#             th('Competing interest', title = 'Funding, equipment or conflict with supplying company')
-#             
-#           )
-#         )
-#       ))
-#       DT::datatable(datasetInput, container = sketch, extensions = "Buttons", options = list(dom = "Bt", scrollX=T, buttons = c('copy', 'csv', 'excel'), sort = FALSE, paging=F, scrollY=T,
-#                                                                                              #use 'title' previously noted in column header as tooltip
-#                                                                                              initComplete = JS("function(settings, json){",
-#                                                                                                                "$('th').tooltip({container: 'body'});
-#                                                                        $(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});
-#                                                                        }")))
-#       
-#       
-#     }) # end of render output$dt
+    # render reactive table (dt)
+    output$dt<- DT::renderDataTable({
+      datasetInput<-datasetInput()[,c(1,3:18)]
+
+      sketch = htmltools::withTags(table(
+        class = 'display',
+        thead(
+          tr( #change the name of column header, 'title =' will be displayed as tooltip
+            th('', title = ''),
+            th('Study', title = 'Author, year'),
+            th('n', title = 'Number of participants'),
+            th('N', title = 'Number of paired measurements'),
+            th('Mean bias', title = 'Mean differences calculated as comparator-ZHF in ˚C'),
+            th('LoAᴸ', title = 'Lower 95% limit of agreement'),
+            th('LoAᵁ', title = 'Upper 95% limit of agreement'),
+            th('Corrected', title = 'Data corrected for repeated measures'),
+            th('Comparator', title = 'Location of comparator thermometer'),
+            th('Multiple', title = 'Multiple measures taken for each participant'),
+            th('Patient population', title = 'Patient population'),
+            th('Comments', title = 'Comments'),
+            th('Clinical setting', title = 'Clinical setting'),
+            th('RoB patient selection', title = 'Risk of bias for patient selection'),
+            th('RoB ZHF', title = 'Risk of bias for interpretation of ZHF'),
+            th('RoB comparator', title = 'Risk of bias for interpretation of comparator device'),
+            th('RoB flow', title = 'Risk of bias for patient flow'),
+            th('Competing interest', title = 'Funding, equipment or conflict with supplying company')
+
+          )
+        )
+      ))
+      DT::datatable(datasetInput, container = sketch, extensions = "Buttons", options = list(dom = "Bt", scrollX=T, buttons = c('copy', 'csv', 'excel'), sort = FALSE, paging=F, scrollY=T,
+                                                                                             #use 'title' previously noted in column header as tooltip
+                                                                                             initComplete = JS("function(settings, json){",
+                                                                                                               "$('th').tooltip({container: 'body'});
+                                                                       $(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});
+                                                                       }")))
+
+
+    }) # end of render output$dt
 #     
 #     g # g (reactive plot) must be the last object mentioned inside curly bracket to show up in app
 #   

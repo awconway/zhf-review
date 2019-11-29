@@ -37,28 +37,28 @@ data <- data %>%
   mutate(V_logs2 = 2/(n-1))
 
 # Create subgroups
-
-data_NPA <- data %>%
-  filter(comparison == "NPA")
-
-data_SL <- data %>%
-  filter(comparison == "Sublingual")
-
-data_core <- data %>% #eshragi overall
-  filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
-  filter(comments != "Intraoperative, off cardiopulmonary bypass" & comments != "Postoperative")
-
-data_core_lowrisk <- data_core %>% #eshragi overall
+# use data from gofer package
+# data_NPA <- data %>%
+#   filter(comparison == "NPA")
+# 
+# data_SL <- data %>%
+#   filter(comparison == "Sublingual")
+# 
+# data_core <- data %>% #eshragi overall
+#   filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
+#   filter(comments != "Intraoperative, off cardiopulmonary bypass" & comments != "Postoperative")
+# 
+data_core_low_risk <- data_core %>% #eshragi overall
   filter(RoB_selection == "low" & RoB_spoton == "low" & RoB_comparator == "low" & RoB_flow =="low")
-
-data_core_op <- data %>% #eshragi intraop
-  filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
-  filter (clinical_setting=="Intraoperative")
-
-data_core_icu <- data %>% #eshragi postop
-  filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
-  filter(clinical_setting=="ICU" | clinical_setting=="Postoperative")
-
+# 
+# data_core_op <- data %>% #eshragi intraop
+#   filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
+#   filter (clinical_setting=="Intraoperative")
+# 
+# data_core_icu <- data %>% #eshragi postop
+#   filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
+#   filter(clinical_setting=="ICU" | clinical_setting=="Postoperative")
+# 
 data_conflict <- data_core %>%
   filter(`Funding/equipment/conflict with ZHF company` == "No")
 
@@ -82,7 +82,7 @@ format_results <- function(group){
 }
 
 
-ma_low_risk <- format_results(data_core_lowrisk) %>% rename("lower_limit" = CI_L_rve, 
+ma_low_risk <- format_results(data_core_low_risk) %>% rename("lower_limit" = CI_L_rve, 
                                                              "effect_estimate" = bias_mean, 
                                                              "upper_limit" = CI_U_rve)
 
@@ -107,8 +107,8 @@ data_core_plot <- gofer::gofer(data_core, ma_effect = ma_core$effect_estimate,
                                grade_rating="Moderate", data_age = data_core_age, 
                                dodge_width = 0.85)
 
-data_core_lowrisk_plot <- gofer::gofer(data_core_lowrisk, ma_effect = ma_low_risk$effect_estimate,
-                                       ma_lower = ma_low_risk$lower_limit, ma_low_risk = ma_core$upper_limit,
+data_core_low_risk_plot <- gofer::gofer(data_core_low_risk, ma_effect = ma_low_risk$effect_estimate,
+                                       ma_lower = ma_low_risk$lower_limit, ma_upper = ma_low_risk$upper_limit,
                                        grade_rating="Moderate", data_age = data_core_low_risk_age, 
                                        dodge_width = 0.85)
 
@@ -547,7 +547,7 @@ server <- shinyUI(function(input, output) {
     datasetInput <- reactive({
       switch(input$dataset,
              "Core" = data_core,
-             "Core (low risk studies)" = data_core_lowrisk,
+             "Core (low risk studies)" = data_core_low_risk,
              "Core (ICU studies)" = data_core_icu,
              "Core (Intra-operative studies)" = data_core_op,
              "Nasopharyngeal" = data_NPA,
@@ -795,7 +795,7 @@ server <- shinyUI(function(input, output) {
     gofer_input <- reactive({
       switch(input$dataset,
              "Core" = data_core_plot,
-             "Core (low risk studies)" = data_core_lowrisk_plot,
+             "Core (low risk studies)" = data_core_low_risk_plot,
              "Core (ICU studies)" = data_core_icu_plot,
              "Core (Intra-operative studies)" = data_core_op_plot,
              "Nasopharyngeal" = data_NPA_plot,

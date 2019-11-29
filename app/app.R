@@ -6,19 +6,12 @@ library(tidyverse)
 library(DT)
 library(robvis)
 library(readxl)
-# library(bama) #awconway/bama
+library(bama) #awconway/bama
 # library(ggprisma)
 library(waiter)
 library(gofer)#awconway/gofer
 # Load data ----
 # 
-load(here::here("data", "data_core_age.rda"))
-load(here::here("data", "data_core.rda"))
-load(here::here("data", "ma_core.rda"))
-pdf(NULL)
-gofer_core <- gofer::gofer(data_core, ma_effect = ma_core$effect_estimate,
-                      ma_lower = ma_core$lower_limit, ma_upper = ma_core$upper_limit,
-                      grade_rating="Moderate", data_age = data_core_age, dodge_width = 0.85)
 
 data <- readxl::read_xlsx(here::here("data", "zhf_extracted.xlsx"))
 # sum_findings <- readxl::read_xlsx(here::here("data", "sum_findings.xlsx"))
@@ -76,6 +69,7 @@ data$comparison <- sub("Iliac", "Iliac artery", data$comparison)
 data$comparison <- sub("Ax", "Axillary artery", data$comparison)
 data$comparison <- sub("Eso", "Esophageal", data$comparison)
 
+
 # Clean up results
 format_results <- function(group){
   out <- bama::loa_maker(group$bias,group$V_bias, group$logs2, group$V_logs2)
@@ -86,6 +80,59 @@ format_results <- function(group){
     select(Studies, m, Participants, Measurements, bias_mean, sd2_est, tau_est, LOA_L, LOA_U, CI_L_rve, CI_U_rve) %>%
     rename("Comparisons" = m)
 }
+
+
+ma_low_risk <- format_results(data_core_lowrisk) %>% rename("lower_limit" = CI_L_rve, 
+                                                             "effect_estimate" = bias_mean, 
+                                                             "upper_limit" = CI_U_rve)
+
+ma_NPA <- format_results(data_NPA) %>% rename("lower_limit" = CI_L_rve, 
+                                                             "effect_estimate" = bias_mean, 
+                                                             "upper_limit" = CI_U_rve)
+
+ma_SL <- format_results(data_SL) %>% rename("lower_limit" = CI_L_rve, 
+                                                   "effect_estimate" = bias_mean, 
+                                                   "upper_limit" = CI_U_rve)
+
+ma_conflict <- format_results(data_conflict) %>% rename("lower_limit" = CI_L_rve, 
+                                                   "effect_estimate" = bias_mean, 
+                                                   "upper_limit" = CI_U_rve)
+
+
+##Gofer plots##
+
+pdf(NULL)
+data_core_plot <- gofer::gofer(data_core, ma_effect = ma_core$effect_estimate,
+                               ma_lower = ma_core$lower_limit, ma_upper = ma_core$upper_limit,
+                               grade_rating="Moderate", data_age = data_core_age, 
+                               dodge_width = 0.85)
+
+data_core_lowrisk_plot <- gofer::gofer(data_core_lowrisk, ma_effect = ma_low_risk$effect_estimate,
+                                       ma_lower = ma_low_risk$lower_limit, ma_low_risk = ma_core$upper_limit,
+                                       grade_rating="Moderate", data_age = data_core_low_risk_age, 
+                                       dodge_width = 0.85)
+
+data_core_icu_plot <- gofer::gofer(data_core_ICU, ma_effect = ma_ICU$effect_estimate,
+                               ma_lower = ma_ICU$lower_limit, ma_upper = ma_ICU$upper_limit,
+                               grade_rating="Moderate", data_age = data_core_ICU_age, dodge_width = 0.85)
+
+data_core_op_plot <- gofer::gofer(data_core_OT, ma_effect = ma_OT$effect_estimate,
+                               ma_lower = ma_OT$lower_limit, ma_upper = ma_OT$upper_limit,
+                               grade_rating="Moderate", data_age = data_core_OT_age, dodge_width = 0.85)
+
+data_NPA_plot <- gofer::gofer(data_NPA, ma_effect = ma_NPA$effect_estimate,
+                               ma_lower = ma_NPA$lower_limit, ma_upper = ma_NPA$upper_limit,
+                               grade_rating="Moderate", data_age = data_NPA_age, dodge_width = 0.85)
+
+data_SL_plot <- gofer::gofer(data_SL, ma_effect = ma_SL$effect_estimate,
+                               ma_lower = ma_SL$lower_limit, ma_upper = ma_SL$upper_limit,
+                               grade_rating="Moderate", data_age = data_SL_age, dodge_width = 0.85)
+
+data_conflict_plot <- gofer::gofer(data_conflict, ma_effect = ma_conflict$effect_estimate,
+                               ma_lower = ma_conflict$lower_limit, ma_upper = ma_conflict$upper_limit,
+                               grade_rating="Moderate", data_age = data_no_conflict_age, dodge_width = 0.85)
+
+
 
 ######UI#########
 ui <- dashboardPage(
@@ -169,32 +216,45 @@ ui <- dashboardPage(
       ),
       
       tabItem(tabName = "gofer",
-              fluidRow(
-                tabBox(width = 12, 
-                              tabPanel(
-                                       p("Primary comparison - ZHF vs core"),
-                                       plotOutput(outputId = "gofer_core", height="1200px")
-                              ),
-                              tabPanel(p("Low risk - ZHF vs core"),
-                                       img(src="gofer_low_risk.png", height="100%", width="100%")
-                              ),
-                       tabPanel(p("ICU - ZHF vs core"),
-                                img(src="gofer_ICU.png", height="100%", width="100%")
-                       ),
-                       tabPanel(p("Surgery - ZHF vs core"),
-                                img(src="gofer_OT.png", height="100%", width="100%")
-                       ),
-                       tabPanel(p("ZHF vs nasopharyngeal"),
-                                img(src="gofer_NPA.png", height="100%", width="100%")
-                       ),
-                       tabPanel(p("ZHF vs sublingual"),
-                                img(src="gofer_SL.png", height="100%", width="100%")
-                       ),
-                       tabPanel(p("Studies without industry funding - ZHF vs core"),
-                                  img(src="gofer_no_conflict.png", height="100%", width="100%")
-                       )
-                )
-              )
+               fluidRow(column(12,
+                        radioButtons(inputId = "dataset",
+                                     h4("Select a subset of studies to display:"),
+                                     inline = TRUE,
+                                     choices= c("Core",
+                                                "Core (low risk studies)",
+                                                "Core (ICU studies)",
+                                                "Core (Intra-operative studies)",
+                                                "Nasopharyngeal",
+                                                "Sublingual",
+                                                "No conflicts of interest")),
+                        h2(htmlOutput("dt_selected_subset")), # reactive title above table
+                        br(),
+                        plotOutput("gofer"))),
+              #   tabBox(width = 12, 
+              #                 tabPanel(
+              #                          p("Primary comparison - ZHF vs core"),
+              #                          plotOutput(outputId = "gofer_core", height="1200px")
+              #                 ),
+              #                 tabPanel(p("Low risk - ZHF vs core"),
+              #                          img(src="gofer_low_risk.png", height="100%", width="100%")
+              #                 ),
+              #          tabPanel(p("ICU - ZHF vs core"),
+              #                   img(src="gofer_ICU.png", height="100%", width="100%")
+              #          ),
+              #          tabPanel(p("Surgery - ZHF vs core"),
+              #                   img(src="gofer_OT.png", height="100%", width="100%")
+              #          ),
+              #          tabPanel(p("ZHF vs nasopharyngeal"),
+              #                   img(src="gofer_NPA.png", height="100%", width="100%")
+              #          ),
+              #          tabPanel(p("ZHF vs sublingual"),
+              #                   img(src="gofer_SL.png", height="100%", width="100%")
+              #          ),
+              #          tabPanel(p("Studies without industry funding - ZHF vs core"),
+              #                     img(src="gofer_no_conflict.png", height="100%", width="100%")
+              #          )
+              #   )
+              # )
               
       ),
       
@@ -731,9 +791,23 @@ server <- shinyUI(function(input, output) {
 #                                        "and ZHF thermometry. Solid vertical lines indicate bounds for the outer 95% confidence intervals (CIs) for the pooled 
 #                                          estimates of limits of agreement (LoA) between", tolower(input$dataset), "and ZHF thermometry (ie. population LoA)."))
 # #}) # end of output$caption
+    
+    gofer_input <- reactive({
+      switch(input$dataset,
+             "Core" = data_core_plot,
+             "Core (low risk studies)" = data_core_lowrisk_plot,
+             "Core (ICU studies)" = data_core_icu_plot,
+             "Core (Intra-operative studies)" = data_core_op_plot,
+             "Nasopharyngeal" = data_NPA_plot,
+             "Sublingual" = data_SL_plot,
+             "No conflicts of interest" = data_conflict_plot
+             
+      )
+    })
+    
   output$gofer_core <- renderPlot({
     
-    grid::grid.draw(gofer_core)
+    grid::grid.draw(gofer_input())
   }
     
   )

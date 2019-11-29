@@ -16,6 +16,10 @@ load(here::here("app", "data", "data_core_age.rda"))
 load(here::here("app", "data", "data_core.rda"))
 load(here::here("app", "data", "ma_core.rda"))
 
+gofer_core <- gofer::gofer(data_core, ma_effect = ma_core$effect_estimate,
+                      ma_lower = ma_core$lower_limit, ma_upper = ma_core$upper_limit,
+                      grade_rating="Moderate", data_age = data_core_age, dodge_width = 0.85)
+
 data <- readxl::read_xlsx(here::here("app", "data", "zhf_extracted.xlsx"))
 # sum_findings <- readxl::read_xlsx(here::here("app", "data", "sum_findings.xlsx"))
 
@@ -167,8 +171,9 @@ ui <- dashboardPage(
       tabItem(tabName = "gofer",
               fluidRow(
                 tabBox(width = 12, 
-                              tabPanel(p("Primary comparison - ZHF vs core"),
-                                       plotOutput("gofer_core")
+                              tabPanel(
+                                       p("Primary comparison - ZHF vs core"),
+                                       plotOutput(outputId = "gofer_core", height="1200px")
                               ),
                               tabPanel(p("Low risk - ZHF vs core"),
                                        img(src="gofer_low_risk.png", height="100%", width="100%")
@@ -727,10 +732,8 @@ server <- shinyUI(function(input, output) {
 #                                          estimates of limits of agreement (LoA) between", tolower(input$dataset), "and ZHF thermometry (ie. population LoA)."))
 # #}) # end of output$caption
   output$gofer_core <- renderPlot({
-    gofer <- gofer::gofer(data_core, ma_effect = ma_core$effect_estimate,
-                 ma_lower = ma_core$lower_limit, ma_upper = ma_core$upper_limit,
-                 grade_rating="Moderate", data_age = data_core_age, dodge_width = 0.85)
-    grid::grid.draw(gofer)
+
+    grid::grid.draw(gofer_core)
   }
     
   )

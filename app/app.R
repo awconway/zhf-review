@@ -9,10 +9,15 @@ library(readxl)
 # library(bama) #awconway/bama
 # library(ggprisma)
 library(waiter)
+library(gofer)#awconway/gofer
 # Load data ----
 # 
-data <- readxl::read_xlsx(here::here("data", "zhf_extracted.xlsx"))
-# sum_findings <- readxl::read_xlsx(here::here("data", "sum_findings.xlsx"))
+load(here::here("app", "data", "data_core_age.rda"))
+load(here::here("app", "data", "data_core.rda"))
+load(here::here("app", "data", "ma_core.rda"))
+
+data <- readxl::read_xlsx(here::here("app", "data", "zhf_extracted.xlsx"))
+# sum_findings <- readxl::read_xlsx(here::here("app", "data", "sum_findings.xlsx"))
 
 # create additional columns for meta-analysis
 data <- data %>%
@@ -163,7 +168,7 @@ ui <- dashboardPage(
               fluidRow(
                 tabBox(width = 12, 
                               tabPanel(p("Primary comparison - ZHF vs core"),
-                                       img(src="gofer.png", height="100%", width="100%")
+                                       plotOutput("gofer_core")
                               ),
                               tabPanel(p("Low risk - ZHF vs core"),
                                        img(src="gofer_low_risk.png", height="100%", width="100%")
@@ -438,7 +443,7 @@ server <- shinyUI(function(input, output) {
   Sys.sleep(3) # do something that takes time
   
   output$Rob_summary <- renderPlot({
-    frame <- read_excel(here::here("data", "zhf_extracted.xlsx"))
+    frame <- read_excel(here::here("app", "data", "zhf_extracted.xlsx"))
 
     RoB <- frame %>%
       select(Study, RoB_selection, RoB_spoton, RoB_comparator, RoB_flow) %>%
@@ -453,7 +458,7 @@ server <- shinyUI(function(input, output) {
   })
 
   output$Rob_traffic_light <- renderPlot({
-    frame <- read_excel(here::here("data", "zhf_extracted.xlsx"))
+    frame <- read_excel(here::here("app", "data", "zhf_extracted.xlsx"))
 
     RoB <- frame %>%
       select(Study, RoB_selection, RoB_spoton, RoB_comparator, RoB_flow) %>%
@@ -721,7 +726,15 @@ server <- shinyUI(function(input, output) {
 #                                        "and ZHF thermometry. Solid vertical lines indicate bounds for the outer 95% confidence intervals (CIs) for the pooled 
 #                                          estimates of limits of agreement (LoA) between", tolower(input$dataset), "and ZHF thermometry (ie. population LoA)."))
 # #}) # end of output$caption
-
+  output$gofer_core <- renderPlot({
+    gofer <- gofer::gofer(data_core, ma_effect = ma_core$effect_estimate,
+                 ma_lower = ma_core$lower_limit, ma_upper = ma_core$upper_limit,
+                 grade_rating="Moderate", data_age = data_core_age, dodge_width = 0.85)
+    grid::grid.draw(gofer)
+  }
+    
+  )
+    
 hide_waiter()
 
 }) # end of server

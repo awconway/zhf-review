@@ -44,7 +44,7 @@ ui <- dashboardPage(
     ) 
   ),
   dashboardBody(  
-    use_waiter(include_js = FALSE),
+    
     
     tabItems(
       tabItem(tabName="Rob",
@@ -61,9 +61,9 @@ ui <- dashboardPage(
       ),
       
       tabItem(tabName = "gofer",
-              fillPage(      tags$style(type = "text/css", "#gofer {height: calc(100vh - 80px) !important;}"),
-
-                              plotOutput("gofer", height="100%")
+              fillPage(    tags$style(type = "text/css", "#gofer {height: calc(100vh - 80px) !important;}"),
+                           use_waitress(color = "#7F7FFF"),
+                           plotOutput("gofer", height="100%")
                               )
               
       ),
@@ -196,7 +196,6 @@ ui <- dashboardPage(
 ')
               ))
     )  
-    ,  show_waiter_on_load(spin_folding_cube())
   ) #end dashboardBody
 ) #end dashboardPage
 
@@ -306,8 +305,19 @@ server <- shinyUI(function(input, output) {
     )
   })
   
+  waitress <- Waitress$new(theme = "overlay-percent") # call the waitress  observeEvent(input$load, {
+  observeEvent(input$gofer, {
+    waitress$
+      start()$
+      auto(percent = 5, ms = 150) # increase by 5 percent every 150 milliseconds
+    Sys.sleep(3.5)
+    waitress$hide()
+  })
+  
   output$gofer <- renderPlot({
-
+    waitress$start()
+    
+    
     plot <- gofer::gofer(gofer_input()[[1]], ma_effect = gofer_input()[[2]]$effect_estimate,
                                    ma_lower = gofer_input()[[2]]$lower_limit, ma_upper = gofer_input()[[2]]$upper_limit,
                                    grade_rating=gofer_input()[[4]], data_age = gofer_input()[[3]], 
@@ -315,6 +325,8 @@ server <- shinyUI(function(input, output) {
         
     
     grid::grid.draw(plot)
+    
+    waitress$hide() # hide when done
      
                                   }) # renderPlot
   
@@ -324,8 +336,9 @@ output$ggprisma <- renderPlot({
                      wrong_design = 1, awaiting_classification = 2)
 })  
   
-  hide_waiter()
-  
+
+
+
 }) # end of server
 
 shinyApp(ui, server)

@@ -204,9 +204,9 @@ server <- shinyUI(function(input, output) {
   Sys.sleep(3) # do something that takes time
   
   output$Rob_summary <- renderPlot({
-    frame <- read_excel(here::here("app", "data", "zhf_extracted.xlsx"))
     
-    RoB <- frame %>%
+    
+    RoB <- data_core %>%
       select(Study, RoB_selection, RoB_spoton, RoB_comparator, RoB_flow) %>%
       mutate(RoB_overall = if_else(RoB_selection == "low" &
                                      RoB_spoton == "low" &
@@ -219,9 +219,9 @@ server <- shinyUI(function(input, output) {
   })
   
   output$Rob_traffic_light <- renderPlot({
-    frame <- read_excel(here::here("app", "data", "zhf_extracted.xlsx"))
     
-    RoB <- frame %>%
+    
+    RoB <- data_core %>%
       select(Study, RoB_selection, RoB_spoton, RoB_comparator, RoB_flow) %>%
       mutate(RoB_overall = if_else(RoB_selection == "low" &
                                      RoB_spoton == "low" &

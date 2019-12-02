@@ -62,7 +62,7 @@ ui <- dashboardPage(
       
       tabItem(tabName = "gofer",
               fillPage(    tags$style(type = "text/css", "#gofer {height: calc(100vh - 80px) !important;}"),
-                           use_waitress(color = "#7F7FFF"),
+                           use_waitress(),
                            plotOutput("gofer", height="100%")
                               )
               
@@ -304,19 +304,19 @@ server <- shinyUI(function(input, output) {
            
     )
   })
-  
-  waitress <- Waitress$new(theme = "overlay-percent") # call the waitress  observeEvent(input$load, {
-  observeEvent(input$gofer, {
-    waitress$
-      start()$
-      auto(percent = 5, ms = 150) # increase by 5 percent every 150 milliseconds
-    Sys.sleep(3.5)
-    waitress$hide()
-  })
+  waitress <- call_waitress("nav", theme = "overlay-percent") # call the waitress
   
   output$gofer <- renderPlot({
     waitress$start()
     
+    
+    dat <- vector()
+    
+    for(i in 1:10){
+      waitress$increase(10) # increase by 10%
+      Sys.sleep(.3)
+      dat <- c(dat, sample(1:100, 1))
+    }
     
     plot <- gofer::gofer(gofer_input()[[1]], ma_effect = gofer_input()[[2]]$effect_estimate,
                                    ma_lower = gofer_input()[[2]]$lower_limit, ma_upper = gofer_input()[[2]]$upper_limit,

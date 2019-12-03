@@ -1,7 +1,7 @@
 ---
 title: "Accuracy and precision of zero-heat-flux temperature monitoring"
 description: A systematic review and meta-analysis
-author: 
+author:
 - name: Aaron Conway
   affiliation: Peter Munk Cardiac Centre, UHN & Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
   email: aaron.conway@utoronto.ca
@@ -181,7 +181,7 @@ The agreement between zero-heat-flux thermometers and core as well as other peri
 
 ## Methods
 
-A systematic review was conducted in accordance with a predetermined protocol. The protocol was submitted to PROSPERO for registration but due to delays in processing we had started data extraction by the time it was reviewed. Therefore, the protocol did not meet the requirements for registration. A copy of the submitted protocol can be accessed [here](https://github.com/awconway/zhf-review). The primary comparison for this review was temperature measured from a zero-heat-flux thermometer versus temperature measured from a core site, which we defined as temperature measured at either an arterial, esophageal, bladder or rectal site. Secondary comparisons were made between zero-heat-flux thermometers and temperatures taken at peripheral sites.
+A systematic review was conducted in accordance with a predetermined protocol. The primary comparison for this review was temperature measured from a zero-heat-flux thermometer versus temperature measured from a core site, which we defined as temperature measured at either an arterial, esophageal, bladder or rectal site. Secondary comparisons were made between zero-heat-flux thermometers and temperatures taken at peripheral sites.
 
 ### Inclusion criteria
 
@@ -189,7 +189,7 @@ Observational studies that reported temperature measurements from a zero-heat-fl
 
 ### Data sources and searches
 
-Published studies were found by searching Medline and EMBASE to July 2019. The Cochrane-recommended search strategy combining terms for the ‘target condition’ and ‘index test’ was used.[@mann2012should] This search strategy is an efficient approach for systematic reviews of diagnostic test accuracy studies.[@preston2015improving] We also conducted forward citation searching, by using Google Scholar to search the citations of the first article published on the accuracy of zero-heat-flux thermometers. The search strategies used for each data base can be located [here](https://aconway.dev/zhf app). Selection of studies was undertaken independently by two reviewers using [Covidence](https://www.covidence.org). 
+Published studies were found by searching Medline and EMBASE to July 2019. The Cochrane-recommended search strategy combining terms for the ‘target condition’ and ‘index test’ was used.[@mann2012should] This search strategy is an efficient approach for systematic reviews of diagnostic test accuracy studies.[@preston2015improving] We also conducted forward citation searching, by using Google Scholar to search the citations of the first article published on the accuracy of zero-heat-flux thermometers. The search strategies used for each data base can be located [here](https://aconway.dev/zhf). Selection of studies was undertaken independently by two reviewers using [Covidence](https://www.covidence.org). 
 
 ### Data extraction and quality assessment
 
@@ -246,17 +246,18 @@ include_graphics("gofer_core.png")
 Table 1 presents results of the primary, sensitivity and all subgroup analyses for the primary comparison as well as secondary comparisons. We conducted two subgroup analyses for the primary comparison according to the clinical setting in which the study was conducted. In the subset of studies conducted in the ICU, the mean bias was `r ICU$bias_mean`°C with population limits of agreement between `r ICU$CI_L_rve`°C and `r ICU$CI_U_rve` °C. The GRADE rating for quality of evidence was downgraded to very low quality due to study limitations, inconsistency and imprecision. In the subset of studies that evaluated the use of zero-heat-flux thermometers during surgery found a mean bias of `r OT$bias_mean`°C with population limits of agreement from `r OT$CI_L_rve`°C to `r OT$CI_U_rve`°C. The quality of evidence was rated as moderate quality due to concerns about study limitations.
 
 
-```{r table-1, layout="l-page-outset"}
-ma <- list(primary, low_risk, ICU, OT,  NPA,SL, conflict)
+```{r table-1, layout="l-page-outset", echo=FALSE}
+library(kableExtra)
+  ma <- list(primary, low_risk, ICU, OT,  NPA,SL, conflict)
 names(ma) <- c("Primary", "Low risk studies", "Intensive Care Unit", 
                "Surgery", "Nasopharyngeal", "Sublingual",
                "Studies not funded by industry")
 df <- bind_rows(ma, .id="Comparison")
 df %>% 
   rename(" " = Comparison, "Mean bias" = bias_mean, "Variance" = sd2_est, "Tau-squared" = tau_est, "Lower bound for 95% limit of agreement" = LOA_L, "Upper bound for 95% limits of agreement" = LOA_U, "Outer confidence interval for lower 95% limits of agreement" = CI_L_rve, "Outer confidence interval for upper 95% limits of agreement" = CI_U_rve) %>% 
-    gt() %>% 
+    gt() %>%
   tab_header(
-    title = "Table 1. Results of meta-analyses"  )  %>% 
+    title = "Table 1. Results of meta-analyses"  )  %>%
   tab_spanner(
     label = "Population limits of agreement",
     columns = vars(

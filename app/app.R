@@ -8,6 +8,7 @@ library(robvis)
 library(ggprisma) #awconway/ggprisma
 library(waiter)
 library(gofer)#awconway/gofer
+library(ggimage)
 
 ######UI#########
 ui <- dashboardPage(
@@ -183,6 +184,8 @@ ui <- dashboardPage(
 <p>Kristina Chang  (Toronto General Hospital, UHN)
   
 <p>Peter Collins  (Toronto General Hospital, UHN)
+
+<p>Elizabeth Tipton (Dapartment of Statistics, Northwestern University)
   
 <p>Matteo Parotto  (Toronto General Hospital, UHN)
 

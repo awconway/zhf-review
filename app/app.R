@@ -5,7 +5,6 @@ library(shinydashboardPlus)
 library(tidyverse)
 library(DT)
 library(robvis)
-library(bama) #awconway/bama
 library(ggprisma) #awconway/ggprisma
 library(waiter)
 library(gofer)#awconway/gofer

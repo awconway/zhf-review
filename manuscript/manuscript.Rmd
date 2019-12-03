@@ -32,9 +32,10 @@ twitter:
 ```{r echo=FALSE, include=FALSE}
 library(tidyverse)
 library(knitr)
-library(bama) # https://github.com/awconway/bama
 library(ggprisma) # https://github.com/awconway/ggprisma
 library(gt)
+source("loa_maker.R")
+source("meta.R")
 ```
 
 ```{r load-data, include=FALSE}
@@ -101,7 +102,7 @@ data_conflict <- data_core %>%
 
 ```{r format-result-function, include=FALSE}
 format_results <- function(group){
-out <- bama::loa_maker(group$bias,group$V_bias, group$logs2, group$V_logs2)
+out <- loa_maker(group$bias,group$V_bias, group$logs2, group$V_logs2)
 out <- round(out, digits=2)
 out <- out %>% 
   mutate(Participants = sum(group$n_count, na.rm=T)) %>% 
@@ -160,7 +161,7 @@ Medline and EMBASE were searched for studies that reported on a measurement of c
 
 **Results**
 
-Sixteen studies were included. The primary comparison of zero-heat-flux versus core temperature measurements consisted of `r primary$Comparisons` comparisons from `r primary$Studies` individual studies. Data from `r primary$Participants` participants with `r format(primary$Measurements, scientfic=F)` paired measurements were included. The pooled estimate for the mean bias was `r primary$bias_mean`°C. Population limits of agreement, which take into consideration the between-study heterogeneity and sampling error, were wide, spanning from `r primary$CI_L_rve`°C to `r primary$CI_U_rve`°C. The GRADE evidence quality rating was downgraded to moderate due to concerns about study limitations. Population limits of agreement for the sensitivity analysis restricted to studies rated as having low risk of bias across all the domains of the QUADAS-2 were similar to the primary analysis.
+Sixteen studies were included. The primary meta-analysis of zero-heat-flux versus core temperature measurements consisted of `r primary$Comparisons` comparisons from `r primary$Studies` individual studies. Data from `r primary$Participants` participants with `r format(primary$Measurements, scientfic=F)` paired measurements were included. The pooled estimate for the mean bias was `r primary$bias_mean`°C. Population limits of agreement, which take into consideration the between-study heterogeneity and sampling error, were wide, spanning from `r primary$CI_L_rve`°C to `r primary$CI_U_rve`°C. The GRADE evidence quality rating was downgraded to moderate due to concerns about study limitations. Population limits of agreement for the sensitivity analysis restricted to studies rated as having low risk of bias across all the domains of the QUADAS-2 were similar to the primary analysis.
 
 
 **Conclusion**

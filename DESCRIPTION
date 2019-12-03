@@ -1,0 +1,38 @@
+Type: Compendium
+Package: Accuracy and precision of zero-heat-flux temperature monitoring
+Title: Source documents for systematic review
+Version: 0.0.1
+Authors@R: 
+    person(given = "Aaron",
+           family = "Conway",
+           role = c("aut", "cre"),
+           email = "aaronconwayphd@gmail.com",
+           comment = c(ORCID = "0000-0002-9583-8636"))
+Description: This repository contains the code for a systematic review and meta-analysis of zero-heat-flux temperature monitoring.
+License: MIT + file LICENSE
+Depends: 
+    distill,
+    DT,
+    ggprisma,
+    gofer,
+    grid,
+    gt,
+    here,
+    htmltools,
+    knitr,
+    readxl,
+    rmarkdown,
+    robvis,
+    shiny,
+    shinydashboard,
+    shinydashboardPlus,
+    shinyLP,
+    tidyverse,
+    waiter
+Remotes: 
+    awconway/ggprisma,
+    awconway/gofer,
+    mcguinlu/robvis,
+    rstudio/gt
+Encoding: UTF-8
+LazyData: true

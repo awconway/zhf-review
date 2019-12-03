@@ -1,6 +1,5 @@
 ---
-title: "Accuracy and precision of zero-heat-flux temperature monitoring"
-description: A systematic review and meta-analysis
+title: "Accuracy and precision of zero-heat-flux temperature monitoring: A systematic review and meta-analysis"
 author:
 - name: Aaron Conway
   affiliation: Peter Munk Cardiac Centre, UHN & Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
@@ -18,16 +17,88 @@ author:
 - name: Peter Collins
   affiliation: Toronto General Hospital, UHN
 - name: Elizabeth Tipton
-  affiliation: Dapartment of Statistics, Northwestern University
+  affiliation: Department of Statistics, Northwestern University
 - name: Matteo Parotto
   affiliation: Toronto General Hospital, UHN
-date: "`r Sys.Date()`"
-bibliography: bibliography.bib
-output: distill::distill_article
+# date: "`r Sys.Date()`"
 repository_url: https://github.com/awconway/zhf-review
 twitter:
   creator: "@aw_conway"
+bibliography: bibliography.bib
+csl: anesthesiology.csl
+output: word_document
+# output: distill::distill_article
+params:
+  distill: FALSE
+  word: TRUE
 ---
+
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(include=FALSE,
+                      echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+
+```{r conditional_title_page, results='asis', include=params$word}
+cat("
+## Author information
+
+<p>Aaron Conway PhD^1,2,3^
+<p>Megan Bittner BSc^2^
+<p>Dan Phan BSc^2^
+<p>Navpreet Kamboj BScN^2^
+<p>Kristina Chang MScN^4^
+<p>Peter Collins MStatistics^4^
+<p>Elizabeth Tipton PhD^5^
+<p>Matteo Parotto MD^4^
+
+<p>^1^ Peter Munk Cardiac Centre, University Health Network
+<p>^2^Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
+<p>^3^School of Nursing, Queensland University of Technology (QUT)
+<p>^4^Toronto General Hospital, UHN
+<p>^5^Department of Statistics, Northwestern University
+
+## Corresponding author
+
+Dr Aaron Conway BN (Hons) PhD
+RBC Chair in Cardiovascular Nursing Research | Peter Munk Cardiac Centre | Toronto General Hospital | University Health Network
+Clinician Investigator | Toronto General Hospital Research Institute | University Health Network
+Assistant Professor | Lawrence S. Bloomberg Faculty of Nursing | University of Toronto
+ 
+585 University Ave, 4NU - 476
+Toronto, ON  M5G 2N2
+
+e. aaron.conway@utoronto.ca  | t. (416) 946-7112 
+
+## Declarations
+
+Clinical trial number: Not applicable
+
+Prior presentations: Not applicable
+
+Abstract word count: 300 words
+
+Total word count: 3075 words
+
+Introduction word count: 303 words
+
+Discussion word count: 781 words
+
+Number of figures: 2
+ 
+Number of tables: 1
+
+Abbreviated title: Accuracy of zero-heat-flux thermometers
+
+Summary statement: Clinicians should consider the potential that a temperature measurement from a zero-heat-flux thermometer could be as much as 1°C higher or lower than core temperature. 
+
+Funding statement: Support was provided solely from institutional and/or departmental sources.
+
+Conflicts of interest: The authors declare no competing interests.
+
+")
+```
 
 ```{r echo=FALSE, include=FALSE}
 library(tidyverse)
@@ -153,20 +224,20 @@ conflict  <- format_results(data_conflict)
 
 **Background**
 
-Zero-heat-flux thermometers are non-invasive devices that can be used to continuously monitor temperature. These devices are increasingly being used in clinical practice to substitute for invasive core temperature measurement during surgery and in critical care settings. The aim of this review was to determine the accuracy and precision of zero-heat-flux temperature measurements. 
+Zero-heat-flux thermometers are non-invasive devices that can be used to continuously monitor temperature. These devices are increasingly being used to substitute for invasive core temperature measurement during surgery and in critical care. The aim of this review was to determine the accuracy and precision of zero-heat-flux temperature measurements. 
 
 **Methods**
 
-Medline and EMBASE were searched for studies that reported on a measurement of core or peripheral temperature that coincided with a measurement from the zero-heat-flux device. Study selection and quality assessment (using the QUADAS-2) was performed independently. The GRADE approach was used to summarize the strength of the body of evidence.  Pooled estimates of the mean bias and limits of agreement with outer 95% confidence intervals (termed population limits of agreement) were calculated. 
+Medline and EMBASE were searched for studies that reported on a measurement of core or peripheral temperature that coincided with a measurement from the zero-heat-flux device. Study selection and quality assessment (using QUADAS-2) was performed independently. The GRADE approach was used to summarize the strength of the evidence.  Pooled estimates of the mean bias and limits of agreement with outer 95% confidence intervals (population limits of agreement) were calculated. 
 
 **Results**
 
-Sixteen studies were included. The primary meta-analysis of zero-heat-flux versus core temperature measurements consisted of `r primary$Comparisons` comparisons from `r primary$Studies` individual studies. Data from `r primary$Participants` participants with `r format(primary$Measurements, scientfic=F)` paired measurements were included. The pooled estimate for the mean bias was `r primary$bias_mean`°C. Population limits of agreement, which take into consideration the between-study heterogeneity and sampling error, were wide, spanning from `r primary$CI_L_rve`°C to `r primary$CI_U_rve`°C. The GRADE evidence quality rating was downgraded to moderate due to concerns about study limitations. Population limits of agreement for the sensitivity analysis restricted to studies rated as having low risk of bias across all the domains of the QUADAS-2 were similar to the primary analysis.
+Sixteen studies were included. The primary meta-analysis of zero-heat-flux versus core temperature consisted of `r primary$Comparisons` comparisons from `r primary$Studies` individual studies. Data from `r primary$Participants` participants with `r format(primary$Measurements, scientfic=F)` paired measurements were included. The pooled estimate for the mean bias was `r primary$bias_mean`°C. Population limits of agreement, which take into consideration the between-study heterogeneity and sampling error, were wide, spanning from `r primary$CI_L_rve`°C to `r primary$CI_U_rve`°C. The GRADE evidence quality rating was downgraded to moderate due to concerns about study limitations. Population limits of agreement for the sensitivity analysis restricted to studies rated as having low risk of bias across all the domains of the QUADAS-2 were similar to the primary analysis.
 
 
 **Conclusion**
 
-The range of uncertainty in the accuracy of the zero-heat-flux thermometer should be taken into account when using measurements from this device to inform clinical decision-making. Clinicians should therefore consider the potential that a temperature measurement from a zero-heat-flux thermometer could be as much as 1°C higher or lower than core temperature. Use of this device may not be appropriate in situations where a difference in temperature of less than 1°C is important to detect. 
+The range of uncertainty in the accuracy of the zero-heat-flux thermometer should be taken into account when using this device to inform clinical decision-making. Clinicians should therefore consider the potential that a temperature measurement from a zero-heat-flux thermometer could be as much as 1°C higher or lower than core temperature. Use of this device may not be appropriate in situations where a difference in temperature of less than 1°C is important to detect. 
 
 </blockquote>
 </div>
@@ -189,7 +260,7 @@ Observational studies that reported temperature measurements from a zero-heat-fl
 
 ### Data sources and searches
 
-Published studies were found by searching Medline and EMBASE to July 2019. The Cochrane-recommended search strategy combining terms for the ‘target condition’ and ‘index test’ was used.[@mann2012should] This search strategy is an efficient approach for systematic reviews of diagnostic test accuracy studies.[@preston2015improving] We also conducted forward citation searching, by using Google Scholar to search the citations of the first article published on the accuracy of zero-heat-flux thermometers. The search strategies used for each data base can be located [here](https://aconway.dev/zhf). Selection of studies was undertaken independently by two reviewers using [Covidence](https://www.covidence.org). 
+Published studies were found by searching Medline and EMBASE to July 2019. The Cochrane-recommended search strategy combining terms for the ‘target condition’ and ‘index test’ was used.[@mann2012should] This search strategy is an efficient approach for systematic reviews of diagnostic test accuracy studies.[@preston2015improving] We also conducted forward citation searching, by using Google Scholar to search the citations of the first article published on the accuracy of zero-heat-flux thermometers. The search strategies used for each data base can be located at this [link](https://aconway.dev/zhf). Selection of studies was undertaken independently by two reviewers using [Covidence](https://www.covidence.org). 
 
 ### Data extraction and quality assessment
 
@@ -206,7 +277,7 @@ The objective for the meta-analysis was to estimate the population limits of agr
 
 Estimations of $\delta$ and $\sigma2$ were made using a weighted least-squares model (similar to a random-effects approach), with the associated standard errors estimated using robust variance estimation. Robust variance estimation was used alternatively to model-based standard errors as some studies included in the systematic review used repeated-measures designs without accommodating for the correlation between measurements.[@hedges2010robust; @tanner2016handling; @tipton2015small] We used the method-of-moments estimator from DerSimonian & Laird @dersimonian1986meta for the $\tau2$ parameter. 
 
-Measures of uncertainty were included in our meta-analyses by calculating the outer 95% confidence intervals for pooled limits of agreement. We also accounted for repeated measurements if they were not properly adjusted for in individual studies. This was achieved by using weights proportional to the number of participants, not the total number of measurements.  The R statistical program was used to conduct all analyses.[@team2017r] All data and R code used in the meta-analyses can be located [here](https://github.com/awconway/zero-heat-flux-review).
+Measures of uncertainty were included in our meta-analyses by calculating the outer 95% confidence intervals for pooled limits of agreement. We also accounted for repeated measurements if they were not properly adjusted for in individual studies. This was achieved by using weights proportional to the number of participants, not the total number of measurements.  The R statistical program was used to conduct all analyses.[@team2017r] All data and R code used in the meta-analyses can be located at this [link](https://github.com/awconway/zhf-review).
 
 Prior to conducting the meta-analyses, the results from each study were converted into a standard format, with bias meaning comparator thermometer minus zero-heat-flux thermometer measured in degrees Celsius (°C). In several studies, results were reported for multiple groups of participants, therefore in the meta-analysis each of these groups was treated as a separate 'comparison'. Other studies reported multiple sets of results, whereby analyses were conducted between zero-heat-flux and various comparator devices used on the same participant. These instances were also treated as a separate 'comparison' if the comparator devices were a part of separate meta-analysis groups. One study reported intraoperative, postoperative and overall results for the same participants. Only the paired measurements from the overall results were included in the main and low risk bias analyses, leaving paired measurements exclusively from the intraoperative and postoperative timepoints to be included in respective meta-analyses subgroups. 
 
@@ -220,12 +291,12 @@ A sensitivity analysis for the primary comparison (zero-heat-flux versus tempera
 
 Sixteen studies were included (Figure \@ref(fig:fig-1)). Two studies reported only in abstract form were not included and assigned as 'studies awaiting classification' because there was insufficient information provided. 
 
-```{r fig-1, fig.align="center", fig.cap="PRISMA Flow Diagram", echo=FALSE, fig.width=5.5, fig.path=""}
+```{r fig-1, fig.align="center", fig.cap="PRISMA Flow Diagram", echo=FALSE, fig.width=5.5, fig.path="", include=params$distill}
 # https://github.com/awconway/ggprisma
 ggprisma::ggprisma(retrieved = 130, included = 16, duplicates = 35, full_text = 22, wrong_intervention = 4, wrong_comparator = 2, wrong_design = 1, awaiting_classification = 2)
 ```
 
-The characteristics of included studies can be viewed [here](https://aconway.dev/zhf). The primary comparison of zero-heat-flux versus core temperature measurements (eg, arterial, bladder, esophageal or rectal) consisted of `r primary$Comparisons` comparisons from `r primary$Studies` individual studies. In total, data from `r primary$Participants` participants with `r format(primary$Measurements, scientfic=F)` paired measurements were included in this comparison (two studies did not report the total number of measurements included in their analysis). The sensitivity analysis for the primary comparison with only studies that were judged as low risk of bias across all domains included `r low_risk$Comparisons` comparisons from `r low_risk$Studies` studies that enrolled `r low_risk$Participants` participants with `r low_risk$Measurements` paired measurements (two studies did not report the total number of measurements included in their analysis). There were `r ICU$Studies` studies that compared zero-heat-flux to core temperature measurements in ICU patients, comprising `r ICU$Comparisons` comparisons with `r ICU$Measurements` measurements from `r ICU$Participants` participants. Another `r OT$Studies` studies were included that compared zero-heat-flux to core temperature measurements in patients undergoing surgery, comprising `r OT$Comparisons` comparisons with `r OT$Measurements` measurements from `r OT$Participants` participants. Nasopharyngeal thermometers were used as the comparator devices in `r NPA$Studies` studies, with `r NPA$Measurements` paired measurements from `r NPA$Measurements` participants. Sublingual thermometers were used as the comparator devices in `r SL$Studies` studies that reported `r SL$Measurements` paired measurements from `r SL$Participants` participants.  
+The characteristics of included studies can be viewed at this [link](https://aconway.dev/zhf). The primary comparison of zero-heat-flux versus core temperature measurements (eg, arterial, bladder, esophageal or rectal) consisted of `r primary$Comparisons` comparisons from `r primary$Studies` individual studies. In total, data from `r primary$Participants` participants with `r format(primary$Measurements, scientfic=F)` paired measurements were included in this comparison (two studies did not report the total number of measurements included in their analysis). The sensitivity analysis for the primary comparison with only studies that were judged as low risk of bias across all domains included `r low_risk$Comparisons` comparisons from `r low_risk$Studies` studies that enrolled `r low_risk$Participants` participants with `r low_risk$Measurements` paired measurements (two studies did not report the total number of measurements included in their analysis). There were `r ICU$Studies` studies that compared zero-heat-flux to core temperature measurements in ICU patients, comprising `r ICU$Comparisons` comparisons with `r ICU$Measurements` measurements from `r ICU$Participants` participants. Another `r OT$Studies` studies were included that compared zero-heat-flux to core temperature measurements in patients undergoing surgery, comprising `r OT$Comparisons` comparisons with `r OT$Measurements` measurements from `r OT$Participants` participants. Nasopharyngeal thermometers were used as the comparator devices in `r NPA$Studies` studies, with `r NPA$Measurements` paired measurements from `r NPA$Measurements` participants. Sublingual thermometers were used as the comparator devices in `r SL$Studies` studies that reported `r SL$Measurements` paired measurements from `r SL$Participants` participants.  
 
 All studies included in this systematic review evaluated the zero-heat-flux temperature monitoring system manufactured by 3M. Previously known as the SpotOn Temperature Monitoring System, the 3M zero-heat-flux device is now referred to commercially as the Bair Hugger Temperature Monitoring System. All comparisons reported adherence to the zero-heat-flux device manufacturer instructions and placed the sensor on the forehead of the participants. One included study also reported results for comparisons where the zero-heat-flux thermometer was not placed on the forehead. We did not include these comparisons in our meta-analysis. 
 
@@ -238,7 +309,7 @@ A graphical overview of the findings for the primary analysis is presented in Fi
 
 
 
-```{r fig-2, preview=TRUE, layout="l-screen-inset", fig.align="center", fig.cap="Graphical overview of findings for the primary analysis", echo=FALSE, fig.path=""}
+```{r fig-2, preview=TRUE, layout="l-screen-inset", fig.align="center", fig.cap="Graphical overview of findings for the primary analysis", echo=FALSE, fig.path="", include=params$distill}
 include_graphics("gofer_core.png")
 ```
 
@@ -246,7 +317,7 @@ include_graphics("gofer_core.png")
 Table 1 presents results of the primary, sensitivity and all subgroup analyses for the primary comparison as well as secondary comparisons. We conducted two subgroup analyses for the primary comparison according to the clinical setting in which the study was conducted. In the subset of studies conducted in the ICU, the mean bias was `r ICU$bias_mean`°C with population limits of agreement between `r ICU$CI_L_rve`°C and `r ICU$CI_U_rve` °C. The GRADE rating for quality of evidence was downgraded to very low quality due to study limitations, inconsistency and imprecision. In the subset of studies that evaluated the use of zero-heat-flux thermometers during surgery found a mean bias of `r OT$bias_mean`°C with population limits of agreement from `r OT$CI_L_rve`°C to `r OT$CI_U_rve`°C. The quality of evidence was rated as moderate quality due to concerns about study limitations.
 
 
-```{r table-1, layout="l-page-outset", echo=FALSE}
+```{r table-1, layout="l-page-outset", include=params$distill}
 library(kableExtra)
   ma <- list(primary, low_risk, ICU, OT,  NPA,SL, conflict)
 names(ma) <- c("Primary", "Low risk studies", "Intensive Care Unit", 
@@ -296,3 +367,18 @@ We did not extract data on adverse events due to zero-heat-flux temperature moni
 Substantial differences between core and zero-heat-flux temperature measurements were identified in this meta-analysis. Clinicians should consider the range of uncertainty in the accuracy of the zero-heat-flux thermometer when using this device to inform their decision-making. As such, there may be circumstances where use of this device would not be appropriate because a difference in temperature of 1°C is important to detect for the given clinical situation. 
 
 <script src="https://hypothes.is/embed.js" async></script>
+
+```{r  conditional_references, include=params$word, results='asis'}
+cat("# References")
+```
+<div id="refs"></div>
+
+```{r  conditional_figure_legend, include=params$word, results='asis'}
+cat("# Figure legend
+    
+Figure 1: PRISMA Flow Diagram
+
+Figure 2: Graphical overview of findings for the primary analysis")
+```
+
+

@@ -101,10 +101,7 @@ Conflicts of interest: The authors declare no competing interests.
 ```
 
 ```{r echo=FALSE, include=FALSE}
-library(tidyverse)
-library(knitr)
-library(ggprisma) # https://github.com/awconway/ggprisma
-library(gt)
+library(magrittr)
 source("loa_maker.R")
 source("meta.R")
 ```
@@ -116,24 +113,24 @@ data <- readxl::read_xlsx(here::here("manuscript", "data", "zhf_extracted.xlsx")
 
 ```{r meta-analysis-prep, include=FALSE}
 data <- data %>%
-  mutate(c = N/n)
+  dplyr::mutate(c = N/n)
 
 #variance
 
 data <- data %>% 
-  mutate(s2 = case_when(corrected == "Yes"  ~ ((upper - bias)/1.96)^2,
+  dplyr::mutate(s2 = dplyr::case_when(corrected == "Yes"  ~ ((upper - bias)/1.96)^2,
          corrected == "No" ~  ((upper - bias)/1.96)^2*(N-1)/(N-c)
                         )
         )
 
 data <- data %>% 
-  mutate(V_bias = s2/n)
+  dplyr::mutate(V_bias = s2/n)
 
 data <- data %>% 
-  mutate(logs2 = log(s2)+1/(n-1))
+  dplyr::mutate(logs2 = log(s2)+1/(n-1))
 
 data <- data %>% 
-  mutate(V_logs2 = 2/(n-1))
+  dplyr::mutate(V_logs2 = 2/(n-1))
 ```
 
 
@@ -141,33 +138,33 @@ data <- data %>%
 # meta-analyses categories
 
 data_NPA <- data %>% 
-  filter(comparison == "NPA")
+  dplyr::filter(comparison == "NPA")
 
 data_SL <- data %>% 
-  filter(comparison == "Sublingual")
+  dplyr::filter(comparison == "Sublingual")
 
 #eshragi overall
 data_core <- data %>% 
-  filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
-  filter(comments != "Intraoperative, off cardiopulmonary bypass" & comments != "Postoperative")
+  dplyr::filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
+  dplyr::filter(comments != "Intraoperative, off cardiopulmonary bypass" & comments != "Postoperative")
 
 data_core_op <- data %>% #eshragi intraop
-    filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
-  filter (clinical_setting=="Intraoperative")
+    dplyr::filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
+  dplyr::filter (clinical_setting=="Intraoperative")
 
 data_core_icu <- data %>% #eshragi postop
-      filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
-  filter(clinical_setting=="ICU" | clinical_setting=="Postoperative")
+      dplyr::filter(comparison=="PA"|comparison=="Bladder"|comparison=="Eso" | comparison =="Rectal"|comparison =="Ax"|comparison =="Iliac") %>%
+  dplyr::filter(clinical_setting=="ICU" | clinical_setting=="Postoperative")
 
 # ROB 
 
 data_core_lowrisk <- data_core %>% #eshragi overall
-  filter(RoB_selection == "low" & RoB_spoton == "low" & RoB_comparator == "low" & RoB_flow =="low")
+  dplyr::filter(RoB_selection == "low" & RoB_spoton == "low" & RoB_comparator == "low" & RoB_flow =="low")
 
 # conflict of interests
 
 data_conflict <- data_core %>% 
-  filter(`Funding/equipment/conflict with ZHF company` == "No")
+  dplyr::filter(`Funding/equipment/conflict with ZHF company` == "No")
 
 ```
 
@@ -176,11 +173,11 @@ format_results <- function(group){
 out <- loa_maker(group$bias,group$V_bias, group$logs2, group$V_logs2)
 out <- round(out, digits=2)
 out <- out %>% 
-  mutate(Participants = sum(group$n_count, na.rm=T)) %>% 
-  mutate(Measurements = format(sum(group$N, na.rm = T), big.mark=",", scientific = FALSE)) %>% 
-  mutate(Studies = length(unique(group$Study))) %>% 
-  select(Studies, m, Participants, Measurements, bias_mean, sd2_est, tau_est, LOA_L, LOA_U, CI_L_rve, CI_U_rve) %>% 
-  rename("Comparisons" = m)
+  dplyr::mutate(Participants = sum(group$n_count, na.rm=T)) %>% 
+  dplyr::mutate(Measurements = format(sum(group$N, na.rm = T), big.mark=",", scientific = FALSE)) %>% 
+  dplyr::mutate(Studies = length(unique(group$Study))) %>% 
+  dplyr::select(Studies, m, Participants, Measurements, bias_mean, sd2_est, tau_est, LOA_L, LOA_U, CI_L_rve, CI_U_rve) %>% 
+  dplyr::rename("Comparisons" = m)
 out
 
 # Better names for columns
@@ -310,7 +307,7 @@ A graphical overview of the findings for the primary analysis is presented in Fi
 
 
 ```{r fig-2, preview=TRUE, layout="l-screen-inset", fig.align="center", fig.cap="Graphical overview of findings for the primary analysis", echo=FALSE, fig.path="", include=params$distill}
-include_graphics("gofer_core.png")
+knitr::include_graphics("gofer_core.png")
 ```
 
 
@@ -318,20 +315,19 @@ Table 1 presents results of the primary, sensitivity and all subgroup analyses f
 
 
 ```{r table-1, layout="l-page-outset", include=params$distill}
-library(kableExtra)
   ma <- list(primary, low_risk, ICU, OT,  NPA,SL, conflict)
 names(ma) <- c("Primary", "Low risk studies", "Intensive Care Unit", 
                "Surgery", "Nasopharyngeal", "Sublingual",
                "Studies not funded by industry")
-df <- bind_rows(ma, .id="Comparison")
+df <- dplyr::bind_rows(ma, .id="Comparison")
 df %>% 
-  rename(" " = Comparison, "Mean bias" = bias_mean, "Variance" = sd2_est, "Tau-squared" = tau_est, "Lower bound for 95% limit of agreement" = LOA_L, "Upper bound for 95% limits of agreement" = LOA_U, "Outer confidence interval for lower 95% limits of agreement" = CI_L_rve, "Outer confidence interval for upper 95% limits of agreement" = CI_U_rve) %>% 
-    gt() %>%
-  tab_header(
+  dplyr::rename(" " = Comparison, "Mean bias" = bias_mean, "Variance" = sd2_est, "Tau-squared" = tau_est, "Lower bound for 95% limit of agreement" = LOA_L, "Upper bound for 95% limits of agreement" = LOA_U, "Outer confidence interval for lower 95% limits of agreement" = CI_L_rve, "Outer confidence interval for upper 95% limits of agreement" = CI_U_rve) %>% 
+    gt::gt() %>%
+  gt::tab_header(
     title = "Table 1. Results of meta-analyses"  )  %>%
-  tab_spanner(
+  gt::tab_spanner(
     label = "Population limits of agreement",
-    columns = vars(
+    columns = gt::vars(
       `Outer confidence interval for lower 95% limits of agreement`, `Outer confidence interval for upper 95% limits of agreement`)
   )
 ```

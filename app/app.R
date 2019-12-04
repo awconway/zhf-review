@@ -2,8 +2,9 @@ library(shiny)
 library(shinyLP)
 library(shinydashboard)
 library(shinydashboardPlus)
-library(tidyverse)
 library(DT)
+library(magrittr)
+library(dplyr)
 library(robvis)
 library(ggprisma) #awconway/ggprisma
 library(waiter)
@@ -207,8 +208,8 @@ server <- shinyUI(function(input, output) {
     
     
     RoB <- data_core %>%
-      select(Study, RoB_selection, RoB_spoton, RoB_comparator, RoB_flow) %>%
-      mutate(RoB_overall = if_else(RoB_selection == "low" &
+      dplyr::select(Study, RoB_selection, RoB_spoton, RoB_comparator, RoB_flow) %>%
+      dplyr::mutate(RoB_overall = dplyr::if_else(RoB_selection == "low" &
                                      RoB_spoton == "low" &
                                      RoB_comparator == "low" &
                                      RoB_flow == "low", "low", "high"))
@@ -222,8 +223,8 @@ server <- shinyUI(function(input, output) {
     
     
     RoB <- data_core %>%
-      select(Study, RoB_selection, RoB_spoton, RoB_comparator, RoB_flow) %>%
-      mutate(RoB_overall = if_else(RoB_selection == "low" &
+      dplyr::select(Study, RoB_selection, RoB_spoton, RoB_comparator, RoB_flow) %>%
+      dplyr::mutate(RoB_overall = dplyr::if_else(RoB_selection == "low" &
                                      RoB_spoton == "low" &
                                      RoB_comparator == "low" &
                                      RoB_flow == "low", "low", "high"))

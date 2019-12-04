@@ -8,7 +8,6 @@ library(robvis)
 library(ggprisma) #awconway/ggprisma
 library(waiter)
 library(gofer)#awconway/gofer
-library(ggimage)
 
 ######UI#########
 ui <- dashboardPage(
@@ -78,7 +77,7 @@ ui <- dashboardPage(
       ),
       
       tabItem(tabName="DT",
-              column(12,
+              fillPage(      tags$style(type = "text/css", "#ggprisma {height: calc(100vh - 80px) !important;}"),
                      DT::dataTableOutput("dt"))),
       tabItem(tabName="search",
               fluidRow(
@@ -283,7 +282,7 @@ server <- shinyUI(function(input, output) {
         )
       )
     ))
-    DT::datatable(datasetInput[,c(1,4:19)], container = sketch, extensions = "Buttons", options = list(dom = "Bt", scrollX=T, buttons = c('copy', 'csv', 'excel'), sort = FALSE, paging=F, scrollY=T,
+    DT::datatable(datasetInput[,c(1,4:19)], container = sketch, extensions = "Buttons", options = list(dom = "Bt", scrollX=T, buttons = c('copy', 'csv', 'excel'), sort = FALSE, paging=F, sScrollY = '75vh', 
                                                                                                        #use 'title' previously noted in column header as tooltip
                                                                                                        initComplete = JS("function(settings, json){",
                                                                                                                          "$('th').tooltip({container: 'body'});

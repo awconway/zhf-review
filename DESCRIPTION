@@ -11,7 +11,7 @@ Authors@R:
 Description: This repository contains the code for a systematic review and meta-analysis of zero-heat-flux temperature monitoring.
 License: MIT + file LICENSE
 Depends: 
-    distill,
+    dplyr,
     DT,
     ggprisma,
     gofer,
@@ -20,6 +20,7 @@ Depends:
     here,
     htmltools,
     knitr,
+    magrittr,
     readxl,
     rmarkdown,
     robvis,
@@ -27,7 +28,6 @@ Depends:
     shinydashboard,
     shinydashboardPlus,
     shinyLP,
-    tidyverse,
     waiter
 Remotes: 
     awconway/ggprisma,

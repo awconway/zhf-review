@@ -16,8 +16,6 @@ author:
   email: navpreet.kamboj@mail.utoronto.ca
 - name: Kristina Chang
   affiliation: Toronto General Hospital, UHN
-- name: Peter Collins
-  affiliation: Toronto General Hospital, UHN
 - name: Elizabeth Tipton
   affiliation: Department of Statistics, Northwestern University
 - name: Matteo Parotto

@@ -2,69 +2,69 @@
 title: "Accuracy and precision of zero-heat-flux temperature monitoring"
 subtitle: A systematic review and meta-analysis
 description: "A systematic review and meta-analysis"
-# author:
-# - name: Aaron Conway
-#   affiliation: Peter Munk Cardiac Centre, UHN & Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
-#   email: aaron.conway@utoronto.ca
-#   url: https://www.aaronconway.info
-# - name: Megan Bittner
-#   affiliation: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
-# - name: Dan Phan
-#   affiliation: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
-# - name: Navpreet Kamboj
-#   affiliation: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
-#   email: navpreet.kamboj@mail.utoronto.ca
-# - name: Kristina Chang
-#   affiliation: Toronto General Hospital, UHN
-# - name: Peter Collins
-#   affiliation: Toronto General Hospital, UHN
-# - name: Elizabeth Tipton
-#   affiliation: Department of Statistics, Northwestern University
-# - name: Matteo Parotto
-#   affiliation: Toronto General Hospital, UHN
-# date: "`r Sys.Date()`"
-# repository_url: https://github.com/awconway/zhf-review
-# twitter:
-#   creator: "@aw_conway"
+author:
+- name: Aaron Conway
+  affiliation: Peter Munk Cardiac Centre, UHN & Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
+  email: aaron.conway@utoronto.ca
+  url: https://www.aaronconway.info
+- name: Megan Bittner
+  affiliation: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
+- name: Dan Phan
+  affiliation: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
+- name: Navpreet Kamboj
+  affiliation: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
+  email: navpreet.kamboj@mail.utoronto.ca
+- name: Kristina Chang
+  affiliation: Toronto General Hospital, UHN
+- name: Peter Collins
+  affiliation: Toronto General Hospital, UHN
+- name: Elizabeth Tipton
+  affiliation: Department of Statistics, Northwestern University
+- name: Matteo Parotto
+  affiliation: Toronto General Hospital, UHN
+date: "`r Sys.Date()`"
+repository_url: https://github.com/awconway/zhf-review
+twitter:
+  creator: "@aw_conway"
 bibliography: Extras/bibliography.bib
 csl: Extras/anesthesiology.csl
-author:
-  - Aaron Conway PhD:
-      email: aaron.conway@utoronto.ca
-      institute: [PMCC, LBFON, QUT]
-      correspondence: true
-  - Megan Bittner BSc:
-      institute: [LBFON]
-      correspondence: false
-  - Dan Phan BSc:
-      institute: [LBFON]
-      correspondence: false
-  - Kristina Chang MScN:
-      institute: [TGH]
-      correspondence: false
-  - Elizabeth Tipton PhD:
-      institute: [NW]
-      correspondence: false
-  - Matteo Parotto MD:
-      institute: [TGH]
-      correspondence: false
-institute:
-  - PMCC: Peter Munk Cardiac Centre, University Health Network
-  - LBFON: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
-  - QUT: School of Nursing, Queensland University of Technology (QUT)
-  - TGH: Toronto General Hospital, UHN
-  - NW: Department of Statistics, Northwestern University
-output:
-  bookdown::word_document2:
-    reference_docx: Extras/manuscript_template.docx
-    pandoc_args:
-      - --csl=Extras/anesthesiology.csl
-      - --lua-filter=Extras/scholarly-metadata.lua
-      - --lua-filter=Extras/author-info-blocks.lua
-#output: distill::distill_article
+# author:
+#   - Aaron Conway PhD:
+#       email: aaron.conway@utoronto.ca
+#       institute: [PMCC, LBFON, QUT]
+#       correspondence: true
+#   - Megan Bittner BSc:
+#       institute: [LBFON]
+#       correspondence: false
+#   - Dan Phan BSc:
+#       institute: [LBFON]
+#       correspondence: false
+#   - Kristina Chang MScN:
+#       institute: [TGH]
+#       correspondence: false
+#   - Elizabeth Tipton PhD:
+#       institute: [NW]
+#       correspondence: false
+#   - Matteo Parotto MD:
+#       institute: [TGH]
+#       correspondence: false
+# institute:
+#   - PMCC: Peter Munk Cardiac Centre, University Health Network
+#   - LBFON: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
+#   - QUT: School of Nursing, Queensland University of Technology (QUT)
+#   - TGH: Toronto General Hospital, UHN
+#   - NW: Department of Statistics, Northwestern University
+# output:
+#   bookdown::word_document2:
+#     reference_docx: Extras/manuscript_template.docx
+#     pandoc_args:
+#       - --csl=Extras/anesthesiology.csl
+#       - --lua-filter=Extras/scholarly-metadata.lua
+#       - --lua-filter=Extras/author-info-blocks.lua
+output: distill::distill_article
 params:
-  distill: FALSE
-  word: TRUE
+  distill: TRUE
+  word: FALSE
 ---
 
 
@@ -73,7 +73,7 @@ knitr::opts_chunk$set(include=FALSE,
                       echo=FALSE, warning=FALSE, message=FALSE)
 library(dplyr)
 library(ggprisma) # https://github.com/awconway/ggprisma
-library(gt)
+library(kableExtra)
 library(knitr)
 library(magrittr)
 source("R/loa_maker.R")
@@ -333,14 +333,9 @@ names(ma) <- c("Primary", "Low risk studies", "Intensive Care Unit",
 df <- dplyr::bind_rows(ma, .id="Comparison")
 df %>% 
   dplyr::rename(" " = Comparison, "Mean bias" = bias_mean, "Variance" = sd2_est, "Tau-squared" = tau_est, "Lower bound for 95% limit of agreement" = LOA_L, "Upper bound for 95% limits of agreement" = LOA_U, "Outer confidence interval for lower 95% limits of agreement" = CI_L_rve, "Outer confidence interval for upper 95% limits of agreement" = CI_U_rve) %>% 
-    gt::gt() %>%
-  gt::tab_header(
-    title = "Table 1. Results of meta-analyses"  )  %>%
-  gt::tab_spanner(
-    label = "Population limits of agreement",
-    columns = gt::vars(
-      `Outer confidence interval for lower 95% limits of agreement`, `Outer confidence interval for upper 95% limits of agreement`)
-  )
+  kableExtra::kable() %>% 
+   kableExtra::add_header_above(c(" ","","","","","","","","","", "Population limits of agreement" = 2)) %>% 
+  kableExtra::add_header_above(c("Table 1. Results of meta-analyses" = 12))
 ```
 
 ### Secondary comparisons: zero-heat-flux thermometer versus peripheral thermometers

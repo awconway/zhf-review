@@ -24,6 +24,7 @@ date: "`r Sys.Date()`"
 repository_url: https://github.com/awconway/zhf-review
 twitter:
   creator: "@aw_conway"
+output: distill::distill_article
 bibliography: Extras/bibliography.bib
 csl: Extras/anesthesiology.csl
 # author:
@@ -38,20 +39,21 @@ csl: Extras/anesthesiology.csl
 #       institute: [LBFON]
 #       correspondence: false
 #   - Kristina Chang MScN:
-#       institute: [TGH]
+#       institute: [PMCC]
 #       correspondence: false
 #   - Elizabeth Tipton PhD:
 #       institute: [NW]
 #       correspondence: false
-#   - Matteo Parotto MD:
-#       institute: [TGH]
+#   - Matteo Parotto MD, PhD:
+#       institute: [TGH, UoT]
 #       correspondence: false
 # institute:
 #   - PMCC: Peter Munk Cardiac Centre, University Health Network
 #   - LBFON: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
 #   - QUT: School of Nursing, Queensland University of Technology (QUT)
-#   - TGH: Toronto General Hospital, UHN
 #   - NW: Department of Statistics, Northwestern University
+#   - TGH: Department of Anesthesia and Pain Management, Toronto General Hospital, UHN
+#   - UoT: Department of Anesthesia and Interdepartmental Division of Critical Care Medicine, University of Toronto
 # output:
 #   bookdown::word_document2:
 #     reference_docx: Extras/manuscript_template.docx
@@ -59,10 +61,10 @@ csl: Extras/anesthesiology.csl
 #       - --csl=Extras/anesthesiology.csl
 #       - --lua-filter=Extras/scholarly-metadata.lua
 #       - --lua-filter=Extras/author-info-blocks.lua
-output: distill::distill_article
 params:
   distill: TRUE
   word: FALSE
+always_allow_html: true
 ---
 
 
@@ -103,7 +105,7 @@ Abbreviated title: Accuracy of zero-heat-flux thermometers
 
 Summary statement: Clinicians should consider the potential that a temperature measurement from a zero-heat-flux thermometer could be as much as 1°C higher or lower than core temperature. 
 
-Funding statement: Support was provided solely from institutional and/or departmental sources.
+Funding statement: Support was provided solely from institutional and/or departmental sources. MP is supported by an Early Investigator Merit Award from the Department of Anesthesia, University of Toronto and Toronto General Hospital
 
 Conflicts of interest: The authors declare no competing interests.
 
@@ -297,7 +299,7 @@ A sensitivity analysis for the primary comparison (zero-heat-flux versus tempera
 
 Sixteen studies were included (Figure 1). Two studies reported only in abstract form were not included and assigned as 'studies awaiting classification' because there was insufficient information provided. 
 
-```{r fig-1, fig.align="center", fig.cap="PRISMA Flow Diagram", echo=FALSE, fig.width=5.5, fig.path="figures/", include=params$distill, eval=params$distill}
+```{r fig-1,  fig.cap="PRISMA Flow Diagram", echo=FALSE, fig.width=5.5, fig.path="figures/", include=params$distill, eval=params$distill}
 # https://github.com/awconway/ggprisma
 ggprisma::ggprisma(retrieved = 130, included = 16, duplicates = 35, full_text = 22, wrong_intervention = 4, wrong_comparator = 2, wrong_design = 1, awaiting_classification = 2)
 ```
@@ -344,7 +346,7 @@ The mean bias between zero-heat-flux and nasopharyngeal temperature measurements
 
 ## Discussion
 
-Results from this systematic review have important implications for practice. Clinicians should consider the potential that a temperature measurement from a zero-heat-flux thermometer could be as much as 1°C higher or lower than core temperature. It was reassuring that results of our sensitivity analysis restricted to studies judged to be at low risk of bias using the QUADAS-2 tool were similar. As such, it is vital for clinicians considering using this device to first determine if differences in temperature smaller than this magnitude would be important for the given clinical situation. If so, then it may not be appropriate to substitute the zero-heat-flux device in place of a core thermometer. 
+This systematic review showed that a temperature measurement from a zero-heat-flux thermometer could be as much as 1°C higher or lower than core temperature. These results may have important implications for practice that clinicians should consider. It was reassuring that results of our sensitivity analysis restricted to studies judged to be at low risk of bias using the QUADAS-2 tool were similar. As such, it is vital for healthcare professionals considering using this device to first determine if differences in temperature smaller than this magnitude would be important for the given clinical situation. If so, then it may not be appropriate to substitute the zero-heat-flux device in place of a core thermometer. 
 
 Our estimates of the accuracy of zero-heat-flux thermometers are similar to results from a previous meta-analysis that compared other peripheral thermometers, such as sublingual and temporal artery devices, with core temperature measurements.[@niven2015accuracy] However, this previous meta-analysis used a statistical approach that did not incorporate the magnitude of heterogeneity in results between studies or sampling error. As such, it is possible that the zero-heat-flux thermometer may still be more precise than other peripheral thermometers.
 

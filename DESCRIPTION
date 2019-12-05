@@ -28,7 +28,8 @@ Depends:
     shinydashboard,
     shinydashboardPlus,
     shinyLP,
-    waiter
+    waiter,
+    distill
 Remotes: 
     awconway/ggprisma,
     awconway/gofer,

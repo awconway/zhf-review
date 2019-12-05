@@ -3,10 +3,15 @@ LABEL maintainer='Aaron Conway'
 USER root
 COPY . ${HOME}
 RUN chown -R ${NB_USER} ${HOME}
+
+RUN chown -R ${NB_USER} ${HOME}
+
+RUN Rscript -e "install.packages('here')"
+RUN Rscript -e "install.packages('distill')"
+RUN installGithub.r awconway/ggprisma
+RUN installGithub.r rstudio/gt
+
+
 USER ${NB_USER}
 
 
-
-RUN wget https://github.com/awconway/zhf-review/raw/master/DESCRIPTION && R -e "options(repos = list(CRAN = 'http://mran.revolutionanalytics.com/snapshot/2019-12-04/')); devtools::install_deps()"
-
-RUN rm DESCRIPTION.1; exit 0

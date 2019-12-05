@@ -1,33 +1,67 @@
 ---
-title: "Accuracy and precision of zero-heat-flux temperature monitoring: A systematic review and meta-analysis"
-author:
-- name: Aaron Conway
-  affiliation: Peter Munk Cardiac Centre, UHN & Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
-  email: aaron.conway@utoronto.ca
-  url: https://www.aaronconway.info
-- name: Megan Bittner
-  affiliation: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
-- name: Dan Phan
-  affiliation: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
-- name: Navpreet Kamboj
-  affiliation: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
-  email: navpreet.kamboj@mail.utoronto.ca
-- name: Kristina Chang
-  affiliation: Toronto General Hospital, UHN
-- name: Peter Collins
-  affiliation: Toronto General Hospital, UHN
-- name: Elizabeth Tipton
-  affiliation: Department of Statistics, Northwestern University
-- name: Matteo Parotto
-  affiliation: Toronto General Hospital, UHN
+title: "Accuracy and precision of zero-heat-flux temperature monitoring"
+subtitle: A systematic review and meta-analysis
+description: "A systematic review and meta-analysis"
+# author:
+# - name: Aaron Conway
+#   affiliation: Peter Munk Cardiac Centre, UHN & Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
+#   email: aaron.conway@utoronto.ca
+#   url: https://www.aaronconway.info
+# - name: Megan Bittner
+#   affiliation: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
+# - name: Dan Phan
+#   affiliation: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
+# - name: Navpreet Kamboj
+#   affiliation: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
+#   email: navpreet.kamboj@mail.utoronto.ca
+# - name: Kristina Chang
+#   affiliation: Toronto General Hospital, UHN
+# - name: Peter Collins
+#   affiliation: Toronto General Hospital, UHN
+# - name: Elizabeth Tipton
+#   affiliation: Department of Statistics, Northwestern University
+# - name: Matteo Parotto
+#   affiliation: Toronto General Hospital, UHN
 # date: "`r Sys.Date()`"
-repository_url: https://github.com/awconway/zhf-review
-twitter:
-  creator: "@aw_conway"
-bibliography: bibliography.bib
-csl: anesthesiology.csl
-output: word_document
-# output: distill::distill_article
+# repository_url: https://github.com/awconway/zhf-review
+# twitter:
+#   creator: "@aw_conway"
+bibliography: Extras/bibliography.bib
+csl: Extras/anesthesiology.csl
+author:
+  - Aaron Conway PhD:
+      email: aaron.conway@utoronto.ca
+      institute: [PMCC, LBFON, QUT]
+      correspondence: true
+  - Megan Bittner BSc:
+      institute: [LBFON]
+      correspondence: false
+  - Dan Phan BSc:
+      institute: [LBFON]
+      correspondence: false
+  - Kristina Chang MScN:
+      institute: [TGH]
+      correspondence: false
+  - Elizabeth Tipton PhD:
+      institute: [NW]
+      correspondence: false
+  - Matteo Parotto MD:
+      institute: [TGH]
+      correspondence: false
+institute:
+  - PMCC: Peter Munk Cardiac Centre, University Health Network
+  - LBFON: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
+  - QUT: School of Nursing, Queensland University of Technology (QUT)
+  - TGH: Toronto General Hospital, UHN
+  - NW: Department of Statistics, Northwestern University
+output:
+  bookdown::word_document2:
+    reference_docx: Extras/manuscript_template.docx
+    pandoc_args:
+      - --csl=Extras/anesthesiology.csl
+      - --lua-filter=Extras/scholarly-metadata.lua
+      - --lua-filter=Extras/author-info-blocks.lua
+#output: distill::distill_article
 params:
   distill: FALSE
   word: TRUE
@@ -37,40 +71,18 @@ params:
 ```{r global_options, include=FALSE}
 knitr::opts_chunk$set(include=FALSE,
                       echo=FALSE, warning=FALSE, message=FALSE)
+library(dplyr)
+library(ggprisma) # https://github.com/awconway/ggprisma
+library(gt)
+library(knitr)
+library(magrittr)
+source("R/loa_maker.R")
+source("R/meta.R")
 ```
 
 
 ```{r conditional_title_page, results='asis', include=params$word}
 cat("
-## Author information
-
-<p>Aaron Conway PhD^1,2,3^
-<p>Megan Bittner BSc^2^
-<p>Dan Phan BSc^2^
-<p>Navpreet Kamboj BScN^2^
-<p>Kristina Chang MScN^4^
-<p>Peter Collins MStatistics^4^
-<p>Elizabeth Tipton PhD^5^
-<p>Matteo Parotto MD^4^
-
-<p>^1^ Peter Munk Cardiac Centre, University Health Network
-<p>^2^Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
-<p>^3^School of Nursing, Queensland University of Technology (QUT)
-<p>^4^Toronto General Hospital, UHN
-<p>^5^Department of Statistics, Northwestern University
-
-## Corresponding author
-
-Dr Aaron Conway BN (Hons) PhD
-RBC Chair in Cardiovascular Nursing Research | Peter Munk Cardiac Centre | Toronto General Hospital | University Health Network
-Clinician Investigator | Toronto General Hospital Research Institute | University Health Network
-Assistant Professor | Lawrence S. Bloomberg Faculty of Nursing | University of Toronto
- 
-585 University Ave, 4NU - 476
-Toronto, ON  M5G 2N2
-
-e. aaron.conway@utoronto.ca  | t. (416) 946-7112 
-
 ## Declarations
 
 Clinical trial number: Not applicable
@@ -97,15 +109,10 @@ Funding statement: Support was provided solely from institutional and/or departm
 
 Conflicts of interest: The authors declare no competing interests.
 
+##### Page break
+
 ")
 ```
-
-```{r echo=FALSE, include=FALSE}
-library(magrittr)
-source("loa_maker.R")
-source("meta.R")
-```
-
 ```{r load-data, include=FALSE}
 data <- readxl::read_xlsx(here::here("manuscript", "data", "zhf_extracted.xlsx"))
 ```
@@ -221,7 +228,7 @@ conflict  <- format_results(data_conflict)
 
 **Background**
 
-Zero-heat-flux thermometers are non-invasive devices that can be used to continuously monitor temperature. These devices are increasingly being used to substitute for invasive core temperature measurement during surgery and in critical care. The aim of this review was to determine the accuracy and precision of zero-heat-flux temperature measurements. 
+Zero-heat-flux thermometers provide clinicians with the ability to continuously and non-invasively monitor body temperature. These devices are increasingly being used to substitute for invasive core temperature measurement during surgery and in critical care. The aim of this review was to determine the accuracy and precision of zero-heat-flux temperature measurements. 
 
 **Methods**
 
@@ -238,7 +245,11 @@ The range of uncertainty in the accuracy of the zero-heat-flux thermometer shoul
 
 </blockquote>
 </div>
-
+```{r conditional_page_break, results='asis', include=params$word}
+cat("
+##### Page break
+")
+```
 ## Introduction
 
 Continuous core temperature monitoring is commonly used within perioperative and intensive care settings. Thermoregulatory dysfunction is commonly associated with the induction of anesthesia and can lead to adverse outcomes including cardiac arrhythmia, altered hemostasis and increased risk of surgical site infection.[@frank1997perioperative; @kurz1996perioperative; @michelson1994reversible; @rohrer1992effect] The pulmonary artery catheter is the reference standard for continuous core temperature monitoring, however, the invasive nature of this method renders an increased risk of bloodstream infections and damage to surrounding tissue.[@hadian2006evidence] Although clinically accurate relative to pulmonary artery temperature measurements, surrogate measures of core temperature at esophageal, rectal, and bladder locations remain mildly invasive interventions. 
@@ -286,9 +297,9 @@ A sensitivity analysis for the primary comparison (zero-heat-flux versus tempera
 
 ### Study selection and description
 
-Sixteen studies were included (Figure \@ref(fig:fig-1)). Two studies reported only in abstract form were not included and assigned as 'studies awaiting classification' because there was insufficient information provided. 
+Sixteen studies were included (Figure 1). Two studies reported only in abstract form were not included and assigned as 'studies awaiting classification' because there was insufficient information provided. 
 
-```{r fig-1, fig.align="center", fig.cap="PRISMA Flow Diagram", echo=FALSE, fig.width=5.5, fig.path="", include=params$distill}
+```{r fig-1, fig.align="center", fig.cap="PRISMA Flow Diagram", echo=FALSE, fig.width=5.5, fig.path="figures/", include=params$distill, eval=params$distill}
 # https://github.com/awconway/ggprisma
 ggprisma::ggprisma(retrieved = 130, included = 16, duplicates = 35, full_text = 22, wrong_intervention = 4, wrong_comparator = 2, wrong_design = 1, awaiting_classification = 2)
 ```
@@ -302,12 +313,12 @@ High risk of bias was associated with patient selection for 13 (43%) comparisons
 
 ### Primary comparison: zero-heat-flux thermometer versus core thermometers
 
-A graphical overview of the findings for the primary analysis is presented in Figure \@ref(fig:fig-2). The pooled estimate for the mean bias between zero-heat-flux and core temperature measurements was `r primary$bias_mean`°C. The population limits of agreement, which take into consideration the between-study heterogeneity and sampling error, were wide, spanning from `r primary$CI_L_rve`°C to `r primary$CI_U_rve`°C (`r primary$Measurements` measurements; `r primary$Participants` participants; `r primary$Studies` studies). The quality of evidence for the primary comparison was downgraded to low quality due to concerns about study limitations and inconsistency. Population limits of agreement for the sensitivity analysis restricted to studies rated as having low risk of bias across all the domains of the QUADAS-2 were similar to the primary analysis (`r low_risk$Measurements` measurements; `r low_risk$Participants` participants; `r low_risk$Studies` studies). The mean bias was again `r low_risk$bias_mean`°C with population limits of agreement spanning from `r low_risk$CI_L_rve`°C to `r low_risk$CI_U_rve`°C. A further sensitivity analysis excluding studies that received industry funding revealed population limits of agreement that were considerably wider than the primary analysis (`r conflict$CI_L_rve`°C to `r conflict$CI_U_rve`°C). The GRADE rating for this sensitivity was downgraded to low quality though, due to concerns about study limitations, inconsistency and imprecision.  
+A graphical overview of the findings for the primary analysis is presented in Figure 2. The pooled estimate for the mean bias between zero-heat-flux and core temperature measurements was `r primary$bias_mean`°C. The population limits of agreement, which take into consideration the between-study heterogeneity and sampling error, were wide, spanning from `r primary$CI_L_rve`°C to `r primary$CI_U_rve`°C (`r primary$Measurements` measurements; `r primary$Participants` participants; `r primary$Studies` studies). The quality of evidence for the primary comparison was downgraded to low quality due to concerns about study limitations and inconsistency. Population limits of agreement for the sensitivity analysis restricted to studies rated as having low risk of bias across all the domains of the QUADAS-2 were similar to the primary analysis (`r low_risk$Measurements` measurements; `r low_risk$Participants` participants; `r low_risk$Studies` studies). The mean bias was again `r low_risk$bias_mean`°C with population limits of agreement spanning from `r low_risk$CI_L_rve`°C to `r low_risk$CI_U_rve`°C. A further sensitivity analysis excluding studies that received industry funding revealed population limits of agreement that were considerably wider than the primary analysis (`r conflict$CI_L_rve`°C to `r conflict$CI_U_rve`°C). The GRADE rating for this sensitivity was downgraded to low quality though, due to concerns about study limitations, inconsistency and imprecision.  
 
 
 
 ```{r fig-2, preview=TRUE, layout="l-screen-inset", fig.align="center", fig.cap="Graphical overview of findings for the primary analysis", echo=FALSE, fig.path="", include=params$distill}
-knitr::include_graphics("gofer_core.png")
+knitr::include_graphics("figures/gofer_core.png")
 ```
 
 
@@ -362,15 +373,20 @@ We did not extract data on adverse events due to zero-heat-flux temperature moni
 
 Substantial differences between core and zero-heat-flux temperature measurements were identified in this meta-analysis. Clinicians should consider the range of uncertainty in the accuracy of the zero-heat-flux thermometer when using this device to inform their decision-making. As such, there may be circumstances where use of this device would not be appropriate because a difference in temperature of 1°C is important to detect for the given clinical situation. 
 
-<script src="https://hypothes.is/embed.js" async></script>
 
 ```{r  conditional_references, include=params$word, results='asis'}
-cat("# References")
+cat("##### Page break
+    
+# References")
 ```
 <div id="refs"></div>
 
+
+
 ```{r  conditional_figure_legend, include=params$word, results='asis'}
-cat("# Figure legend
+cat("##### Page break
+
+# Figure legend
     
 Figure 1: PRISMA Flow Diagram
 

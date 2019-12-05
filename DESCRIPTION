@@ -12,28 +12,17 @@ Description: This repository contains the code for a systematic review and meta-
 License: MIT + file LICENSE
 Depends: 
     dplyr,
-    DT,
     ggprisma,
     gofer,
-    grid,
     gt,
     here,
-    htmltools,
     knitr,
     magrittr,
     readxl,
     rmarkdown,
-    robvis,
-    shiny,
-    shinydashboard,
-    shinydashboardPlus,
-    shinyLP,
-    waiter,
     distill
 Remotes: 
     awconway/ggprisma,
-    awconway/gofer,
-    mcguinlu/robvis,
     rstudio/gt
 Encoding: UTF-8
 LazyData: true

@@ -183,8 +183,6 @@ ui <- dashboardPage(
   
 <p>Kristina Chang  (Toronto General Hospital, UHN)
   
-<p>Peter Collins  (Toronto General Hospital, UHN)
-
 <p>Elizabeth Tipton (Dapartment of Statistics, Northwestern University)
   
 <p>Matteo Parotto  (Toronto General Hospital, UHN)
@@ -314,7 +312,7 @@ server <- shinyUI(function(input, output) {
     
     waitress$
       start()$
-      auto(percent = 5, ms = 320) # increase by 5 percent every 150 milliseconds
+      auto(percent = 5, ms = 350) # increase by 5 percent every 150 milliseconds
     
     
     plot <- gofer::gofer(gofer_input()[[1]], ma_effect = gofer_input()[[2]]$effect_estimate,

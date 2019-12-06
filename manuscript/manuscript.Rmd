@@ -2,69 +2,74 @@
 title: "Accuracy and precision of zero-heat-flux temperature monitoring"
 subtitle: A systematic review and meta-analysis
 description: "A systematic review and meta-analysis"
-author:
-- name: Aaron Conway
-  affiliation: Peter Munk Cardiac Centre, UHN & Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
-  email: aaron.conway@utoronto.ca
-  url: https://www.aaronconway.info
-- name: Megan Bittner
-  affiliation: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
-- name: Dan Phan
-  affiliation: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
-- name: Navpreet Kamboj
-  affiliation: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
-  email: navpreet.kamboj@mail.utoronto.ca
-- name: Kristina Chang
-  affiliation: Toronto General Hospital, UHN
-- name: Elizabeth Tipton
-  affiliation: Department of Statistics, Northwestern University
-- name: Matteo Parotto
-  affiliation: Toronto General Hospital, UHN
-date: "`r Sys.Date()`"
-repository_url: https://github.com/awconway/zhf-review
-twitter:
-  creator: "@aw_conway"
-output: distill::distill_article
+# author:
+# - name: Aaron Conway
+#   affiliation: Peter Munk Cardiac Centre, UHN & Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
+#   email: aaron.conway@utoronto.ca
+#   url: https://www.aaronconway.info
+# - name: Megan Bittner
+#   affiliation: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
+# - name: Dan Phan
+#   affiliation: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
+# - name: Navpreet Kamboj
+#   affiliation: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
+#   email: navpreet.kamboj@mail.utoronto.ca
+# - name: Kristina Chang
+#   affiliation: Toronto General Hospital, UHN
+# - name: Elizabeth Tipton
+#   affiliation: Department of Statistics, Northwestern University
+# - name: Matteo Parotto
+#   affiliation: Toronto General Hospital, UHN
+# date: "`r Sys.Date()`"
+# repository_url: https://github.com/awconway/zhf-review
+# twitter:
+#   creator: "@aw_conway"
+# output: distill::distill_article
 bibliography: Extras/bibliography.bib
 csl: Extras/anesthesiology.csl
-# author:
-#   - Aaron Conway PhD:
-#       email: aaron.conway@utoronto.ca
-#       institute: [PMCC, LBFON, QUT]
-#       correspondence: true
-#   - Megan Bittner BSc:
-#       institute: [LBFON]
-#       correspondence: false
-#   - Dan Phan BSc:
-#       institute: [LBFON]
-#       correspondence: false
-#   - Kristina Chang MScN:
-#       institute: [PMCC]
-#       correspondence: false
-#   - Elizabeth Tipton PhD:
-#       institute: [NW]
-#       correspondence: false
-#   - Matteo Parotto MD, PhD:
-#       institute: [TGH, UoT]
-#       correspondence: false
-# institute:
-#   - PMCC: Peter Munk Cardiac Centre, University Health Network
-#   - LBFON: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
-#   - QUT: School of Nursing, Queensland University of Technology (QUT)
-#   - NW: Department of Statistics, Northwestern University
-#   - TGH: Department of Anesthesia and Pain Management, Toronto General Hospital, UHN
-#   - UoT: Department of Anesthesia and Interdepartmental Division of Critical Care Medicine, University of Toronto
-# output:
-#   bookdown::word_document2:
-#     reference_docx: Extras/manuscript_template.docx
-#     pandoc_args:
-#       - --csl=Extras/anesthesiology.csl
-#       - --lua-filter=Extras/scholarly-metadata.lua
-#       - --lua-filter=Extras/author-info-blocks.lua
-params:
-  distill: TRUE
-  word: FALSE
+author:
+  - Aaron Conway PhD:
+      email: aaron.conway@utoronto.ca
+      phone: +1 416 946 7112
+      address: 585 University Ave, 4NU - 476 | Toronto, ON  M5G 2N2
+      institute: [PMCC, LBFON, QUT]
+      correspondence: true
+  - Megan Bittner BSc:
+      institute: [LBFON]
+      correspondence: false
+  - Dan Phan BSc:
+      institute: [LBFON]
+      correspondence: false
+  - Kristina Chang MScN:
+      institute: [PMCC]
+      correspondence: false
+  - Navpreet Kamboj BScN:
+      institute: [LBFON]
+      correspondence: false
+  - Elizabeth Tipton PhD:
+      institute: [NW]
+      correspondence: false
+  - Matteo Parotto MD, PhD:
+      institute: [TGH, UoT]
+      correspondence: false
+institute:
+  - PMCC: Peter Munk Cardiac Centre, University Health Network, Toronto, Canada
+  - LBFON: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto, Toronto, Canada
+  - QUT: School of Nursing, Queensland University of Technology (QUT), Brisbane, Australia
+  - NW: Department of Statistics, Northwestern University, Evanston, IL, United States
+  - TGH: Department of Anesthesia and Pain Management, Toronto General Hospital, UHN, Toronto, Canada
+  - UoT: Department of Anesthesia and Interdepartmental Division of Critical Care Medicine, University of Toronto, Toronto, Canada
+output:
+  bookdown::word_document2:
+    reference_docx: Extras/manuscript_template.docx
+    pandoc_args:
+      - --lua-filter=Extras/scholarly-metadata.lua
+      - --lua-filter=Extras/author-info-blocks.lua
+      - --lua-filter=Extras/pagebreak.lua
 always_allow_html: true
+params:
+  distill: FALSE
+  word: TRUE
 ---
 
 
@@ -79,6 +84,7 @@ library(magrittr)
 source("R/loa_maker.R")
 source("R/meta.R")
 ```
+\pagebreak
 
 
 ```{r conditional_title_page, results='asis', include=params$word}
@@ -109,10 +115,10 @@ Funding statement: Support was provided solely from institutional and/or departm
 
 Conflicts of interest: The authors declare no competing interests.
 
-##### Page break
-
 ")
 ```
+
+
 ```{r load-data, include=FALSE}
 data <- readxl::read_xlsx(here::here("manuscript", "data", "zhf_extracted.xlsx"))
 ```
@@ -245,11 +251,9 @@ The range of uncertainty in the accuracy of the zero-heat-flux thermometer shoul
 
 </blockquote>
 </div>
-```{r conditional_page_break, results='asis', include=params$word}
-cat("
-##### Page break
-")
-```
+
+\pagebreak
+
 ## Introduction
 
 Continuous core temperature monitoring is commonly used within perioperative and intensive care settings. Thermoregulatory dysfunction is commonly associated with the induction of anesthesia and can lead to adverse outcomes including cardiac arrhythmia, altered hemostasis and increased risk of surgical site infection.[@frank1997perioperative; @kurz1996perioperative; @michelson1994reversible; @rohrer1992effect] The pulmonary artery catheter is the reference standard for continuous core temperature monitoring, however, the invasive nature of this method renders an increased risk of bloodstream infections and damage to surrounding tissue.[@hadian2006evidence] Although clinically accurate relative to pulmonary artery temperature measurements, surrogate measures of core temperature at esophageal, rectal, and bladder locations remain mildly invasive interventions. 
@@ -368,18 +372,19 @@ We did not extract data on adverse events due to zero-heat-flux temperature moni
 
 Substantial differences between core and zero-heat-flux temperature measurements were identified in this meta-analysis. Clinicians should consider the range of uncertainty in the accuracy of the zero-heat-flux thermometer when using this device to inform their decision-making. As such, there may be circumstances where use of this device would not be appropriate because a difference in temperature of 1°C is important to detect for the given clinical situation. 
 
+\pagebreak
+
 
 ```{r  conditional_references, include=params$word, results='asis'}
-cat("##### Page break
-    
+cat("
+
 # References")
 ```
 <div id="refs"></div>
 
-
-
+\pagebreak
 ```{r  conditional_figure_legend, include=params$word, results='asis'}
-cat("##### Page break
+cat("
 
 # Figure legend
     

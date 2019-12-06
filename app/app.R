@@ -306,31 +306,29 @@ server <- shinyUI(function(input, output) {
            
     )
   })
-  waitress <- call_waitress("nav", theme = "overlay-percent") # call the waitress
   
   output$gofer <- renderPlot({
-    waitress$start()
+    
+    waitress <- Waitress$new(dom="#gofer", theme = "overlay-percent") # call the waitress
     
     
-    dat <- vector()
+    waitress$
+      start()$
+      auto(percent = 5, ms = 320) # increase by 5 percent every 150 milliseconds
     
-    for(i in 1:10){
-      waitress$increase(10) # increase by 10%
-      Sys.sleep(.3)
-      dat <- c(dat, sample(1:100, 1))
-    }
     
     plot <- gofer::gofer(gofer_input()[[1]], ma_effect = gofer_input()[[2]]$effect_estimate,
-                                   ma_lower = gofer_input()[[2]]$lower_limit, ma_upper = gofer_input()[[2]]$upper_limit,
-                                   grade_rating=gofer_input()[[4]], data_age = gofer_input()[[3]], 
-                                   dodge_width = 0.85)
-        
+                         ma_lower = gofer_input()[[2]]$lower_limit, ma_upper = gofer_input()[[2]]$upper_limit,
+                         grade_rating=gofer_input()[[4]], data_age = gofer_input()[[3]], 
+                         dodge_width = 0.85)
     
     grid::grid.draw(plot)
     
-    waitress$hide() # hide when done
-     
-                                  }) # renderPlot
+    
+    waitress$hide()
+    
+    
+  }) # renderPlot
   
 output$ggprisma <- renderPlot({
   ggprisma::ggprisma(retrieved = 130, included = 16, duplicates = 35, 

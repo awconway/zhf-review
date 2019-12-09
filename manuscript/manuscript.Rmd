@@ -2,73 +2,73 @@
 title: "Accuracy and precision of zero-heat-flux temperature monitoring"
 subtitle: A systematic review and meta-analysis
 description: "A systematic review and meta-analysis"
-# author:
-# - name: Aaron Conway
-#   affiliation: Peter Munk Cardiac Centre, UHN & Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
-#   email: aaron.conway@utoronto.ca
-#   url: https://www.aaronconway.info
-# - name: Megan Bittner
-#   affiliation: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
-# - name: Dan Phan
-#   affiliation: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
-# - name: Navpreet Kamboj
-#   affiliation: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
-#   email: navpreet.kamboj@mail.utoronto.ca
-# - name: Kristina Chang
-#   affiliation: Toronto General Hospital, UHN
-# - name: Elizabeth Tipton
-#   affiliation: Department of Statistics, Northwestern University
-# - name: Matteo Parotto
-#   affiliation: Toronto General Hospital, UHN
-# date: "`r Sys.Date()`"
-# repository_url: https://github.com/awconway/zhf-review
-# twitter:
-#   creator: "@aw_conway"
-# output: distill::distill_article
+author:
+- name: Aaron Conway
+  affiliation: Peter Munk Cardiac Centre, UHN & Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
+  email: aaron.conway@utoronto.ca
+  url: https://www.aaronconway.info
+- name: Megan Bittner
+  affiliation: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
+- name: Dan Phan
+  affiliation: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
+- name: Navpreet Kamboj
+  affiliation: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto
+  email: navpreet.kamboj@mail.utoronto.ca
+- name: Kristina Chang
+  affiliation: Toronto General Hospital, UHN
+- name: Elizabeth Tipton
+  affiliation: Department of Statistics, Northwestern University
+- name: Matteo Parotto
+  affiliation: Toronto General Hospital, UHN
+date: "`r Sys.Date()`"
+repository_url: https://github.com/awconway/zhf-review
+twitter:
+  creator: "@aw_conway"
+output: distill::distill_article
 bibliography: Extras/bibliography.bib
 csl: Extras/anesthesiology.csl
-author:
-  - Aaron Conway PhD:
-      email: aaron.conway@utoronto.ca
-      phone: +1 416 946 7112
-      address: 585 University Ave | Toronto, ON  M5G 2N2
-      institute: [PMCC, LBFON, QUT]
-      correspondence: true
-  - Megan Bittner BSc:
-      institute: [LBFON]
-      correspondence: false
-  - Dan Phan BSc:
-      institute: [LBFON]
-      correspondence: false
-  - Kristina Chang MScN:
-      institute: [PMCC]
-      correspondence: false
-  - Navpreet Kamboj BScN:
-      institute: [LBFON]
-      correspondence: false
-  - Elizabeth Tipton PhD:
-      institute: [NW]
-      correspondence: false
-  - Matteo Parotto MD, PhD:
-      institute: [TGH, UoT]
-      correspondence: false
-institute:
-  - PMCC: Peter Munk Cardiac Centre, University Health Network, Toronto, Canada
-  - LBFON: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto, Toronto, Canada
-  - QUT: School of Nursing, Queensland University of Technology (QUT), Brisbane, Australia
-  - NW: Department of Statistics, Northwestern University, Evanston, IL, United States
-  - TGH: Department of Anesthesia and Pain Management, Toronto General Hospital, UHN, Toronto, Canada
-  - UoT: Department of Anesthesia and Interdepartmental Division of Critical Care Medicine, University of Toronto, Toronto, Canada
-output:
-  bookdown::word_document2:
-    reference_docx: Extras/manuscript_template.docx
-    pandoc_args:
-      - --lua-filter=Extras/scholarly-metadata.lua
-      - --lua-filter=Extras/author-info-blocks.lua
-always_allow_html: true
+# author:
+#   - Aaron Conway PhD:
+#       email: aaron.conway@utoronto.ca
+#       phone: +1 416 946 7112
+#       address: 585 University Ave | Toronto, ON  M5G 2N2
+#       institute: [PMCC, LBFON, QUT]
+#       correspondence: true
+#   - Megan Bittner BSc:
+#       institute: [LBFON]
+#       correspondence: false
+#   - Dan Phan BSc:
+#       institute: [LBFON]
+#       correspondence: false
+#   - Kristina Chang MScN:
+#       institute: [PMCC]
+#       correspondence: false
+#   - Navpreet Kamboj BScN:
+#       institute: [LBFON]
+#       correspondence: false
+#   - Elizabeth Tipton PhD:
+#       institute: [NW]
+#       correspondence: false
+#   - Matteo Parotto MD, PhD:
+#       institute: [TGH, UoT]
+#       correspondence: false
+# institute:
+#   - PMCC: Peter Munk Cardiac Centre, University Health Network, Toronto, Canada
+#   - LBFON: Lawrence S. Bloomberg Faculty of Nursing, University of Toronto, Toronto, Canada
+#   - QUT: School of Nursing, Queensland University of Technology (QUT), Brisbane, Australia
+#   - NW: Department of Statistics, Northwestern University, Evanston, IL, United States
+#   - TGH: Department of Anesthesia and Pain Management, Toronto General Hospital, UHN, Toronto, Canada
+#   - UoT: Department of Anesthesia and Interdepartmental Division of Critical Care Medicine, University of Toronto, Toronto, Canada
+# output:
+#   bookdown::word_document2:
+#     reference_docx: Extras/manuscript_template.docx
+#     pandoc_args:
+#       - --lua-filter=Extras/scholarly-metadata.lua
+#       - --lua-filter=Extras/author-info-blocks.lua
+# always_allow_html: true
 params:
-  distill: FALSE
-  word: TRUE
+  distill: TRUE
+  word: FALSE
 ---
 
 

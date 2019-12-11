@@ -318,7 +318,8 @@ server <- shinyUI(function(input, output) {
     plot <- gofer::gofer(gofer_input()[[1]], ma_effect = gofer_input()[[2]]$effect_estimate,
                          ma_lower = gofer_input()[[2]]$lower_limit, ma_upper = gofer_input()[[2]]$upper_limit,
                          grade_rating=gofer_input()[[4]], data_age = gofer_input()[[3]], 
-                         dodge_width = 0.85)
+                         dodge_width = 0.85,
+                         measurements_logscale =TRUE)
     
     grid::grid.draw(plot)
     

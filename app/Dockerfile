@@ -10,5 +10,5 @@ RUN Rscript -e "install.packages('robvis')"
 RUN Rscript -e "install.packages('waiter')"
 RUN Rscript -e "install.packages('shinydashboardPlus')"
 
-RUN installGithub.r awconway/ggprisma
-RUN installGithub.r awconway/gofer
+RUN R -e "remotes::install_github('awconway/ggprisma')"
+RUN R -e "remotes::install_github('awconway/gofer')"

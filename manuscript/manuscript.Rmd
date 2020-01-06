@@ -83,6 +83,7 @@ library(magrittr)
 source("R/loa_maker.R")
 source("R/meta.R")
 ```
+
 \pagebreak
 
 
@@ -108,14 +109,14 @@ Number of tables: 1
 
 Abbreviated title: Accuracy of zero-heat-flux thermometers
 
-Summary statement: Clinicians should consider the potential that a temperature measurement from a zero-heat-flux thermometer could be as much as 1°C higher or lower than core temperature. 
-
 Funding statement: Support was provided solely from institutional and/or departmental sources. MP is supported by an Early Investigator Merit Award from the Department of Anesthesia, University of Toronto and Toronto General Hospital
 
 Conflicts of interest: The authors declare no competing interests.
 
 ")
 ```
+
+\pagebreak
 
 
 ```{r load-data, include=FALSE}
@@ -247,6 +248,14 @@ Sixteen studies were included. The primary meta-analysis of zero-heat-flux versu
 **Conclusion**
 
 The range of uncertainty in the accuracy of the zero-heat-flux thermometer should be taken into account when using this device to inform clinical decision-making. Clinicians should therefore consider the potential that a temperature measurement from a zero-heat-flux thermometer could be as much as 1°C higher or lower than core temperature. Use of this device may not be appropriate in situations where a difference in temperature of less than 1°C is important to detect. 
+
+### Key points
+
+**Question:** How accurate are temperature measurements from zero-heat-flux temperature monitors?
+
+**Findings:** Population limits of agreement, which take into consideration the between-study heterogeneity and sampling error, were wide, spanning from `r primary$CI_L_rve`°C to `r primary$CI_U_rve`°C.
+
+**Meaning:** Zero-heat-flux temperature monitoring would not be appropriate if a difference in temperature of 1°C is important to detect for the given clinical situation.
 
 </blockquote>
 </div>

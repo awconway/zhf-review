@@ -14,3 +14,11 @@ gt <- df %>%
   )
 
 gtsave(data = gt, filename = "table_gt.pdf", vwidth = 600)
+
+library(flextable)
+df %>% %>% 
+  rename(" " = Comparison, "Mean bias" = bias_mean, "Variance" = sd2_est, 
+         "Tau-squared" = tau_est, "Lower bound for 95% limit of agreement" = LOA_L, 
+         "Upper bound for 95% limits of agreement" = LOA_U, 
+         "Outer confidence interval for lower 95% limits of agreement" = CI_L_rve, 
+         "Outer confidence interval for upper 95% limits of agreement" = CI_U_rve) %>% flextable()

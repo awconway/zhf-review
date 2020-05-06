@@ -13,7 +13,6 @@ RUN install2.r --error \
 RUN installGithub.r \
     awconway/ggprisma \
     awconway/gofer \
-    davidgohel/officer \
     davidgohel/officedown
 
 

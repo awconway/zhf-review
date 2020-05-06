@@ -8,7 +8,8 @@ RUN chown -R ${NB_USER} ${HOME}
 
 RUN install2.r --error \
     here \
-    flextable
+    flextable \
+    bookdown
 
 RUN installGithub.r \
     awconway/ggprisma \

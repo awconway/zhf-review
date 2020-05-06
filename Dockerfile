@@ -8,4 +8,5 @@ RUN install2.r --error \
 RUN installGithub.r \
     awconway/ggprisma \
     awconway/gofer \
-    davidgohel/officedown
+    davidgohel/officedown \
+    mcguinlu/robvis

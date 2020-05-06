@@ -392,12 +392,44 @@ data_NPA <- gofer::data_NPA
 data_SL <- gofer::data_SL
 data_core <- gofer::data_core
 data_NPA$comparison <- sub("NPA", "Nasopharyngeal", data_NPA$comparison) 
+data_NPA$Study <- sub("West, 2018", "West, 2019", data_NPA$Study) 
+
 data_core$comparison <- sub("PA", "Pulmonary artery", data_core$comparison) 
 data_core$comparison <- sub("Iliac", "Iliac artery", data_core$comparison) 
 data_core$comparison <- sub("Ax", "Axillary artery", data_core$comparison) 
 data_core$comparison <- sub("Eso", "Esophageal", data_core$comparison)
 data_core$patients <- sub("Gynecological Surgery", "Gynecology Surgery", data_core$patients)
 data_core$patients <- sub("Laparosopic Surgery", "Laparoscopy Surgery", data_core$patients)
+
+data_NPA_age <- gofer::data_NPA_age
+data_NPA_age$Study <- sub("West, 2015", "West, 2019", data_NPA_age$Study) 
+
+data_NPA <- data_NPA_age %>% 
+  tidyr::pivot_wider(names_from = c(age_type, age_measure),
+                    values_from = age) %>% 
+  dplyr::rename(mean_age = mean_sd_average,
+         lower_mean = mean_sd_lower,
+         upper_mean = mean_sd_upper,
+         median_age = median_iqr_average,
+         lower_IQR = median_iqr_lower,
+         upper_IQR = median_iqr_upper) %>% 
+  left_join(data_NPA) 
+
+data_SL_age <- gofer::data_SL_age
+data_SL_age$Study <- sub("West, 2015", "West, 2019", data_SL_age$Study) 
+
+data_SL$Study <- sub("West, 2018", "West, 2019", data_SL$Study) 
+
+data_SL <- data_SL_age %>% 
+  tidyr::pivot_wider(names_from = c(age_type, age_measure),
+                    values_from = age) %>% 
+  dplyr::rename(mean_age = mean_sd_average,
+         lower_mean = mean_sd_lower,
+         upper_mean = mean_sd_upper,
+         median_age = median_iqr_average,
+         lower_IQR = median_iqr_lower,
+         upper_IQR = median_iqr_upper) %>% 
+  left_join(data_SL) 
 
 ft <- data_core %>% 
     dplyr::bind_rows(data_SL) %>%
@@ -502,8 +534,8 @@ ft <- compose( ft, j = "N",   value = as_paragraph(as_chunk(format(N)), "    ",
 part = "body")
 
 ft <- compose(ft, j = "perc_male",
-  value = as_paragraph(as_image( 
-    src = "figures/sex.png", 
+  value = as_paragraph(as_image(
+    src = "figures/sex.png",
     width = .20, height = .15)),
   part="header"
 )
@@ -533,6 +565,14 @@ ft <- merge_at(ft, part = "body", i=~Study=="West", j = "perc_male")
 ft <- merge_at(ft, part = "body", i=~Study=="West", j = "age")
 ft <- merge_at(ft, part = "body", i=~Study=="West", j = "code")
 ft <- merge_at(ft, part = "body", i=~Study=="West", j = "temp_range")
+
+ft <- merge_at(ft, part = "body", i=~Study=="Iden", j = "patients")
+ft <- merge_at(ft, part = "body", i=~Study=="Iden", j = "perc_male")
+ft <- merge_at(ft, part = "body", i=~Study=="Iden", j = "age")
+ft <- merge_at(ft, part = "body", i=~Study=="Iden", j = "code")
+ft <- merge_at(ft, part = "body", i=~Study=="Iden", j = "temp_range")
+ft <- merge_at(ft, part = "body", i=~Study=="Iden", j = "n")
+ft <- merge_at(ft, part = "body", i=~Study=="Iden", j = "N")
 
 ft <- merge_at(ft, part = "body", i=~Study=="Pesonen", j = "patients")
 ft <- merge_at(ft, part = "body", i=~Study=="Pesonen", j = "perc_male")

@@ -6,11 +6,13 @@ RUN chown -R ${NB_USER} ${HOME}
 
 RUN chown -R ${NB_USER} ${HOME}
 
-RUN Rscript -e "install.packages('here')"
-RUN Rscript -e "install.packages('distill')"
-RUN Rscript -e "install.packages('kableExtra')"
+RUN install2.r --error \
+    here \
+    flextable \
 
-RUN installGithub.r awconway/ggprisma
+RUN installGithub.r \
+    awconway/ggprisma \
+    awconway/gofer
 
 
 USER ${NB_USER}

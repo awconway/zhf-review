@@ -8,21 +8,21 @@ Authors@R:
            role = c("aut", "cre"),
            email = "aaronconwayphd@gmail.com",
            comment = c(ORCID = "0000-0002-9583-8636"))
-Description: This repository contains the code for a systematic review and meta-analysis of zero-heat-flux temperature monitoring.
+Description: This repository contains the code for a systematic review 
+    and meta-analysis of zero-heat-flux temperature monitoring.
 License: MIT + file LICENSE
 Depends: 
     dplyr,
     ggprisma,
     gofer,
-    gt,
     here,
     knitr,
     magrittr,
     readxl,
     rmarkdown,
-    distill
+    flextable
 Remotes: 
     awconway/ggprisma,
-    rstudio/gt
+    awconway/gofer
 Encoding: UTF-8
 LazyData: true

@@ -14,6 +14,7 @@ RUN installGithub.r \
     awconway/ggprisma \
     awconway/gofer \
     rstudio/bookdown \
+    davidgohel/rvg \
     davidgohel/officedown
 
 

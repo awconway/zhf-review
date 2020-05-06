@@ -8,12 +8,12 @@ RUN chown -R ${NB_USER} ${HOME}
 
 RUN install2.r --error \
     here \
-    flextable \
-    bookdown
+    flextable 
 
 RUN installGithub.r \
     awconway/ggprisma \
     awconway/gofer \
+    rstudio/bookdown \
     davidgohel/officedown
 
 

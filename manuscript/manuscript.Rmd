@@ -50,7 +50,6 @@ knitr::opts_chunk$set(include=TRUE,
                       echo=FALSE, warning=FALSE, message=FALSE)
 library(dplyr)
 library(ggprisma) # https://github.com/awconway/ggprisma
-library(kableExtra)
 library(knitr)
 library(magrittr)
 source(here::here("manuscript", "loa_maker.R"))

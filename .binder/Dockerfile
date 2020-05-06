@@ -8,11 +8,14 @@ RUN chown -R ${NB_USER} ${HOME}
 
 RUN install2.r --error \
     here \
-    flextable
+    flextable \
+    officer
 
 RUN installGithub.r \
     awconway/ggprisma \
-    awconway/gofer
+    awconway/gofer \
+    davidgohel/officedown
+
 
 
 USER ${NB_USER}

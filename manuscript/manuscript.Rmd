@@ -41,7 +41,6 @@ output:
     pandoc_args:
       - --lua-filter=Extras/scholarly-metadata.lua
       - --lua-filter=Extras/author-info-blocks.lua
-always_allow_html: true
 params:
   include_figs: false
 ---
@@ -60,6 +59,8 @@ source(here::here("manuscript", "loa_maker.R"))
 source(here::here("manuscript","meta.R"))
 library(gofer) # https://github.com/awconway/gofer
 library(flextable)
+library(officer)
+library(officedown)
 ```
 
 \pagebreak
@@ -198,7 +199,7 @@ Eighteen studies were included. The primary meta-analysis of zero-heat-flux vers
 
 **Conclusion**
 
-The range of uncertainty in the accuracy of the zero-heat-flux thermometer should be taken into account when using this device to inform clinical decision-making. Clinicians should therefore consider the potential that a temperature measurement from a 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System could be as much as 1°C higher or lower than core temperature. Use of this device may not be appropriate in situations where a difference in temperature of less than 1°C is important to detect. 
+The range of uncertainty in the accuracy of a thermometer should be taken into account when using this device to inform clinical decision-making. Clinicians should therefore consider the potential that a temperature measurement from a 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System could be as much as 1°C higher or lower than core temperature. Use of this device may not be appropriate in situations where a difference in temperature of less than 1°C is important to detect. 
 
 Clinical trial number: Not applicable
 
@@ -212,7 +213,7 @@ Keywords: temperature, measurement, zero-heat-flux, surgery, anesthesia
 Availability of data and material (data transparency): All data used in the meta-analyses is available [here](https://zhf-info.netlify.app).
 
 
-Code availability: All data used in the meta-analyses is available [here](https://github.com/awconway/zhf-review).
+Code availability: All data used in the meta-analyses is available [here](https://github.com/awconway/zhf-review) and archived [here]().
 
 Abbreviated title: Accuracy of zero-heat-flux thermometers
 
@@ -241,11 +242,11 @@ SD^2^ = Variance
 
 ## Introduction
 
-Continuous core temperature monitoring is commonly used within perioperative and intensive care settings. Thermoregulatory dysfunction is associated with the induction of anesthesia and can lead to adverse outcomes including cardiac arrhythmia, altered hemostasis and increased risk of surgical site infection.[@frank1997perioperative; @kurz1996perioperative; @michelson1994reversible; @rohrer1992effect] The pulmonary artery catheter is the reference standard for continuous core temperature monitoring, however, the invasive nature of this method renders an increased risk of bloodstream infections and damage to surrounding tissue.[@hadian2006evidence] Although clinically accurate relative to pulmonary artery temperature measurements, surrogate measures of core temperature at esophageal, rectal, and bladder locations remain mildly invasive interventions. 
+Continuous core temperature monitoring is commonly used within perioperative and intensive care settings. Thermoregulatory dysfunction is associated with the induction of anesthesia and can lead to adverse outcomes including cardiac arrhythmia, altered hemostasis and increased risk of surgical site infection.[@frank1997perioperative; @kurz1996perioperative; @michelson1994reversible; @rohrer1992effect] The pulmonary artery catheter is the reference standard for continuous core temperature monitoring, however, the invasive nature of this method renders an increased risk of bloodstream infections and damage to surrounding tissue.[@hadian2006evidence] Although accurate relative to pulmonary artery temperature measurements, surrogate measures of core temperature at esophageal, rectal, and bladder locations remain mildly invasive interventions. 
 
-Zero-heat-flux thermometry is an alternative non-invasive method that allows for continuous monitoring of core temperature. Zero-heat-flux sensors are placed on the lateral surface of the forehead and is initially warmed to equilibrate the temperature of the skin surface to the underlying core tissues. Equipped with a thermal insulator, the zero-heat-flux sensor eliminates heat loss to the environment to allow for changes in core temperature to be directly reflected by a change in skin surface temperature.[@eshraghi2014] Originally developed in the 1970s, zero-heat-flux technology was recently implemented in the the 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System (3M^TM^, St Paul, MN), as a single-use, disposable sensor. This device was previously known as the SpotOn Temperature Monitoring System. Another device on the market is the T-core sensor from Dräger. 
+Zero-heat-flux thermometry is an alternative non-invasive method that allows for continuous temperature monitoring from the skin surface. Unlike other commonly used non-invasive thermometers such as infrared aural canal and temporal devices, the zero-heat-flux device does not apply a correction factor. As such, it is classified as an indirect *measurement* of core temperature, not an indirect *estimate*.[@riley2018inadvertent]  Zero-heat-flux thermometers consist of a thermal insulator positioned between two thermistors, which are covered by a heating component. The heater is initially warmed to equilibrate with skin surface temperature. By eliminating heat loss to the environment, skin surface temperature closely reflects the temperature at a depth of about 1 to 2 cm below the location of the thermometer.[@eshraghi2014]  It has been confirmed that zero-heat-flux thermometers can provide an accurate substitute for core temperature monitoring.[@Sessler_2008]  A comprehensive review of this method of temperature measurement, which was originally developed in the 1970s, is available.[@yamakage2003deep]
 
-The agreement between temperature measurements from zero-heat-flux thermometers and core as well as other peripheral thermometers has been investigated in multiple studies over the last five years. The 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System, has been the zero-heat-flux device used in most of these recent studies. Appraisal and synthesis of the results would aid clinicians in deciding the appropriate circumstances in which this particular zero-heat-flux thermometer may be used. We aimed to determine if 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System has clinically acceptable accuracy and precision relative to established core and peripheral temperature measurement devices. Accuracy is defined as the average difference between temperature measurements from the zero-heat-flux and comparator device and precision as the variance (standard deviation) in the differences.
+A new generation of zero-heat-flux thermometers are now approved for use within perioperative and intensive care settings. The accuracy of temperature measurements from this latest generation of devices has been investigated in multiple studies over the last five years. The 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System (3M^TM^, St Paul, MN) was the zero-heat-flux device used in most of these studies. This device was previously known as the SpotOn Temperature Monitoring System. It is a single-use, disposable sensor, which is recommended to be positioned on the lateral surface of the forehead, as this is one of the locations in the body where subcutaneous temperature approximates core temperature. Appraisal and synthesis of the results would aid clinicians in deciding the appropriate circumstances in which this particular zero-heat-flux thermometer may be used. We aimed to determine if the 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System has clinically acceptable accuracy and precision relative to established core and peripheral temperature measurement devices. Accuracy is defined as the average difference between temperature measurements from the zero-heat-flux and comparator device and precision as the variance (standard deviation) in the differences.
 
 \pagebreak
 
@@ -284,15 +285,13 @@ The conventionally cited clinically acceptable agreement between zero-heat-flux 
 
 A sensitivity analysis for the primary comparison (zero-heat-flux versus temperature measurement at core site) was performed based on risk of bias, whereby ‘unclear risk of bias’ was treated as ‘high risk’ and ‘high risk of bias’ studies were excluded from analyses. We also conducted a sensitivity analysis for the primary comparison (zero-heat-flux versus temperature measurement at core site) excluding studies that received funding from industry. As clinicians would be interested in the accuracy of zero-heat-flux relative within the clinical setting in which they use it, we conducted subgroup analyses for the primary comparison according to clinical setting of the study (either intraoperative or intensive care unit).
 
-\pagebreak
-
 ## Results
 
 ### Study selection and description
 
 Sixteen studies were included (Figure 1). Two studies reported only in abstract form were not included and assigned as 'studies awaiting classification' because there was insufficient information provided.[@cullen2015measuring; @VendrellJorda2016] 
 
-Detailed characteristics of included studies is displayed in Table 1. The primary comparison of the 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System versus core temperature measurements (eg, arterial, bladder, esophageal or rectal) consisted of `r primary$Comparisons` comparisons from `r primary$Studies` individual studies.[@Boisson_2018; @Carvalho_2019; @Dahyot_Fizelier_2017; @eshraghi2014; @G_mez_Romero_2019; @idei2016; @Jack_2019; @Kato_2015; @kollmann2019validation; @M_kinen_2016; @Morettini_2019; @Pesonen_2018; @Schell_Chaple_2018; @Tachibana_2019; @G_mez_Romero_2019] In total, data from `r primary$Participants` participants with `r format(primary$Measurements, scientfic=F)` paired measurements were included in this comparison (two studies did not report the total number of measurements included in their analysis). The sensitivity analysis for the primary comparison with only studies that were assessed as low risk of bias across all domains included `r low_risk$Comparisons` comparisons from `r low_risk$Studies` studies that enrolled `r low_risk$Participants` participants with `r low_risk$Measurements` paired measurements (two studies did not report the total number of measurements included in their analysis). There were `r ICU$Studies` studies that compared zero-heat-flux to core temperature measurements in ICU patients, comprising `r ICU$Comparisons` comparisons with `r ICU$Measurements` measurements from `r ICU$Participants` participants. Another `r OT$Studies` studies were included that compared zero-heat-flux to core temperature measurements in patients undergoing surgery, comprising `r OT$Comparisons` comparisons with `r OT$Measurements` measurements from `r OT$Participants` participants. Nasopharyngeal thermometers were used as the comparator devices in `r NPA$Studies` studies, with `r NPA$Measurements` paired measurements from `r NPA$Participants` participants. Sublingual thermometers were used as the comparator devices in `r SL$Studies` studies that reported `r SL$Measurements` paired measurements from `r SL$Participants` participants. Supplementary information presented in the study [webpage](https://zhf-info.netlify.app) provides comprehensive summaries of the studies included in each of these meta-analyses.
+A summary of the characteristics of included studies is displayed in Table 1. The primary comparison of the 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System versus core temperature measurements (eg, arterial, bladder, esophageal or rectal) consisted of `r primary$Comparisons` comparisons from `r primary$Studies` individual studies.[@Boisson_2018; @Carvalho_2019; @Dahyot_Fizelier_2017; @eshraghi2014; @G_mez_Romero_2019; @idei2016; @Jack_2019; @Kato_2015; @kollmann2019validation; @M_kinen_2016; @Morettini_2019; @Pesonen_2018; @Schell_Chaple_2018; @Tachibana_2019] In total, data from `r primary$Participants` participants with `r format(primary$Measurements, scientfic=F)` paired measurements were included in this comparison (two studies did not report the total number of measurements included in their analysis). The sensitivity analysis for the primary comparison with only studies that were assessed as low risk of bias across all domains included `r low_risk$Comparisons` comparisons from `r low_risk$Studies` studies that enrolled `r low_risk$Participants` participants with `r low_risk$Measurements` paired measurements (two studies did not report the total number of measurements included in their analysis). There were `r ICU$Studies` studies that compared zero-heat-flux to core temperature measurements in ICU patients, comprising `r ICU$Comparisons` comparisons with `r ICU$Measurements` measurements from `r ICU$Participants` participants. Another `r OT$Studies` studies were included that compared zero-heat-flux to core temperature measurements in patients undergoing surgery, comprising `r OT$Comparisons` comparisons with `r OT$Measurements` measurements from `r OT$Participants` participants. Nasopharyngeal thermometers were used as the comparator devices in `r NPA$Studies` studies, with `r NPA$Measurements` paired measurements from `r NPA$Participants` participants. Sublingual thermometers were used as the comparator devices in `r SL$Studies` studies that reported `r SL$Measurements` paired measurements from `r SL$Participants` participants. Supplementary information presented in the study [webpage](https://zhf-info.netlify.app) provides comprehensive summaries of the studies included in each of these meta-analyses.
 
 All comparisons reported adherence to the 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System manufacturer instructions and placed the sensor on the forehead of the participants. One included study also reported results for comparisons where the zero-heat-flux thermometer was not placed on the forehead.[@Tachibana_2019] We did not include these comparisons in our meta-analysis. 
 
@@ -301,7 +300,7 @@ Risk of bias assessments for each study are presented in Figure 2. High risk of 
 
 ### Primary comparison: 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System versus core thermometers
 
-Table 1 presents results of the primary, sensitivity and all subgroup analyses for the primary comparison as well as secondary comparisons. The pooled estimate for the mean bias between the 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System and core temperature measurements was `r primary$bias_mean`°C. Population limits of agreement, which take into consideration the between-study heterogeneity and sampling error, were wide, spanning from `r primary$CI_L_rve`°C to `r primary$CI_U_rve`°C (`r primary$Measurements` measurements; `r primary$Participants` participants; `r primary$Studies` studies). The amount of between-study heterogeneity is displayed graphically in the density plot in Figure 3. The quality of evidence for the primary comparison was downgraded to low quality due to concerns about study limitations and inconsistency. Population limits of agreement for the sensitivity analysis restricted to studies rated as having low risk of bias across all the domains of the QUADAS-2 were similar to the primary analysis (`r low_risk$Measurements` measurements; `r low_risk$Participants` participants; `r low_risk$Studies` studies). The mean bias was again `r low_risk$bias_mean`°C with population limits of agreement spanning from `r low_risk$CI_L_rve`°C to `r low_risk$CI_U_rve`°C. A further sensitivity analysis excluding studies that received industry funding revealed population limits of agreement that were considerably wider than the primary analysis (`r conflict$CI_L_rve`°C to `r conflict$CI_U_rve`°C). The evidence rating for this sensitivity analysis was downgraded to low quality though, due to concerns about study limitations, inconsistency and imprecision.  
+Table 2 presents results of the primary, sensitivity and all subgroup analyses for the primary comparison as well as secondary comparisons. The pooled estimate for the mean bias between the 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System and core temperature measurements was `r primary$bias_mean`°C. Population limits of agreement, which take into consideration the between-study heterogeneity and sampling error, were wide, spanning from `r primary$CI_L_rve`°C to `r primary$CI_U_rve`°C (`r primary$Measurements` measurements; `r primary$Participants` participants; `r primary$Studies` studies). The amount of between-study heterogeneity is displayed graphically in the density plot in Figure 3. The quality of evidence for the primary comparison was downgraded to moderate quality due to concerns about study limitations. Population limits of agreement for the sensitivity analysis restricted to studies rated as having low risk of bias across all the domains of the QUADAS-2 were similar to the primary analysis (`r low_risk$Measurements` measurements; `r low_risk$Participants` participants; `r low_risk$Studies` studies). The mean bias was again `r low_risk$bias_mean`°C with population limits of agreement spanning from `r low_risk$CI_L_rve`°C to `r low_risk$CI_U_rve`°C. A further sensitivity analysis excluding studies that received industry funding revealed population limits of agreement that were considerably wider than the primary analysis (`r conflict$CI_L_rve`°C to `r conflict$CI_U_rve`°C). The evidence rating for this sensitivity analysis was downgraded to low quality though, due to concerns about study limitations, inconsistency and imprecision.  
 
 We conducted two subgroup analyses for the primary comparison according to the clinical setting in which the study was conducted. In the subset of studies conducted in the ICU, the mean bias was `r ICU$bias_mean`°C with population limits of agreement between `r ICU$CI_L_rve`°C and `r ICU$CI_U_rve` °C. The GRADE rating for quality of evidence was downgraded to very low quality due to study limitations, inconsistency and imprecision. In the subset of studies that evaluated the use of 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System during surgery found a mean bias of `r OT$bias_mean`°C with population limits of agreement from `r OT$CI_L_rve`°C to `r OT$CI_U_rve`°C. The quality of evidence was rated as moderate quality due to concerns about study limitations.
 
@@ -321,7 +320,7 @@ Subgroup analyses revealed insights to direct future research. There were fewer 
 
 Although comparisons with core temperature are the most important to evaluate, we included studies that compared 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System and peripheral temperature monitoring devices in our review because clinicians may be interested to determine if this new technology is sufficiently accurate to replace other ways to non-invasively monitor temperature. Also, there may be situations where it is standard practice for only peripheral temperature monitoring to be used. In these circumstances, it is not practical to expose research participants to the potential risks of invasive core temperature monitoring for the purpose of evaluating the new temperature monitoring device. Whether or not the zero-heat-flux thermometer is sufficiently accurate to be used in place of nasopharyngeal thermometers is unclear. Population limits of agreement calculated from four studies were broad, spanning from 1°C less than zero-heat-flux temperature to one degree higher. Further studies are therefore required.
 
-It should be noted that we did not include studies that used the Temple Touch Pro because it is not strictly a zero-heat-flux device. This is a new thermometer that is similar to the zero-heat-flux device in that it is placed cutaneously, but the underlying technology is different.[@evron2017evaluation] Likewise, studies that evaluated the Drager Tcore device were not included because this review focused specifically on the 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System.
+It should be noted that we did not include studies that used the Temple Touch Pro because it is not strictly a zero-heat-flux device. This is a new thermometer that is similar to the zero-heat-flux device in that it is placed cutaneously, but the underlying technology is different.[@evron2017evaluation] Likewise, studies that evaluated the Dräger Tcore device were not included because this review focused specifically on the 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System.
 
 Many studies in this review analysed a large number of measurements of temperature with relatively small sample sizes. Importantly, the approach we used for our meta-analysis takes this into account. By using robust variance estimation, weights for pooling estimates in the meta-analysis become proportional to the number of patients, not the total number of measurements.[@tipton2017framework]
 
@@ -329,7 +328,9 @@ The accuracy of 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System has been ev
 
 ### Limitations
  
-We did not extract data on adverse events due to temperature monitoring with the 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System. The possibility of publication bias cannot be ruled out, although the evidence suggests this may not be as serious of a problem for studies that are not randomized controlled trials.[@begg2005systematic] Our focus for the meta-analysis was on calculating population limits of agreement, which incorporate the variation in bias between studies into the estimates. For this reason, we did not use meta-regression or tests for interaction between subgroups as a way to investigate sources of heterogeneity. It is important to note that this review did not assess the clinical utility of temperature monitoring using the zero-heat-flux device. The evidence from this review should be considered in the context of other information about the reliability and ease of use of this device. 
+We did not extract data on adverse events due to temperature monitoring with the 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System. The possibility of publication bias cannot be ruled out, although the evidence suggests this may not be as serious of a problem for studies that are not randomized controlled trials.[@begg2005systematic] Our focus for the meta-analysis was on calculating population limits of agreement, which incorporate the variation in bias between studies into the estimates. For this reason, we did not use meta-regression or tests for interaction between subgroups as a way to investigate sources of heterogeneity. It is important to note that this review did not assess the clinical utility of temperature monitoring using the zero-heat-flux device. The evidence from this review should be considered in the context of other information about the reliability and ease of use of this device. For example, the 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System permits use of the same temperature monitoring device to be used throughout the whole perioperative care pathway. As such, use of this device during the pre and post-operative period to replace indirect estimates of core temperature, such as infrared tympanic and temporal devices, which are not recommended for use in surgical patients[@riley2018inadvertent] yet are commonly used because of convenience, may be an advantage. 
+
+Finally, our initial protocol was focused on the accuracy of zero-heat-flux temperature measurements in general, not the 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System specifically. A decision was made after data extraction and analysis was conducted to revise our inclustion criteria and include only studies that reported on the accuracy of the 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System for this particular report. This decision was made because of the potential that differences in the technology integrated into zero-heat-flux devices produced by different manufacturers (i.e. 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System and the Dräger Tcore) will influence estimates about the accuracy of zero-heat-flux devices overall. Although revising the inclusion criteria must be considered a limitation, this decision permitted a more targeted evaluation of the 3M^TM^ Bair Hugger^TM^ Temperature Monitoring System and easier interpretation of results.
 
 ## Conclusion
 
@@ -387,9 +388,16 @@ Fig. 3 Comparisons between core and zero-heat-flux thermometers within and acros
 11.	5 AND 10
 
 
-\pagebreak
+<!---BLOCK_MULTICOL_START--->
 
-### Table 1: Study Characteristics
+
+<!---BLOCK_STOP--->
+
+
+<!--BLOCK_LANDSCAPE_START--->
+
+
+## Table 1: Study Characteristics
 
 ```{r }
 data_NPA <- gofer::data_NPA
@@ -443,14 +451,13 @@ ft <- data_core %>%
   dplyr::arrange(-as.numeric(Year)) %>% 
        dplyr::mutate(perc_male = round((male/(female+male))*100, 1)) %>% 
   dplyr::mutate(N= tidyr::replace_na(N, 0)) %>% 
-    dplyr::mutate(lower_temp= tidyr::replace_na(lower_temp, 0)) %>% 
-  dplyr::mutate(upper_temp= tidyr::replace_na(upper_temp, 0)) %>% 
     dplyr::mutate(age = ifelse(!is.na(mean_age), 
                       glue::glue("{mean_age} ({mean_age - lower_mean})"),
                       glue::glue("{median_age} [{lower_IQR}-{upper_IQR}]"))) %>% 
     dplyr::mutate(temp_range = glue::glue("{lower_temp}-{upper_temp}")) %>%
-
-     dplyr::select(Year, Study, code, patients, perc_male, age, comparison, n, N, 
+    dplyr::mutate(n1=n) %>% 
+  dplyr::mutate(N1=N) %>% 
+     dplyr::select(Year, Study, code, patients, perc_male, age, comparison, n,n1, N,N1, 
            temp_range) %>%
       flextable()
 
@@ -463,76 +470,70 @@ part = "body")
 
 ft <- compose(ft, i=~code=="US", j = "code",
   value = as_paragraph(as_image( 
-    src = flagon::flags("US", filetype = "png"),
+    src = "Extras/flags/US.png",
     width = .20, height = .15))
 )
 
 ft <- compose(ft, i=~code=="FI", j = "code",
   value = as_paragraph(as_image( 
-    src = flagon::flags("FI", filetype = "png"),
+    src = "Extras/flags/FI.png",
     width = .20, height = .15))
 )
 
 ft <- compose(ft, i=~code=="FR", j = "code",
   value = as_paragraph(as_image( 
-    src = flagon::flags("FR", filetype = "png"),
+    src = "Extras/flags/FR.png",
     width = .20, height = .15))
 )
 
 ft <- compose(ft, i=~code=="BE", j = "code",
   value = as_paragraph(as_image( 
-    src = flagon::flags("BE", filetype = "png"), 
+    src = "Extras/flags/BE.png", 
     width = .20, height = .15))
 )
 
 ft <- compose(ft, i=~code=="ES", j = "code",
   value = as_paragraph(as_image( 
-    src = flagon::flags("ES", filetype = "png"), 
-    width = .20, height = .15))
-)
-
-ft <- compose(ft, i=~code=="BE", j = "code",
-  value = as_paragraph(as_image( 
-    src = flagon::flags("BE", filetype = "png"), 
+    src = "Extras/flags/ES.png", 
     width = .20, height = .15))
 )
 
 ft <- compose(ft, i=~code=="GB", j = "code",
   value = as_paragraph(as_image( 
-    src = flagon::flags("GB", filetype = "png"), 
+    src = "Extras/flags/GB.png", 
     width = .20, height = .15))
 )
 
 ft <- compose(ft, i=~code=="JP", j = "code",
   value = as_paragraph(as_image( 
-    src = flagon::flags("JP", filetype = "png"), 
+    src = "Extras/flags/JP.png", 
     width = .20, height = .15))
 )
 
 ft <- compose(ft, i=~code=="IT", j = "code",
   value = as_paragraph(as_image( 
-    src = flagon::flags("IT", filetype = "png"), 
+    src = "Extras/flags/IT.png", 
     width = .20, height = .15))
 )
 
 ft <- compose(ft, i=~code=="DE", j = "code",
   value = as_paragraph(as_image( 
-    src = flagon::flags("DE", filetype = "png"), 
+    src = "Extras/flags/DE.png", 
     width = .20, height = .15))
 )
 
 ft <- compose(ft, i=~code=="CA", j = "code",
   value = as_paragraph(as_image( 
-    src = flagon::flags("CA", filetype = "png"), 
+    src = "Extras/flags/CA.png", 
     width = .20, height = .15))
 )
 
-ft <- compose( ft, j = "n",   value = as_paragraph(as_chunk(format(n)), "    ",
+ft <- compose( ft, j = "n1",   value = as_paragraph(
   minibar(value = n, barcol = "#930093")
 ),
 part = "body")
 
-ft <- compose( ft, j = "N",   value = as_paragraph(as_chunk(format(N)), "    ",
+ft <- compose( ft, j = "N1",   value = as_paragraph(
   lollipop(rangecol = "white",positivecol ="#930093", value = log(N), min=0, max=log(max(N)))
 ),
 part = "body")
@@ -540,7 +541,7 @@ part = "body")
 ft <- compose(ft, j = "perc_male",
   value = as_paragraph(as_image(
     src = "figures/sex.png",
-    width = .20, height = .15)),
+    width = .4, height = .3)),
   part="header"
 )
 
@@ -598,19 +599,20 @@ ft <- merge_at(ft, part = "body", i=~Study=="Makinen", j = "temp_range")
 ft %>% 
   fontsize(size = 10) %>% 
   fix_border_issues() %>% 
-  add_header_row(values = c("Study","Participants", "Temperature measurements"),  colwidths = c(4, 2 , 4)) %>% 
+  add_header_row(values = c("Study","Participants", "Temperature measurements"),  colwidths = c(4, 2 , 6)) %>% 
   align(align = "center", part = "header") %>% 
   bg(i=1, j=1:4, part="header", bg="#0080ff") %>% 
   color(i=1, j=1:4, part="header", color="white") %>% 
   bg(i=1, j=5:6, part="header", bg="#ee721a") %>% 
   color(i=1, j=5:6, part="header", color="white")  %>% 
-  bg(i=1, j=7:10, part="header", bg="#930093") %>% 
-  color(i=1, j=7:10, part="header", color="white")  %>% 
+  bg(i=1, j=7:12, part="header", bg="#930093") %>% 
+  color(i=1, j=7:12, part="header", color="white")  %>% 
   empty_blanks() %>% 
   set_header_labels(Year ="", Study = "", code = "",
                     patients = "", age= "Age (years)",
-                    comparison = "", n = "Participants",
-                    N = "Measurements", temp_range = "Range (°C)") %>% 
+                    comparison = "", n1 = "Participants",
+                    N1 = "Measurements", temp_range = "Range (°C)",
+                    n="", N="") %>% 
   border_remove() %>% 
    hline(i =~Year=="2019", part = "body", 
             border = officer::fp_border(color="black", width = 1)) %>% 
@@ -629,21 +631,29 @@ hline(i =~Year=="2017", part = "body",
 
 hline( i =~Year=="2014", part = "body", 
             border = officer::fp_border(color="black", width = 1))  %>% 
-  bg(j=~comparison + temp_range + n+N, bg="lightgray") %>% 
+  bg(j=7:12, bg="lightgray") %>% 
   hline( i =2, part = "header", 
             border = officer::fp_border(color="black", width = 1)) %>% 
   hline_bottom(part = "body", 
             border = officer::fp_border(color="black", width = 1)) %>% 
   width(j="Year",width = 0.49) %>%
-    width(j="Study",width = 0.79)  %>% 
-   width(j="code",width = 0.39)  %>% 
-    width(j="patients",width = 0.98)  %>% 
+    width(j="Study",width = 0.79)  %>%
+   width(j="code",width = 0.39)  %>%
+    width(j="patients",width = 0.98)  %>%
   width(j="perc_male",width = 1.19) %>%
   width(j="age",width = 0.82) %>%
   width(j="comparison",width = 1.18) %>%
-  width(j="n",width = 1.75) %>%
-  width(j="N",width = 1.81) %>%
-  width(j="temp_range",width = 0.65) 
+  width(j="n",width = 0.38) %>%
+  width(j="n1",width = 1.16) %>%
+  width(j="N",width = 0.63) %>%
+  width(j="N1",width = 1.19) %>% 
+  width(j="temp_range",width = 0.65) %>% 
+  footnote(i =2, j = 6,
+               value = as_paragraph(
+                "mean (standard deviation) or median [interquartile range]"
+               ),
+               ref_symbols = "a",
+               part = "header")
 
 
 
@@ -654,7 +664,7 @@ hline( i =~Year=="2014", part = "body",
 
 ### Table 2: Results of meta-analyses
 
-```{r }
+```{r tab.style='table-flex'}
   ma <- list(primary, low_risk, ICU, OT,  NPA,SL, conflict)
 names(ma) <- c("Primary", "Low risk studies", "Intensive Care Unit", 
                "Surgery", "Nasopharyngeal", "Sublingual",
@@ -735,79 +745,6 @@ df %>%
 
 ```
 
-\pagebreak
-
-```{r fig.cap="Fig. 1", include=params$include_figs, eval=params$include_figs}
-ggprisma::ggprisma(retrieved = 131, included = 16, 
-                          duplicates = 35, full_text = 23, 
-                          wrong_intervention = 5, 
-                          wrong_comparator = 2, 
-                          wrong_design = 1, 
-                          awaiting_classification = 2)
-```
-
-\pagebreak
-
-```{r fig.cap="Fig. 2", include=params$include_figs, eval=params$include_figs}
-RoB <- data_core %>%
-  dplyr::bind_rows(data_SL) %>%
-  dplyr::bind_rows(data_NPA) %>%
-  dplyr::select(Study, RoB_selection, RoB_spoton, RoB_comparator, RoB_flow) %>%
-  dplyr::mutate(RoB_overall = dplyr::if_else(RoB_selection == "low" &
-                                               RoB_spoton == "low" &
-                                               RoB_comparator == "low" &
-                                               RoB_flow == "low", "low", "high"))
-RoB[RoB == "unclear"] <- "some concerns"
-robvis::rob_traffic_light(data = RoB, tool = "QUADAS-2")
-```
-
-\pagebreak
-
-```{r fig.cap="Fig. 3", include=params$include_figs, eval=params$include_figs}
-bias=data_core$bias
-s2_unb = data_core$s2
-pooled_bias = primary$bias_mean
-pooled_sd = primary$sd2_est
-pooled_tau2 = primary$tau_est
-pooled_sd = sqrt(pooled_sd^2 + pooled_tau2)
-
-LOA_l = primary$LOA_L
-LOA_u = primary$LOA_U
-LOA_l_CI = primary$CI_L_rve
-LOA_u_CI = primary$CI_U_rve
-g <- ggplot(data.frame(x=seq(-20,20,length=200)), aes(x=x)) + 
-  stat_function(fun=dnorm, args = list(bias[1], sd=sqrt(s2_unb[1])), colour = "cornflowerblue", size=0.6, alpha = 0.5) 
-
-for (i in 2:length(bias)){
-  g <- g + stat_function(fun=dnorm, args = list(bias[i], sd=sqrt(s2_unb[i])), color = "cornflowerblue", size = 0.6, alpha = 0.5)
-} 
-
-g <- g + stat_function(fun=dnorm, args = list(pooled_bias, pooled_sd), colour ="lightcoral", alpha = 0.05) + 
-  stat_function(fun=dnorm, args = list(pooled_bias, pooled_sd), colour = NA, geom="area", fill="lightcoral", alpha = 0.6) + 
-  scale_x_continuous(limits = c(-3.5,3.5), breaks = c(-2, -1, 0, 1, 2)) + 
-  labs(x = expression('Difference between core and ZHF temperature measurements in'*~degree*C*''),
-       caption = "Blue curves are distributions of the differences between measurements from zero-heat-flux sensors and core\ntemperature measurements in individual studies. The red curve is the distribution of the pooled estimate.")+
-  scale_y_continuous(name = "Density \n", limits = c(0,2.5)) +  
-  #labs(title = "\nOuter confidence intervals for pooled limits of agreement\n\n  Pooled limits of agreement")+
-  theme(plot.title = element_text(hjust = 0.5, margin = margin(t=10, b=-32), size=10),
-        axis.text=element_text(hjust = 0.5, size=10),                                                                        
-        axis.title=element_text(hjust = 0.5, size=10),
-        axis.line=element_line(colour="black", size=0.2),
-        panel.background = element_blank(),
-        axis.ticks = element_blank(), 
-        plot.caption = element_text(hjust = 0)) #+ 
-#CI lines that extend to arrow tips
-# geom_segment(aes(x=LOA_u, y=0, xend=LOA_u, yend=2.25), size = 0.3, linetype="dashed")+ 
-# geom_segment(aes(x=LOA_l, y=0, xend=LOA_l, yend=2.25), size = 0.3, linetype="dashed")+
-# geom_segment(aes(x=LOA_u_CI, y=0, xend=LOA_u_CI, yend=2.48), size = 0.3)+
-# geom_segment(aes(x=LOA_l_CI, y=0, xend=LOA_l_CI, yend=2.48), size = 0.3)#+
-# 
-# geom_segment(aes(x=0, y=2.48, xend=LOA_u_CI, yend=2.48), size = 0.4, arrow = arrow(length = unit(0.03, "npc")))+ #R arrow high
-# geom_segment(aes(x=0, y=2.48, xend=LOA_l_CI, yend=2.48), size = 0.4, arrow = arrow(length = unit(0.03, "npc")))+ #L arrow high
-# geom_segment(aes(x=0, y=2.25, xend=LOA_u, yend=2.25), size = 0.4,  arrow = arrow(length = unit(0.03, "npc")))+ #R arrow low
-# geom_segment(aes(x=0, y=2.25, xend=LOA_l, yend=2.25), size = 0.4,  arrow = arrow(length = unit(0.03, "npc"))) #L arrow low
-g
-
-```
+<!---BLOCK_LANDSCAPE_STOP--->
 
 

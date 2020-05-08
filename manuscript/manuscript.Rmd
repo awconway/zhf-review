@@ -213,7 +213,7 @@ Keywords: temperature, measurement, zero-heat-flux, surgery, anesthesia
 Availability of data and material (data transparency): All data used in the meta-analyses is available [here](https://zhf-info.netlify.app).
 
 
-Code availability: All data used in the meta-analyses is available [here](https://github.com/awconway/zhf-review) and archived [here]().
+Code availability: All data used in the meta-analyses is available [here](https://github.com/awconway/zhf-review) and archived [here](https://doi.org/10.5281/zenodo.3817610).
 
 Abbreviated title: Accuracy of zero-heat-flux thermometers
 
